@@ -1,0 +1,125 @@
+<!-- featured-four-banner.liquid -->
+<div class="page-width four-block-banner shop-by-price">
+  {% if section.settings.seasonal-heading != blank or section.settings.seasonal-subheading != blank %}
+  <header class="header-title-wrapper">
+    {% if section.settings.seasonal-subheading != blank %}
+    <h6 class="header--main-heading">{{ section.settings.seasonal-subheading }}</h6>
+    {% endif %}
+  </header>
+  {% endif %}
+  <div class="grid display-flex {% unless block.blocks.size == 5 %}grid--uniform{% endunless %} grid--flush-bottom">
+    {% for block in section.blocks %}
+    {% case section.blocks.size %}
+    {% when 2 %}
+    {%- assign grid_item_width = 'medium-up--one-half' -%}
+    {% when 3 %}
+    {%- assign grid_item_width = 'medium-up--one-third' -%}
+    {% when 4 %}
+    {%- assign grid_item_width = 'medium-up--one-quarter' -%}
+    {% when 5 %}
+    {%- assign grid_item_width = 'medium-up--one-fifth' -%}
+    {% endcase %}
+    {%- assign max_height = 345 -%}
+    <div class="grid__item {% if section.settings.half_width %}small--one-half {% else %}small--one-whole {% endif %}{{ grid_item_width }} text-{{ block.settings.align_text }}" {{ block.shopify_attributes }}>
+      {% if block.settings.enable_image %}
+      {% if block.settings.image != blank %}
+      
+      {% capture img_id %}TextColumnImage-{{ block.id }}{% endcapture %}
+      {% capture wrapper_id %}TextColumnImageWrapper-{{ block.id }}{% endcapture %}
+      {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      {%- assign img_url_mob  = block.settings.image_mob | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      <div id="{{ wrapper_id }}" class="feature-row__image-wrapper js hover_image">
+          <img id="{{ img_id }}" data-child="{{ forloop.index }}" class=" lazyload image_scale" data-src="{{ img_url }}" data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+          data-aspectratio="{{ block.settings.image.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image.alt | escape }}">
+          <div class="text_contain text-center">
+            {% if block.settings.title != blank %}
+            <p class="title">{{ block.settings.title }}</p>
+            {% endif %}
+            {% if block.settings.price != blank %}
+            <p class="four-grid-price">{{ block.settings.price }}</p>
+            {% endif %}
+            
+          </div>
+      </div>
+      <noscript>
+        <p>
+          {{ block.settings.image | img_url: '480x480', scale: 2 | img_tag: block.settings.image.alt, 'feature-row__image' }}
+        </p>
+      </noscript>
+      {% else %}
+      <p>
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </p>
+      {% endif %}
+      {% endif %}
+    </div>
+    
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Three banner",
+  "class": "index-section featured-four-banner",
+  "settings": [
+  {
+    "type": "text",
+    "id": "seasonal-subheading",
+    "label": "Heading",
+    "default": "Shop by Price"
+  },
+  {
+    "type": "checkbox",
+    "id": "half_width",
+    "label": "Show 2 items on mobile",
+    "default": false
+  },
+  {
+    "type": "checkbox",
+    "id": "show_shop_btn",
+    "label": "Show shop now button",
+    "default": true
+  }
+  ],
+  "blocks": [
+  {
+    "type": "text_block",
+    "name": "Image",
+    "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_image",
+      "label": "Show image",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mob",
+      "label": "Mobile Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Block title"
+    },
+    {
+      "type": "text",
+      "id": "price",
+      "label": "Price"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Banner link"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,88 @@
+{% if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings %}
+{% assign ri_settings = shop.metafields.reviewsimportify.store_settings %}
+{% else %}
+{% assign ri_settings = null %}
+{% endif %}
+{% if ri_settings.reviews_slider_status == "enabled" and ri_settings.app_status == "active" %}
+<div class="reviews-importify-element" ng-controller="RIReviewsSliderController" ng-init="loadReviewsSlider()">
+  <div id="reviews-importify-reviews-slider" class="reviews-importify-reviews-slider" ng-if="reviewsSliderData.reviews.total > 0">
+    {% if ri_settings.reviews_slider_heading  and ri_settings.reviews_slider_heading != "" %}
+    <h3 class="ri-reviews-slider-heading">{{ri_settings.reviews_slider_heading}}</h3>
+    {% endif %}
+    <div class="ri-reviews-slider owl-carousel">
+      <div class="ri_review_slider_row" ng-repeat="review in reviewsSliderData.reviews.data">
+        <div class="ri_review_slider_row_author">
+          <span class="review-user-image">
+            {% if ri_settings.reviews_slider_user_icon_type == "user_icon_image" %}
+            <img ng-src="(% appPublicUrl + '/images/user-icon.png' %)">
+            {% elsif ri_settings.reviews_slider_user_icon_type == "user_icon" %}
+            <span class="fa fa-user review-user-icon"></span>
+            {% elsif ri_settings.reviews_slider_user_icon_type == "square_letter" %}
+            <span class="review-user-letter square">(% authorFirstLetter(review.author) %)</span>
+            {% else %}
+            <span class="review-user-letter circle">(% authorFirstLetter(review.author) %)</span>
+            {% endif %}
+          </span>
+          <span class="review-user-name">
+            (% review.author %) <sup ng-if="review.is_verified == 1 && riStoreData.settings.reviews_slider_verified_tick_status == 'show'"><i class="fa fa-check"></i></sup>
+          </span>
+        </div>
+        <div class="ri_review_slider_row_data">
+          <div class="review_title_rating_star">
+            <div class="rating_star">
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 1}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 2}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 3}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 4}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 5}"></span>
+            </div>
+            <div class="ri_review_title" ng-if="riStoreData.settings.reviews_slider_review_title == 'show'">(% review.title %)</div>
+          </div>
+          {% if ri_settings.reviews_slider_variant_options_status == "show" %}
+          <div class="review_variant_options">
+            <span class="review_variant_option" ng-if="review.option1.name">
+              <span class="review_variant_option_name">(% review.option1.name %) :</span>
+              <span class="review_variant_option_value">(% review.option1.value %)</span>
+            </span>
+            <span class="review_variant_option" ng-if="review.option2.name">
+              <span class="review_variant_option_name">(% review.option2.name %) :</span>
+              <span class="review_variant_option_value">(% review.option2.value %)</span>
+            </span>
+            <span class="review_variant_option" ng-if="review.option3.name">
+              <span class="review_variant_option_name">(% review.option3.name %) :</span>
+              <span class="review_variant_option_value">(% review.option3.value %)</span>
+            </span>
+          </div>
+          {% endif %}
+          {% if ri_settings.reviews_slider_review_description != "hide" %}
+          <div class="ri_review_description">
+            <i class="fa fa-quote-left"></i> (% review.description %) <i class="fa fa-quote-right"></i>
+          </div>
+          {% endif %}
+        </div>
+        
+        <div class="review_meta_data">
+          <div class="rireview-date">
+            {% if ri_settings.reviews_slider_review_date != "hide" %}
+            <span class="review_date_text">
+              <span class="fa fa-calendar review-date-icon"></span> (% review.date_time_str %)
+            </span>
+            {% endif %}
+            <span ng-class="riStoreData.settings.reviews_slider_review_date != 'hide' ? 'verified_text' : 'verified_text noborder'" ng-if="review.is_verified == 1 && riStoreData.settings.reviews_slider_verified_text_status != 'hide'">
+              <span>
+                {% if ri_settings.verified_purchase_text != "" and ri_settings.verified_purchase_text != null %}
+                {{ri_settings.verified_purchase_text }}
+                {% else %}
+                Verified Purchase
+                {% endif %}
+              </span>
+            </span>
+          </div>
+          
+        </div>
+        <div class="clearfloat"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

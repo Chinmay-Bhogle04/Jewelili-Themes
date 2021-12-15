@@ -1,0 +1,108 @@
+<div class="page-width" id="about">
+  <div class="banner-section overlay">
+    <div class="image_wrapper">
+     <img src="{{section.settings.banner_image | img_url:'master'}}" alt="" />
+    </div>
+    <div class="overlay-content">
+      <h1 class="title">{{section.settings.overlay_heading}}</h1>
+      <p class="subtext">{{section.settings.overlay_subtext}}</p>
+    </div>
+  </div>
+  <div class="box_wrapper">
+    {% for block in section.blocks %}
+    <div class="box overlay overlay-{{block.id}}" {% if block.settings.block_image == blank %} id="content-box" style="background:{{ block.settings.bg_color }};" {% endif %}>
+      {% if block.settings.block_image %}
+      <div class="image_wrapper">
+        <img src="{{block.settings.block_image | img_url: 'master'}}" alt="" />
+      </div>
+      {% endif%}
+      <div class="overlay-content">
+        <p class="subtext">{{block.settings.overlay_text}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<style>
+  {% for block in section.blocks %}
+  .overlay-{{block.id}} .subtext{
+    color: {{block.settings.overlay_color}};
+  }
+  {%endfor%}
+  .banner-section .subtext,.banner-section .title{
+    color:{{section.settings.text_color}};
+  }
+</style>
+{% schema %}
+  {
+    "name": "About Us settings",
+    "settings": [
+		{
+		  "type" :"header",
+          "content" : "Banner sections"
+		},
+        {
+		  "type" : "image_picker",
+          "id" : "banner_image",
+          "label" :"Select Banner Image",
+          "info" : "1200 x 400 .jpg recommends"
+        },
+        {
+          "type" :"text",
+          "id" : "overlay_heading",
+          "label" :"Enter Overlay Title",
+          "default" :"About Us"
+        },
+        {
+          "type" :"text",
+          "id" : "overlay_subtext",
+          "label" :"Enter Overlay Text",
+          "default" :"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"
+        },
+        {
+          "type" :"color",
+          "id" : "text_color",
+          "label" :"Select Text color",
+          "default" :"#3D404B"
+        }
+],
+
+ "blocks": [
+    {
+      "type": "Half-block",
+      "name": "Image Block",
+      "settings" : [
+		{
+		  "type" :"header",
+          "content" : "Block Content"
+		},
+        {
+		  "type" : "image_picker",
+          "id" : "block_image",
+          "label" :"Select background Image",
+          "info": "612 x 512px .jpg recommended"
+        },
+        {
+          "type" :"color",
+          "id" : "bg_color",
+          "label" :"Select Background color",
+          "default" :"#3D404B"
+        },  
+        {
+          "type" :"text",
+          "id" : "overlay_text",
+          "label" :"Enter Overlay Text"
+        },
+        {
+          "type" :"color",
+          "id" : "overlay_color",
+          "label" :"Select overlay color",
+          "default" :"#FFF2FF"
+        }
+
+       ]
+      }
+     ]
+  }
+{% endschema %}
+

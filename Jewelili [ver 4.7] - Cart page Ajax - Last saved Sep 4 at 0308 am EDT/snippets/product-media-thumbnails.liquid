@@ -1,0 +1,67 @@
+{% if product.media.size > 1 %}
+{% if product.media.size > 4 %}
+{%- assign enable_thumbnail_slides = true -%}
+{% endif %}
+<div class="thumbnails-wrapper{% if enable_thumbnail_slides == true %} thumbnails-slider--active{% endif %}">
+  <noscript>
+    {% capture product_image_size %}{{ height }}x{% endcapture %}
+    <img src="{{ featured_media | img_url: product_image_size, scale: product_image_scale }}" alt="{{ featured_media.alt }}" id="FeaturedMedia-{{ section.id }}" class="product-featured-media" style="max-width: {{ height }}px;">
+  </noscript>
+
+  <ul class="product-single__thumbnails product-single__thumbnails-{{ section.id }} {% if bespoke %}bespoke_thumbnail{% endif %}">
+
+    {% for media in product.media %}
+    {% assign active_media = false %}
+    {% if featured_media == media %}
+    {% assign active_media = true %}
+    {% endif %}
+    {% assign mediaId = media.id %}
+    {% if mediaList contains mediaId -%}
+    {% assign colorName1 = mediaList | split: mediaId | last %}
+    {% endif %}
+
+    <li class="product-single__thumbnails-item product-single__thumbnails-item--{{ section.settings.media_size }} {{ colorName1 | split:"`~`" | first | handle | replace: "sterling-silver","14k-white-gold" | replace: "10k-white-gold","14k-white-gold" | replace: "10k-yellow-gold","14k-yellow-gold" | replace: "10k-rose-gold","14k-rose-gold" }} js" data-no-slick-index="{{ forloop.index0 }}">   
+      {%- capture thumbnailAlt -%}
+      {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+      {{ 'sections.featured_product.video_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+      {%- elsif media.media_type == 'model' -%}
+      {{ 'sections.featured_product.model_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+      {%- else -%}
+      {{ 'sections.featured_product.gallery_thumbnail_alt' | t: imageAlt: media.alt | escape }}
+      {%- endif -%}
+      {%- endcapture -%}
+
+      <img class="product-single__thumbnail-image lazyload" src="{{ media.preview_image | img_url: '80x80' }}" data-src="{{ media.preview_image | img_url: '80x80' }}" data-thumbnail-id="{{ section.id }}-{{ media.id }}" alt="{{ thumbnailAlt }}" data-sizes="auto">
+      {%- if media.media_type == 'video' or media.media_type =='external_video' -%}
+      <div class="product-single__thumbnail-badge">
+        {% include 'icon-video-badge-full-color' %}
+      </div>
+      {%- endif -%}
+      {%- if media.media_type == 'model' -%}
+      <div class="product-single__thumbnail-badge">
+        {% include 'icon-3d-badge-full-color' %}
+      </div>
+      {%- endif -%}
+    </li>
+
+
+    {% if product.vendor contains 'Jewelili Diamonds' or product.vendor contains 'Jewelili Gemstones' or product.vendor contains 'Swarovski' %}
+    {% if forloop.last == true %}
+    <li class="product-single__thumbnails-item product-single__thumbnails-item--{{ section.settings.media_size }} {{ allColorName }} js">    
+      <img class="product-single__thumbnail-image lazyload" data-src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_Box.jpg?v=1627959899" data-thumbnail-id="{{ section.id }}-{{ media.id }}" alt="Product Box" data-sizes="auto">
+    </li>
+    {% endif %}
+    {% endif %}
+
+    {% endfor %}
+  </ul>
+  {% comment %}
+  {% if enable_thumbnail_slides == true %}
+  <button type="button" class="btn btn--link medium-up--hide thumbnails-slider__btn thumbnails-slider__next thumbnails-slider__next--{{ section.id }}">
+    {% include 'icon-chevron-right' %}
+    <span class="icon__fallback-text">{{ 'sections.slideshow.next_slide' | t }}</span>
+  </button>
+  {% endif %}
+  {% endcomment %}
+</div>
+{% endif %}

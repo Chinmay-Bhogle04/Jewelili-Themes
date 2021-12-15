@@ -1,0 +1,122 @@
+{% comment %}
+The contents of the collection.liquid template can be found in /sections/collection-template.liquid
+{% endcomment %}
+<div class="mothers-day-collection">
+  {% section 'mothers-day-banner' %}
+  {% section 'mothers-day-category' %}
+  {% section 'mothers_shop_by_price' %}
+  {% section 'mothers-day-collection-temp' %}
+</div>
+
+<style> 
+  .mother-category-index .feature-row__image-wrapper{
+    cursor: pointer;
+  }
+  .mothers-day-collection .featured-four-banner{
+    padding-top: 0;
+  }
+  .mothers-day-collection .shop-by-design-section .feature-row__image {
+    margin: 0 -5px -10px;
+  }
+  .mothers-day-collection .shop-by-design-section .txt-img-block{
+    padding: 10px 5px;
+  }
+  .mothers-day-collection .shop-by-design-section .txt-img-block{
+    display: flex;
+    align-items: center;
+  }
+  .mothers-day-collection .shop-by-design-section .text-block {
+    left: 22px;
+    bottom: auto;
+  }
+  .mothers-day-collection .shop-by-design-section .name{
+    font-size: 20px;
+    line-height: 27px;
+    font-weight: 600;
+    letter-spacing: 0px;
+    color: #292D36;
+  }
+  .mothers-day-collection .shop-by-design-section .profession{
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 27px;
+    letter-spacing: 0px;
+    color: #292D36;
+  }
+  .mothers-day-collection .block_link{
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 1.2px;
+    color: #292D36;
+    text-transform: uppercase;
+  }
+  .mothers-day-collection .txt-img-block .banner_link{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  
+  .mothers-day-collection .featured-four-banner .feature-row__image-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor:pointer;
+  }
+  .mothers-day-collection .four-block-banner .text_contain{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .mothers-day-collection .four-block-banner .title {
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 1.6px;
+    color: #292D36;
+    text-transform: uppercase;
+  }
+  .mothers-day-collection .four-block-banner .four-grid-price {
+    font-size: 55px;
+    font-weight: 500;
+    line-height: 52px;
+    letter-spacing: 0px;
+    color: #292D36;
+    text-transform: uppercase;
+  }
+  .mothers-day-collection .four-grid-price sup{
+    top: -0.4em;
+    font-size: 65%;
+  }
+  @media (max-width:1023px){
+    .mothers-day-collection .shop-by-design-section {
+      padding-top: 0;
+    }
+    .mothers-day-collection .shop-by-design-section .feature-row__image{
+      margin: 0 -15px -10px -5px;
+      flex-wrap: nowrap;
+      overflow: auto;
+    }
+    .mothers-day-collection .shop-by-design-section .txt-img-block{
+      max-width: 46%;
+      flex: 0 0 88%;
+    }
+    
+    .mothers-day-collection .four-block-banner .title {
+      font-size: 13px;
+      line-height: 16px;
+      letter-spacing: 1.3px;
+    }
+    .mothers-day-collection .four-block-banner .four-grid-price {
+      font-size: 35px;
+      line-height: 26px;
+    }
+  }
+  @media(max-width:767px){
+    .mothers-day-collection .shop-by-design-section .txt-img-block {
+      max-width: 100%;
+    }
+  }
+</style>

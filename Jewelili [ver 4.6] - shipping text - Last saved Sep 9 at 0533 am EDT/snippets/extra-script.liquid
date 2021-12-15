@@ -1,0 +1,26 @@
+<script>
+  $(document).on('page:load page:change', function() {
+    var checkoutAmount = $(".payment-due__price").attr("data-checkout-payment-due-target");
+    console.log(checkoutAmount);
+    if(checkoutAmount<50000){
+      $('[data-select-gateway="39613988918"]').hide();
+    }
+    //  add $ 0.0 as shipping charges
+    //     $("[data-checkout-total-shipping-target]").html('<b>Free</b>')
+    // Thank you cross sell code  
+    var checkOutDataStep = $('.main__content .step').data('step');
+    var checkoutOrderPrice = $('.payment-due__price').data('checkout-payment-due-target');
+    console.log(checkOutDataStep);
+    if(checkOutDataStep === 'thank_you'){
+      var crossSellHtml = `
+      <div id="thankyou-cross-sell" class="shopify-section">
+          <div id="discount-wrapper-thankyou">
+            <p class="discount-description"><b>Congratulations!</b><br> You have earned an EXTRA 10% off on your next purchase. Valid on minimum purchase of $150.<br> Use Code: <b class="discount_code">LOYAL10</b></p>
+          </div>
+      </div>`;
+      $('.order-summary__sections').append(crossSellHtml);
+    }
+
+    // Thank you cross sell code end
+  })
+</script>

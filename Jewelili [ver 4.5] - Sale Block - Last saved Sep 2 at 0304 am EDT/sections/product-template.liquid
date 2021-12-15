@@ -1,0 +1,611 @@
+<div class="product-template__container page-width"
+     id="ProductSection-{{ section.id }}"
+     data-section-id="{{ section.id }}"
+     data-section-type="product"
+     data-enable-history-state="true"
+     data-ajax-enabled="{{ settings.enable_ajax }}"
+     >
+  {% comment %}
+  Get first variant, or deep linked one
+  {% endcomment %}
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {% assign featured_media = current_variant.featured_media | default: product.featured_media %}
+  {% capture mediaList %}
+  {% for variant in product.variants %}
+  {{ variant.featured_media.id }}{{ variant.title }}{% if forloop.last == false %}`~`{% endif %}
+  {% endfor %}
+  {% endcapture %}
+
+  {%- assign product_image_zoom_size = '1024x1024' -%}
+  {%- assign product_image_scale = '2' -%}
+  {%- assign enable_image_zoom = section.settings.enable_image_zoom -%}
+  {%- assign compare_at_price = current_variant.compare_at_price -%}
+  {%- assign price = current_variant.price -%}
+
+  {% case section.settings.media_size %}
+  {% when 'small' %}
+  {%- assign product_media_width = 'medium-up--one-third' -%}
+  {%- assign product_description_width = 'medium-up--two-thirds' -%}
+  {%- assign height = 345 -%}
+  {% when 'medium' %}
+  {%- assign product_media_width = 'medium-up--one-half' -%}
+  {%- assign product_description_width = 'medium-up--one-half' -%}
+  {%- assign height = 530 -%}
+  {% when 'large' %}
+  {%- assign product_media_width = 'medium-up--two-thirds' -%}
+  {%- assign product_description_width = 'medium-up--one-third' -%}
+  {%- assign height = 720 -%}
+  {% when 'full' %}
+  {%- assign product_media_width = '' -%}
+  {%- assign product_description_width = '' -%}
+  {%- assign height = 1090 -%}
+  {%- assign enable_image_zoom = false -%}
+  {% endcase %}
+
+  {% assign bespokering = false %}
+  {% for tag in product.tags %}
+  {% if tag contains 'bespoke' %}
+  {% assign bespoke = tag %}
+  {% endif %}
+  {% if tag contains 'custom' %}
+  {% assign custom_tag = tag %}
+  {% endif %}
+  {% if tag  contains 'gmst' %}
+  {% assign NoEngraving = tag %}
+  {% endif %}
+  {% if tag  contains 'bespokering' %}
+  {% assign bespokering = true %}
+  {% endif %}
+  {% endfor %}
+  
+  {% assign allColorName = '' %}
+
+  {% assign hasVariantImage = false %}
+  {%- if product.tags contains 'Image with Variant' or product.tags contains 'Image With Variant' -%}
+  {% assign hasVariantImage = true %}
+  {% endif %}
+
+  <div class="grid product-single{% if section.settings.enable_payment_button %} product-single--{{ section.settings.media_size }}-media{% endif %}">
+    <div class="grid__item product-single__media-group {{ product_media_width }}{% if section.settings.media_size == 'full' %} product-single__media-group--full{% endif %}" data-product-single-media-group>
+      
+      {% include 'product-main-medias' %}
+
+      {% assign first_3d_model = product.media | where: "media_type", "model" | first %}
+
+      {%- if first_3d_model -%}
+      <button aria-label="{{ 'products.product.view_in_space_label' | t }}" class="product-single__view-in-space" data-shopify-xr data-shopify-model3d-id="{{ first_3d_model.id }}"
+              data-shopify-title="{{ product.title | escape }}" data-shopify-xr-hidden >
+        {% include 'icon-3d-badge-full-color' %}<span class='product-single__view-in-space-text'>{{ 'products.product.view_in_space' | t }}</span>
+      </button>
+      {%- endif -%}
+
+      {% include 'product-media-thumbnails' %}
+      
+    </div>
+
+
+    <div class="grid__item product-single__detail-group {{ product_description_width }}">
+      <div class="product-single__meta">
+        <div class="product__vendor"><span>{{ product.vendor }}</span></div>
+        <h1 class="product-single__title">{{ product.title }}</h1>	  
+        <p class="product-single__sku">SKU: <span class="variant-sku">{{ current_variant.sku }}</span></p>
+        <div class="medium--up-hide">{% include 'ri-rating-product' with product %}</div>
+        <div class="product__price">
+          {% include 'product-price', variant: current_variant, show_vendor: section.settings.show_vendor %}
+        </div>
+        <div class="free-shipping-text coupan-text hide">
+          <p>
+            <span>
+              <svg id="Capa_1" enable-background="new 0 0 512.006 512.006" viewBox="0 0 512.006 512.006" xmlns="http://www.w3.org/2000/svg"><path id="XMLID_1468_" d="m502.335 77.815 6.741-6.741c3.905-3.905 3.905-10.237 0-14.143-3.905-3.904-10.237-3.904-14.143 0l-6.741 6.741-6.737-6.737c-1.875-1.875-4.419-2.929-7.071-2.929h-10.999l-51.077-51.077c-1.876-1.875-4.419-2.929-7.071-2.929h-369.222c-19.858 0-36.014 16.155-36.014 36.014v187.401c0 19.858 16.156 36.014 36.014 36.014h87.12l-58.585 58.586c-6.802 6.802-10.548 15.846-10.548 25.466 0 9.619 3.746 18.663 10.548 25.466l132.512 132.512c6.802 6.802 15.846 10.548 25.466 10.548s18.664-3.746 25.466-10.548l99.247-99.246c3.906-3.905 3.906-10.237 0-14.143-3.905-3.903-10.237-3.904-14.142 0l-99.248 99.246c-3.024 3.025-7.046 4.69-11.323 4.69s-8.299-1.665-11.323-4.69l-132.513-132.512c-3.024-3.024-4.69-7.046-4.69-11.323 0-4.278 1.666-8.299 4.69-11.323l258.15-258.15h133.401l3.808 3.808-23.124 23.124c-3.917-1.878-8.3-2.931-12.926-2.931-16.542 0-30 13.458-30 30s13.458 30 30 30 30-13.458 30-30c0-4.626-1.054-9.01-2.932-12.926l23.124-23.124 3.808 3.808v133.4l-95.264 95.265c-3.905 3.905-3.905 10.237 0 14.143 3.905 3.904 10.237 3.904 14.143 0l98.193-98.193c1.875-1.876 2.929-4.419 2.929-7.071v-141.688c0-2.652-1.054-5.195-2.929-7.071zm-322.755 101.62c-5.516 0-10.003-4.487-10.003-10.003 0-5.517 4.487-10.004 10.003-10.004s10.003 4.487 10.003 10.004c0 5.515-4.487 10.003-10.003 10.003zm153.12-125.428c-2.652 0-5.196 1.054-7.071 2.929l-116.294 116.293c.158-1.245.249-2.511.249-3.798 0-16.544-13.459-30.004-30.003-30.004-16.543 0-30.003 13.46-30.003 30.004s13.459 30.003 30.003 30.003c1.287 0 2.553-.091 3.798-.249l-40.243 40.243h-107.121c-8.83 0-16.014-7.184-16.014-16.014v-187.4c0-8.83 7.184-16.014 16.014-16.014h365.079l34.007 34.007zm105.301 84c-5.514 0-10-4.486-10-10s4.486-10 10-10c2.282 0 4.382.777 6.067 2.069.265.346.547.684.863 1s.654.598 1 .863c1.292 1.685 2.069 3.785 2.069 6.067.001 5.515-4.485 10.001-9.999 10.001z"/><path id="XMLID_1527_" d="m332.599 295.835c2.652 0 5.196-1.054 7.071-2.929l22.627-22.628c3.905-3.905 3.905-10.237 0-14.143-3.905-3.904-10.237-3.904-14.142 0l-15.556 15.557-49.498-49.497c-3.904-3.904-10.237-3.904-14.142 0-3.905 3.905-3.905 10.237 0 14.143l56.569 56.568c1.876 1.875 4.42 2.929 7.071 2.929z"/><path id="XMLID_1528_" d="m410.381 208.053c-3.905-3.904-10.237-3.904-14.143 0l-12.728 12.728-14.142-14.141 12.728-12.728c3.905-3.905 3.905-10.237 0-14.143-3.905-3.904-10.237-3.904-14.143 0l-12.728 12.728-14.142-14.142 12.728-12.728c3.905-3.905 3.906-10.237 0-14.143-3.905-3.903-10.237-3.904-14.142 0l-19.799 19.799c-1.875 1.875-2.929 4.419-2.929 7.071s1.054 5.195 2.929 7.071l56.569 56.568c1.952 1.952 4.512 2.929 7.071 2.929s5.119-.977 7.071-2.929l19.799-19.799c3.906-3.904 3.906-10.236.001-14.141z"/><path id="XMLID_1531_" d="m299.776 323.029c4.919 2.508 10.942.55 13.45-4.371 2.507-4.921.55-10.942-4.372-13.449l-74.953-38.184c-3.86-1.967-8.547-1.224-11.61 1.839s-3.806 7.751-1.839 11.61l38.184 74.953c1.766 3.468 5.276 5.464 8.918 5.463 1.527 0 3.078-.351 4.531-1.092 4.921-2.507 6.878-8.528 4.372-13.449l-3.066-6.02 20.367-20.367zm-35.932-1.437-11.604-22.779 22.78 11.605z"/><path id="XMLID_1532_" d="m203.906 400.386c-3.905 3.905-3.906 10.237 0 14.143 1.953 1.952 4.512 2.929 7.071 2.929s5.119-.977 7.071-2.929l14.143-14.142c11.697-11.697 11.697-30.729 0-42.427-11.118-11.118-28.857-11.66-40.632-1.644-.366.277-.722.571-1.055.905l-.74.739c-1.889 1.889-4.4 2.929-7.071 2.929s-5.182-1.04-7.071-2.929c-3.899-3.899-3.899-10.243 0-14.143l14.142-14.142c3.905-3.905 3.906-10.237 0-14.143-3.905-3.903-10.237-3.904-14.142 0l-14.143 14.142c-11.697 11.697-11.697 30.73 0 42.428 5.667 5.666 13.2 8.786 21.213 8.786 8.002 0 15.526-3.112 21.192-8.766.007-.007.015-.013.022-.02 3.898-3.9 10.243-3.9 14.142 0 1.889 1.889 2.929 4.399 2.929 7.07 0 2.672-1.04 5.183-2.929 7.071z"/><path id="XMLID_1533_" d="m171.339 64.557c-4.809-2.714-10.909-1.018-13.624 3.792l-64.5 114.254c-2.715 4.81-1.018 10.909 3.792 13.624 1.554.877 3.241 1.294 4.907 1.294 3.49 0 6.879-1.83 8.717-5.086l64.5-114.254c2.715-4.81 1.018-10.91-3.792-13.624z"/><path id="XMLID_1536_" d="m125.176 89.997c0-16.544-13.459-30.003-30.003-30.003s-30.004 13.459-30.004 30.003 13.459 30.004 30.003 30.004 30.004-13.46 30.004-30.004zm-40.007 0c0-5.516 4.487-10.003 10.003-10.003s10.003 4.487 10.003 10.003c0 5.517-4.487 10.004-10.003 10.004s-10.003-4.487-10.003-10.004z"/><path id="XMLID_1537_" d="m371.991 353.319c-2.64 0-5.21 1.07-7.07 2.931-1.86 1.859-2.93 4.439-2.93 7.069 0 2.631 1.07 5.211 2.93 7.07 1.86 1.86 4.43 2.93 7.07 2.93 2.63 0 5.21-1.069 7.07-2.93 1.86-1.859 2.93-4.439 2.93-7.07 0-2.63-1.07-5.21-2.93-7.069-1.86-1.86-4.44-2.931-7.07-2.931z"/></svg>
+            </span>
+            <span>
+              <span class=title>Use code <span class="code">First10</span> &amp; Get 10% Off</span>
+              <span class="subtitle">On First Order</span>
+            </span>
+          </p>
+        </div>
+
+        {% if current_variant.price > 50000 %}
+        <div class="monthly-payment">
+          <p class="price-bar">
+            <span class="price-title">Easy monthly payments of <br>{{ product.price | divided_by: 6 | money  }}/month. <a href="/pages/monthly-payment-option" target="_blank">Know More</a></span>
+          </p>
+          <p class="benefit">
+            <spna class="benefit-point">No credit check.</spna>
+            <spna class="benefit-point">No interest </spna>
+            <spna class="benefit-point">No late fees</spna>
+          </p>
+        </div>
+        {% endif %}
+
+        {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+        <div class="product__policies rte" data-product-policies>
+          {%- if shop.taxes_included -%}
+          {{ 'products.product.include_taxes' | t }}
+          {%- endif -%}
+          {%- if shop.shipping_policy.body != blank -%}
+          {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+
+        {% include 'product-form' %}
+        
+      </div>
+
+      {%- comment -%}
+      Live region for announcing updated price and availability to screen readers
+      {%- endcomment -%}
+      <p class="visually-hidden" data-product-status
+         aria-live="polite"
+         role="status"
+         ></p>
+
+      {%- comment -%}
+      Live region for announcing that the product form has been submitted and the
+      product is in the process being added to the cart
+      {%- endcomment -%}
+      <p class="visually-hidden" data-loader-status
+         aria-live="assertive"
+         role="alert"
+         aria-hidden="true"
+         >{{ 'products.product.loader_label' | t }}</p>
+
+      {% if section.settings.show_share_buttons %}
+      {% include 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product.featured_media %}
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% unless product == empty %}
+<script type="application/json" id="ProductJson-{{ section.id }}">
+  {{ product | json }}
+</script>
+<script type="application/json" id="ModelJson-{{ section.id }}">
+  {{ product.media | where: 'media_type', 'model' | json }}
+</script>
+{% endunless %}
+
+<script>
+  const shareButton = document.querySelector('.share-button');
+  const shareDialog = document.querySelector('.social-sharing');
+  //   const closeButton = document.querySelector('.close-button');
+
+  shareButton.addEventListener('click', function(event){
+    if (navigator.share) { 
+      navigator.share({
+        title: 'Enchanted Disney Fine Jewelry',
+        text:"{{ product.title }}",
+        url: '{{ shop.url }}{{ product.url }}'
+      }).then(function(){
+        console.log('Thanks for sharing!');
+      }).catch(console.error);
+    } else {
+      if(shareDialog.classList.contains("is-open")){
+        shareDialog.classList.remove('is-open');
+      }else{
+        shareDialog.classList.add('is-open');
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+"name": {
+"da": "Produktsider",
+"de": "Produktseiten",
+"en": "Product pages",
+"es": "Páginas de productos",
+"fi": "Tuotesivut",
+"fr": "Pages de produits",
+"hi": "उत्पाद पेज",
+"it": "Pagine di prodotto",
+"ja": "商品ページ",
+"ko": "제품 페이지",
+"nb": "Produktsider",
+"nl": "Productpagina's",
+"pt-BR": "Páginas de produtos",
+"pt-PT": "Páginas de produtos",
+"sv": "Produktsidor",
+"th": "หน้าสินค้า",
+"zh-CN": "产品页面",
+"zh-TW": "產品頁面"
+},
+"settings": [
+{
+"type": "checkbox",
+"id": "show_quantity_selector",
+"label": {
+"da": "Vis antalsvælger",
+"de": "Mengenauswahl anzeigen",
+"en": "Show quantity selector",
+"es": "Mostrar selector de cantidad",
+"fi": "Näytä määrän valitsin",
+"fr": "Afficher le sélecteur de quantité",
+"hi": "मात्रा चयनकर्ता दिखाएं",
+"it": "Mostra selettore quantità",
+"ja": "数量セレクターを表示する",
+"ko": "수량 선택기 표시",
+"nb": "Vis mengdevelger",
+"nl": "Hoeveelheidskiezer weergeven",
+"pt-BR": "Exibir seletor de quantidade",
+"pt-PT": "Mostrar um seletor de quantidade",
+"sv": "Visa kvantitetsväljare",
+"th": "แสดงตัวเลือกจำนวน",
+"zh-CN": "显示数量选择器",
+"zh-TW": "顯示數量選擇器"
+},
+"default": false
+},
+{
+"type": "checkbox",
+"id": "show_variant_labels",
+"label": {
+"da": "Vis variantlabels",
+"de": "Varianten-Etiketten anzeigen",
+"en": "Show variant labels",
+"es": "Mostrar etiquetas de variantes",
+"fi": "Näytä vaihtoehtoiset tarrat",
+"fr": "Afficher le nom des variantes",
+"hi": "वेरिएंट लेबल दिखाएं",
+"it": "Mostra etichette varianti",
+"ja": "バリエーションのラベルを表示する",
+"ko": "이형 상품 레이블 표시",
+"nb": "Vis variantetiketter",
+"nl": "Variantlabels weergeven",
+"pt-BR": "Exibir etiquetas de variantes",
+"pt-PT": "Mostrar etiquetas de variantes",
+"sv": "Visa variantetiketter",
+"th": "แสดงป้ายกำกับตัวเลือกสินค้า",
+"zh-CN": "显示多属性标签",
+"zh-TW": "顯示子類選項標籤"
+},
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_vendor",
+"label": {
+"da": "Vis leverandør",
+"de": "Lieferanten anzeigen",
+"en": "Show vendor",
+"es": "Mostrar proveedor",
+"fi": "Näytä myyjä",
+"fr": "Afficher les vendeurs",
+"hi": "विक्रेता दिखाएं",
+"it": "Mostra fornitore",
+"ja": "販売元を表示する",
+"ko": "공급업체 표시",
+"nb": "Vis leverandør",
+"nl": "Leverancier weergeven",
+"pt-BR": "Exibir fornecedor",
+"pt-PT": "Mostrar fornecedor",
+"sv": "Visa säljare",
+"th": "แสดงผู้ขาย",
+"zh-CN": "显示厂商",
+"zh-TW": "顯示廠商"
+},
+"default": false
+},
+{
+"type": "checkbox",
+"id": "enable_payment_button",
+"label": {
+"da": "Vis dynamisk betalingsknap",
+"de": "Dynamischen Checkout Button anzeigen",
+"en": "Show dynamic checkout button",
+"es": "Mostrar botón de pago dinámico",
+"fi": "Näytä dynaaminen kassapainike",
+"fr": "Afficher le bouton de paiement dynamique",
+"hi": "डायनेमिक चेकआउट बटन दिखाएं",
+"it": "Mostra pulsante di check-out dinamico",
+"ja": "動的チェックアウトボタンを表示する",
+"ko": "동적 결제 버튼 표시",
+"nb": "Vis dynamisk knapp for å gå til kassen",
+"nl": "Dynamische betaalknop weergeven",
+"pt-BR": "Exibir botão de checkout dinâmico",
+"pt-PT": "Mostrar o botão dinâmico de finalização da compra",
+"sv": "Visa dynamiska utcheckningsknappar",
+"th": "แสดงปุ่มชำระเงินแบบไดนามิก",
+"zh-CN": "显示动态结账按钮",
+"zh-TW": "顯示動態結帳按鈕"
+},
+"info": {
+"da": "Den enkelte kunde vil se sin foretrukne betalingsmetode blandt dem, der er tilgængelige i din butik, f.eks. PayPal eller Apple Pay. [Få mere at vide](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"de": "Jeder Kunde sieht seine bevorzugte Zahlungsmethode aus den in deinem Shop verfügbaren Zahlungsmethoden wie PayPal oder Apple Pay. [Mehr Informationen](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"en": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"es": "Cada cliente verá su forma de pago preferida entre las disponibles en tu tienda, como PayPal o Apple Pay. [Más información](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"fi": "Kukin asiakas näkee ensisijaisen valintansa kauppasi tarjoamista maksutavoista, esim. PayPal tai Apple Pay. [Lisätietoja](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"fr": "Chaque client verra son moyen de paiement préféré parmi ceux qui sont proposés sur votre boutique, tels que PayPal ou Apple Pay. [En savoir plus](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"hi": "प्रत्येक ग्राहक आपके स्टोर पर उपलब्ध अपनी पसंदीदा भुगतान की विधि देखेंगे जैसे PayPal या Apple Pay. [अधिक जानें](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"it": "Ogni cliente vedrà il suo metodo di pagamento preferito tra quelli disponibili nel tuo negozio, come PayPal o Apple Pay. [Maggiori informazioni](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"ja": "PayPalやApple Payなど、ストアで利用可能な希望の決済方法がお客様に表示されます。[詳しくはこちら](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"ko": "각 고객은 PayPal 또는 Apple Pay와 같이 스토어에서 사용 가능한 지불 방법을 확인할 수 있습니다. [자세히 알아보기](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"nb": "Hver enkelt kunde vil se sin foretrukne betalingsmåte blant de som er tilgjengelig i butikken din, som PayPal eller Apple Pay. [Finn ut mer](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"nl": "Elke klant ziet zijn of haar beschikbare voorkeursmethode om af te rekenen, zoals PayPal of Apple Pay. [Meer informatie](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"pt-BR": "Cada cliente verá a forma de pagamento preferencial dele dentre as disponíveis na loja, como PayPal ou Apple Pay. [Saiba mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"pt-PT": "Cada cliente irá ver o seu método de pagamento preferido entre os disponíveis na loja, como o PayPal ou Apple Pay. [Saiba mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"sv": "Varje kund kommer att se den föredragna betalningsmetoden från de som finns tillgängliga i din butik, till exempel PayPal eller Apple Pay. [Läs mer](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"th": "ลูกค้าแต่ละรายจะเห็นวิธีการชำระเงินที่ต้องการจากวิธีที่ใช้ได้ในร้านค้าของคุณ เช่น PayPal หรือ Apple Pay [ดูข้อมูลเพิ่มเติม](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"zh-CN": "每位客户都可在您商店提供的付款方式中看到他们的首选付款方式，例如 PayPal 或 Apple Pay。[了解详细信息](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+"zh-TW": "每位顧客都可以在您商店內開放使用的付款方式中看見他們偏好使用的方式，如 PayPal、Apple Pay 等。[深入瞭解](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)"
+},
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_share_buttons",
+"label": {
+"da": "Vis knapper til deling på sociale medier",
+"de": "Buttons für Social Media anzeigen",
+"en": "Show social sharing buttons",
+"es": "Mostrar botones para compartir en redes sociales",
+"fi": "Näytä sosiaalisen median jakamispainikkeet",
+"fr": "Affichez les boutons de partage sur les médias sociaux",
+"hi": "सोशल शेयरिंग बटन दिखाएं",
+"it": "Mostra i pulsanti per la condivisione sui social",
+"ja": "ソーシャルメディアでの共有ボタンを表示する",
+"ko": "소셜 공유 버튼 표시",
+"nb": "Vis knapper for deling på sosiale medier",
+"nl": "Knoppen voor sociaal delen weergeven",
+"pt-BR": "Exibir botões de compartilhamento em redes sociais",
+"pt-PT": "Mostrar botões de partilha nas redes sociais",
+"sv": "Visa knappar för delning i sociala medier",
+"th": "แสดงปุ่มสำหรับแชร์ลงโซเชียล",
+"zh-CN": "显示社交分享按钮",
+"zh-TW": "顯示社群分享按鈕"
+},
+"default": true
+},
+{
+"type": "header",
+"content": {
+"da": "Medie",
+"de": "Medien",
+"en": "Media",
+"es": "Elementos multimedia",
+"fi": "Media",
+"fr": "Support multimédia",
+"hi": "मीडिया",
+"it": "Media",
+"ja": "メディア",
+"ko": "미디어",
+"nb": "Medier",
+"nl": "Media",
+"pt-BR": "Mídia",
+"pt-PT": "Multimédia",
+"sv": "Media",
+"th": "สื่อ",
+"zh-CN": "媒体",
+"zh-TW": "媒體"
+},
+"info": {
+"da": "Få mere at vide om [media types](https://help.shopify.com/manual/products/product-media)",
+"de": "Mehr Informationen über [Medientypen ](https://help.shopify.com/manual/products/product-media)",
+"en": "Learn more about [media types](https://help.shopify.com/manual/products/product-media)",
+"es": "Más información sobre [tipos de archivos multimedia](https://help.shopify.com/manual/products/product-media)",
+"fi": "Lue lisää [mediatyypeistä](https://help.shopify.com/manual/products/product-media)",
+"fr": "En savoir plus sur les [types de supports multimédia](https://help.shopify.com/manual/products/product-media)",
+"hi": "[मीडिया प्रकार](https://help.shopify.com/manual/products/product-media) के बारे में और जानें",
+"it": "Scopri di più sulle [tipologie di file multimediali](https://help.shopify.com/manual/products/product-media)",
+"ja": "[メディアのタイプ](https://help.shopify.com/manual/products/product-media) について詳しくはこちら",
+"ko": "[미디어 유형](https://help.shopify.com/manual/products/product-media)에 대해 자세히 알아보기",
+"nb": "Lær mer om [medietyper](https://help.shopify.com/manual/products/product-media)",
+"nl": "Meer informatie over [mediatypen](https://help.shopify.com/manual/products/product-media)",
+"pt-BR": "Saiba mais sobre [tipos de mídia](https://help.shopify.com/manual/products/product-media)",
+"pt-PT": "Saiba mais sobre [media types](https://help.shopify.com/manual/products/product-media)",
+"sv": "Läs mer om [mediatyper](https://help.shopify.com/manual/products/product-media)",
+"th": "ดูข้อมูลเพิ่มเติมเกี่ยวกับ [ประเภทของสื่อ](https://help.shopify.com/manual/products/product-media)",
+"zh-CN": "详细了解[媒体类型](https://help.shopify.com/manual/products/product-media)",
+"zh-TW": "深入瞭解 [媒體類型](https://help.shopify.com/manual/products/product-media)"
+}
+},
+{
+"type": "select",
+"id": "media_size",
+"label": {
+"da": "Størrelse",
+"de": "Größe",
+"en": "Size",
+"es": "Tamaño",
+"fi": "Koko",
+"fr": "Taille",
+"hi": "आकार",
+"it": "Dimensione",
+"ja": "サイズ",
+"ko": "사이즈",
+"nb": "Størrelse",
+"nl": "Grootte",
+"pt-BR": "Tamanho",
+"pt-PT": "Tamanho",
+"sv": "Storlek",
+"th": "ขนาด",
+"zh-CN": "大小",
+"zh-TW": "尺寸"
+},
+"options": [
+{
+"value": "small",
+"label": {
+"da": "Lille",
+"de": "Klein",
+"en": "Small",
+"es": "Pequeño",
+"fi": "Pieni",
+"fr": "Petit",
+"hi": "छोटा",
+"it": "Piccolo",
+"ja": "スモール",
+"ko": "스몰",
+"nb": "Liten",
+"nl": "Klein",
+"pt-BR": "Pequeno",
+"pt-PT": "Pequeno",
+"sv": "Liten",
+"th": "เล็ก",
+"zh-CN": "小",
+"zh-TW": "小型"
+}
+},
+{
+"value": "medium",
+"label": {
+"da": "Medium",
+"de": "Mittel",
+"en": "Medium",
+"es": "Mediano",
+"fi": "Keskisuuri",
+"fr": "Moyenne",
+"hi": "मध्यम",
+"it": "Medio",
+"ja": "中",
+"ko": "보통",
+"nb": "Middels",
+"nl": "Gemiddeld",
+"pt-BR": "Médio",
+"pt-PT": "Médio",
+"sv": "Medium",
+"th": "ปานกลาง",
+"zh-CN": "中等",
+"zh-TW": "中等"
+}
+},
+{
+"value": "large",
+"label": {
+"da": "Stor",
+"de": "Groß",
+"en": "Large",
+"es": "Grande",
+"fi": "Suuri",
+"fr": "Grande",
+"hi": "बड़ा",
+"it": "Grande",
+"ja": "大",
+"ko": "라지",
+"nb": "Stor",
+"nl": "Groot",
+"pt-BR": "Grande",
+"pt-PT": "Grande",
+"sv": "Stor",
+"th": "ใหญ่",
+"zh-CN": "大",
+"zh-TW": "大型"
+}
+},
+{
+"value": "full",
+"label": {
+"da": "Fuld bredde",
+"de": "Volle Breite",
+"en": "Full-width",
+"es": "Ancho completo",
+"fi": "Täysi leveys",
+"fr": "Pleine largeur",
+"hi": "पूर्ण चौड़ाई",
+"it": "Intera larghezza",
+"ja": "全幅",
+"ko": "전체 폭",
+"nb": "Full bredde",
+"nl": "Volledige breedte",
+"pt-BR": "Largura completa",
+"pt-PT": "Largura completa",
+"sv": "Full bredd",
+"th": "เต็มความกว้าง",
+"zh-CN": "全宽",
+"zh-TW": "完整寬度"
+}
+}
+],
+"default": "medium"
+},
+{
+"type": "checkbox",
+"id": "enable_image_zoom",
+"label": {
+"da": "Aktivér billedzoom",
+"de": "Foto-Zoom zulassen",
+"en": "Enable image zoom",
+"es": "Habilitar zoom de imagen",
+"fi": "Ota kuvan zoomaus käyttöön",
+"fr": "Activer le zoom d'image",
+"hi": "इमेज ज़ूम सक्षम करें",
+"it": "Abilita lo zoom dell'immagine",
+"ja": "画像ズームを有効にする",
+"ko": "이미지 확대 사용",
+"nb": "Aktiver bildezoom",
+"nl": "Inzoomen op afbeelding inschakelen",
+"pt-BR": "Habilitar o zoom da imagem",
+"pt-PT": "Ativar o zoom da imagem",
+"sv": "Aktivera bildzoom",
+"th": "เปิดใช้การซูมภาพ",
+"zh-CN": "启用图片缩放",
+"zh-TW": "啟用圖片縮放"
+},
+"default": true
+},
+{
+"type": "checkbox",
+"id": "enable_video_looping",
+"label": {
+"da": "Aktivér looping af videoer",
+"de": "Videschleife aktivieren",
+"en": "Enable video looping",
+"es": "Habilitar la reproducción de video en bucle",
+"fi": "Ota käyttöön videosilmukka",
+"fr": "Activer le bouclage de la vidéo",
+"hi": "वीडियो लूपिंग सक्षम करें",
+"it": "Abilita la riproduzione in loop dei video",
+"ja": "ビデオのループを有効にする",
+"ko": "동영상 루프",
+"nb": "Aktiver løkkeavspilling av video",
+"nl": "Video-looping inschakelen",
+"pt-BR": "Habilitar loop de vídeo",
+"pt-PT": "Ativar ciclo de vídeo",
+"sv": "Aktivera video-loopning",
+"th": "เปิดใช้งานการวนซ้ำวิดีโอ",
+"zh-CN": "启用视频循环",
+"zh-TW": "啟用影片循環功能"
+},
+"default": false
+}
+],
+"blocks": [
+{
+"type": "gemstone-image",
+"name": "Gemstone Images",
+"settings": [
+{
+"type": "text",
+"id": "gemstone_name",
+"label": "Gemstone Name"
+},
+{
+"type": "image_picker",
+"id": "gemstone_image",
+"label": "Image"
+}
+]
+},
+{
+"type": "metal-color",
+"name": "Metal Color",
+"settings": [
+{
+"type": "text",
+"id": "color_name",
+"label": "Color Name"
+},
+{
+"type": "image_picker",
+"id": "color_image",
+"label": "Image"
+}
+]
+}
+]
+}
+{% endschema %}

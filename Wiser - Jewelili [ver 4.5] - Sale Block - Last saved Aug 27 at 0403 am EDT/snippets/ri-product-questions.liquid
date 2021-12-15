@@ -1,0 +1,229 @@
+{% if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings %}
+{% assign ri_settings = shop.metafields.reviewsimportify.store_settings %}
+{% else %}
+{% assign ri_settings = null %}
+{% endif %}
+{% if ri_settings.product_questions_status == "enabled" and ri_settings.app_status == "active" %}
+<div class="reviews-importify-element" ng-controller="QuestionsController" ng-init="loadQuestions()">
+  <div id="reviews-importify-questions" class="reviews-importify-reviews reviews-importify-questions-{{ product.id }}" product-id="{{ product.id }}" product-handle="{{ product.handle }}" product-title="{{ product.title }}">
+    <div id="reviews_importify_questions_section_{{ product.id }}"></div>
+    
+    <div class="reviews-importify-overview">
+      <h3 class="reviews_overview_heading"><span class="total_questions"></span>{{ ri_settings.questions_overview_heading }}</h3>
+      <div class="review-overview-row">
+        <div class="review-overview-row-col1" ng-if="questionsData.questions.total > 0">
+          {% if ri_settings.question_overview_count_text != "" and ri_settings.question_overview_count_text != null %}
+          {{ri_settings.question_overview_count_text | replace: "[question_count]", "(% questionsData.questions.total %)" }}
+          {% else %}
+          (% questionsData.questions.total %) Questions Asked
+          {% endif %}
+        </div>
+        
+        <div class="review-overview-row-col1" ng-if="questionsData.questions.total == 0">
+          <p>
+            {% if ri_settings.no_questions_count_msg %}
+            {{ ri_settings.no_questions_count_msg }}
+            {% else %}
+            0 Question
+            {% endif %}
+          </p>
+        </div>
+
+        {% if ri_settings.ask_question_status == "enabled" %}
+        <div class="review-overview-row-col2">
+          <button type="button" ng-click="showAskQuestionForm()" id="importify-reviews-ask-question" class="importify-reviews-btn">
+            {{ri_settings.ask_question_btn_text}}
+          </button>
+        </div>
+        <div class="clearfloat height_10"></div>
+        <div class="reviews_importify_ask_question_form_container">
+          {% if ri_settings.product_questions_condition != "users" or customer %}
+          <form id="reviews-importify-ask-question-form" class="reviews-importify-ask-question-form" action="" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="product_handle" value="{{ product.handle }}">
+            <input type="hidden" name="shop" value="{{ shop.permanent_domain }}">
+            
+            <fieldset>
+              <legend><h3>{{ ri_settings.ask_question_heading }}</h3></legend>
+              
+              <p class="validateTips">{{ ri_settings.ask_question_sub_heading }}</p>
+            
+              <p class="riAskQuestionSuccess" style="padding:5px;display:none;background:green;color:#FFF;"></p>
+              <p class="riAskQuestionErrors" style="padding:5px;display:none;background:red;color:#FFF;"></p>
+
+              {% if customer %}
+              <input type="hidden" name="author" id="ri_question_author_name" value="{{ customer.name }}">
+              <input type="hidden" name="email" id="ri_question_author_email" value="{{ customer.email }}">
+              <input type="hidden" name="customer_id" id="ri_question_customer_id" value="{{ customer.id }}">
+              {% else %}
+              <input type="hidden" name="customer_id" id="ri_question_customer_id" value="">
+              <div class="ri-field-row">
+                <label for="ri_question_author_name">
+                  {% if ri_settings.your_name_text != null and ri_settings.your_name_text != "" %}
+                  {{ri_settings.your_name_text }}
+                  {% else %}
+                  Your Name
+                  {% endif %}
+                </label>
+                <input type="text" name="author" id="ri_question_author_name" class="ri_review_form_element">
+              </div>
+              <div class="ri-field-row">
+                <label for="ri_question_author_email">
+                  {% if ri_settings.your_email_text != null and ri_settings.your_email_text != "" %}
+                  {{ri_settings.your_email_text }}
+                  {% else %}
+                  Your Email
+                  {% endif %}
+                </label>
+                <input type="text" name="email" id="ri_question_author_email" class="ri_review_form_element">
+              </div>
+              {% endif %}
+              
+              <div class="ri-field-row">
+                <label for="ri_question_title">
+                  {% if ri_settings.enter_your_question_text != null and ri_settings.enter_your_question_text != "" %}
+                  {{ri_settings.enter_your_question_text }}
+                  {% else %}
+                  Enter Your Question
+                  {% endif %}
+                </label>
+                <textarea name="question" id="ri_question_title" class="ri_review_form_element"></textarea>
+              </div>
+              
+              <button type="button" class="importify-reviews-btn importify_reviews_ask_question_btn" ng-click="submitAskQuestionForm();">{{ri_settings.ask_question_submit_btn_text}}</button>
+              <span class="reviews-importify-loading"><i class="fa fa-spinner fa-spin"></i></span>
+            </fieldset>
+          </form>
+          {% else %}
+          <p class="ri_noticemsg">
+            {% if ri_settings.questions_must_be_logged_in_text != null and ri_settings.questions_must_be_logged_in_text != "" %}
+            {{ri_settings.questions_must_be_logged_in_text }}
+            {% else %}
+            you must be logged in to ask questions.
+            {% endif %}
+          </p>
+          {% endif %}
+        </div>
+        
+        {% endif %}
+        <div class="clearfloat height_10"></div>
+      </div>
+    </div>
+    
+    {% if product.metafields.reviewsimportify.questions_count > 0 %}
+    {% include 'ri-questions-filter' %}
+    {% else %}
+    <div class="ri_line"></div>
+    {% endif%}
+    
+    <div class="ri-reviews ri-question" ng-if="questionsData.questions.total > 0">
+      <div class="ri-reviews-row" ng-repeat="question in questionsData.questions.data">
+        <div class="ri-review-row-col-1 ri-review-row-col">
+          <span class="review-user-image">
+            
+            {% if ri_settings.questions_section_user_icon_type == "user_icon_image" %}
+            <img ng-src="(% appPublicUrl + '/images/user-icon.png' %)">
+            {% elsif ri_settings.questions_section_user_icon_type == "user_icon" %}
+            <span class="fa fa-user review-user-icon"></span>
+            {% elsif ri_settings.questions_section_user_icon_type == "square_letter" %}
+            <span class="review-user-letter square">(% authorFirstLetter(question.author) %)</span>
+            {% else %}
+            <span class="review-user-letter circle">(% authorFirstLetter(question.author) %)</span>
+            {% endif %}
+          </span>
+
+          <span class="review-user-name reviews-importify-tooltip">
+            (% question.author %)
+          </span>
+        </div>
+        <div class="ri-review-row-col-2 ri-review-row-col">
+          <div class="ri_question_title">
+            <span style="display:block;"><b>Q : </b> (% question.question %) ?</span>
+            {% if ri_settings.question_asked_date == "show" %}
+            <div class="rireview-date rireview-question-date">
+              <span class="ri_question_date_author">
+                {% if ri_settings.asked_on_text != null and ri_settings.asked_on_text != "" %}
+                {{ ri_settings.asked_on_text | replace: "[question_date]","(% question.created_at %)" }}
+                {% else %}
+                Asked on (% question.created_at %)
+                {% endif %}
+              </span>
+            </div>
+            {% endif %}
+          </div>
+          
+          
+          <div class="ri_question_answer">
+            <b>A : </b> (% question.answer %)
+          </div>
+          <div class="rireview-date rireview-question-date">
+            <span class="ri_question_date_author">
+              {% if ri_settings.question_answered_by_name == "show" %}
+              <span>
+                {% if ri_settings.answered_by_text != null and ri_settings.answered_by_text != "" %}
+                {{ ri_settings.answered_by_text }}
+                {% else %}By{% endif %}
+                 (% question.answered_by %) 
+              </span>
+              {% endif %}
+              {% if ri_settings.question_answered_date == "show" %}
+              <span>
+                {% if ri_settings.answered_on_text != null and ri_settings.answered_on_text != "" %}
+                {{ ri_settings.answered_on_text }}
+                {% else %}On{% endif %}
+                (% question.answered_at %)
+              </span>
+              {% endif %}
+            </span>
+          </div>
+        </div>
+        <div class="clearfloat"></div>
+      </div>
+      <p class="">
+        
+        {% if ri_settings.questions_pagination_text != "" and ri_settings.questions_pagination_text != null %}
+        {{ri_settings.questions_pagination_text | replace: "[from_count]", "(% questionsData.questions.from %)" | replace: "[to_count]", "(% questionsData.questions.to %)" }}
+        {% else %}
+        showing questions from (% questionsData.questions.from %) to (% questionsData.questions.to %)
+        {% endif %}
+        
+        <span class="ri-pagination-buttons" ng-if="questionsData.question.last_page > 1">
+          <span ng-click="loadPrevPage(questionsData.question.current_page)" class="ri-pagination-button ri-pagination-button-left fa fa-caret-left reviews-importify-tooltip" ng-if="questionsData.question.current_page > 1">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.previous_page_text != "" and ri_settings.previous_page_text != null %}
+              {{ri_settings.previous_page_text}}
+              {% else %}
+              Previous Page
+              {% endif %}
+            </span>
+          </span>
+          <span ng-click="loadNextPage(questionsData.question.current_page)" class="ri-pagination-button ri-pagination-button-right fa fa-caret-right reviews-importify-tooltip" ng-if="questionsData.question.last_page > questionsData.question.current_page">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.next_page_text != "" and ri_settings.next_page_text != null %}
+              {{ri_settings.next_page_text}}
+              {% else %}
+              Next Page
+              {% endif %}
+            </span>
+          </span>
+        </span>
+        
+        <span class="ri-filter-option ri-filter-reviews-loading">
+          <i class="fa fa-spinner fa-spin"></i>
+        </span>
+        
+      </p>
+    </div>
+      
+    <div class="ri-reviews-no-result" ng-if="questionsData.questions.total == 0">
+      <p>
+        {% if ri_settings.no_questions_msg != null and ri_settings.no_questions_msg != "" %}
+        {{ ri_settings.no_questions_msg }}
+        {% else %}
+        No Question Found.
+        {% endif %}
+      </p>
+    </div>
+    
+  </div>
+</div>
+{% endif %}

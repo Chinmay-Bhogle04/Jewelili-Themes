@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+    <link rel="shortcut icon" href="//cdn.shopify.com/s/files/1/0252/9620/7926/files/jewelili_5664fe69-aac5-4ddb-a1d5-3b6b27efbfd4_32x32.png?v=1611142018" type="image/png">
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                                                          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                                })(window,document,'script','dataLayer','GTM-W8PV6ZJ');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta name="p:domain_verify" content="6b9fe65aac38aefd80acc7b8006976b3"/>
+    <style>
+      .tag__button {
+        background: transparent
+      }
+
+      .tag__button:hover {
+        border-width: 0px
+      }
+
+      #discount-wrapper {
+        display: none
+      }
+
+      .discount-button-wrapper {
+        display: flex;
+        clear: both;
+        border-bottom: 1px solid rgba(175, 175, 175, 0.34);
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        padding-top: 15px
+      }
+
+      .discount-button-wrapper .svg-wrapper {
+        margin-right: 7px
+      }
+
+      .discount-button-wrapper .discount-wrapper {
+        flex-grow: 1
+      }
+
+      .discount-button-wrapper .section__discount {
+        background: #EBEBEB;
+        padding: 0;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column
+      }
+
+      .discount-button-wrapper .section__discount-code {
+        display: flex;
+        padding: 10px 13px
+      }
+
+      .discount-button-wrapper .discount-code-wrapper {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-between;
+        align-items: center
+      }
+
+      .discount-button-wrapper .field__input-btn {
+        visibility: hidden;
+        opacity: 0
+      }
+
+      .discount-button-wrapper .code-off,
+      .discount-button-wrapper #apply-discount {
+        margin-bottom: 0;
+        font-size: 13px;
+        line-height: 1;
+        font-weight: 600
+      }
+
+      .discount-button-wrapper .code-off {
+        color: #707070
+      }
+
+      .discount-button-wrapper #apply-discount {
+        color: #BA3626;
+        text-transform: uppercase;
+        cursor: pointer
+      }
+
+      .discount-button-wrapper #apply-discount span:last-child {
+        display: none
+      }
+
+      .discount-button-wrapper .applied-discount span:first-child {
+        display: none
+      }
+
+      .discount-button-wrapper .applied-discount span:last-child {
+        display: inline-block !important
+      }
+
+      .discount-button-wrapper .applied-discount #apply-discount {
+        pointer-events: none
+      }
+
+      .discount-button-wrapper .code-button a {
+        font-size: 10px;
+        letter-spacing: 0.1px;
+        line-height: 14px;
+        color: #BA3626
+      }
+
+      .discount-button-wrapper .discount-details h5 {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 0
+      }
+
+      .discount-button-wrapper .section__discount-description {
+        padding: 10px 13px 15px;
+        border-top: 1px solid #fff;
+        display: none
+      }
+
+      .discount-button-wrapper .details ul {
+        padding-left: 15px;
+        margin-bottom: 0
+      }
+
+      .discount-button-wrapper .details li {
+        font-size: 10px;
+        line-height: 15px
+      }
+
+      .discount-button-wrapper .disabled-discount #apply-discount {
+        pointer-events: none;
+        color: #AEAEAE
+      }
+
+      @media (max-width: 767px) {
+        .discount-button-wrapper .btn--disabled {
+          display: none
+        }
+      }
+
+      @media (max-width: 798px) {
+        body {
+          padding-top: 160px
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8PV6ZJ"
+                      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    {{ skip_to_content_link }}
+
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </header>
+    
+    
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+    <!--    discount code html  -->
+    <div id="shopify-section-checkout-discount" class="shopify-section" style="display:none;">
+      <div id="discount-wrapper">
+        <div class="discount-button-wrapper">
+          <div class="discount-wrapper">
+            <div class="section__discount">
+              <div class="section__discount-code">
+                <div class="svg-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13.68" height="12.224" viewBox="0 0 13.68 12.224"><defs><style>.a{fill:#717171;}.b{fill:#a8a8a8;}</style></defs><g transform="translate(0 -23.224)"><g transform="translate(0 23.224)"><g transform="translate(0 0)"><path class="a" d="M10.67,23.224H6.47a1,1,0,0,0-.709.294L.294,28.984a1,1,0,0,0,0,1.419l4.2,4.2a1,1,0,0,0,1.418,0l5.467-5.466a1.006,1.006,0,0,0,.294-.71v-4.2A1,1,0,0,0,10.67,23.224ZM8.915,26.735a.752.752,0,1,1,.752-.752A.753.753,0,0,1,8.915,26.735Z" transform="translate(0 -23.224)"/></g></g><g transform="translate(6.865 24.227)"><g transform="translate(0 0)"><path class="b" d="M224.8,55.224v4.669a.871.871,0,0,1-.256.617l-5.555,5.555.085.085a1,1,0,0,0,1.418,0l5.017-5.016a1,1,0,0,0,.294-.709v-4.2A1,1,0,0,0,224.8,55.224Z" transform="translate(-218.988 -55.224)"/></g></g></g></svg>
+                </div>
+                <div class="discount-code-wrapper">
+                  <div class="code-button">
+                    <p class="code-off">SPRING10 - Extra 10% OFF</p>
+                    <a href="javascript:void(0);">View Details</a>
+                  </div>
+                  <div class="apply-button SPRING10">
+                    <p id="apply-discount" data-discount-code="SPRING10">
+                      <span>Apply</span>
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="19.13" height="13.018" viewBox="0 0 19.13 13.018"><defs><style>.tick-a{fill:#ba3626;}</style></defs><g transform="translate(-15.876 -21.316)"><g transform="translate(15.876 21.316)"><path class="tick-a" d="M141.879,165.829a1.49,1.49,0,0,0-2.107-.056l-9.516,9.025-4.539-4.66a1.491,1.491,0,0,0-2.136,2.08l5.565,5.714a1.491,1.491,0,0,0,2.094.042l10.583-10.037A1.49,1.49,0,0,0,141.879,165.829Z" transform="translate(-123.158 -165.364)"/></g></g></svg>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="section__discount-description">
+                <div class="discount-details">
+                  <h5>Terms & Conditions</h5>
+                  <div class="details">
+                    <ul>
+                      <li>
+                        Offer is application on order above $150.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="section__discount">
+              <div class="section__discount-code">
+                <div class="svg-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13.68" height="12.224" viewBox="0 0 13.68 12.224"><defs><style>.a{fill:#717171;}.b{fill:#a8a8a8;}</style></defs><g transform="translate(0 -23.224)"><g transform="translate(0 23.224)"><g transform="translate(0 0)"><path class="a" d="M10.67,23.224H6.47a1,1,0,0,0-.709.294L.294,28.984a1,1,0,0,0,0,1.419l4.2,4.2a1,1,0,0,0,1.418,0l5.467-5.466a1.006,1.006,0,0,0,.294-.71v-4.2A1,1,0,0,0,10.67,23.224ZM8.915,26.735a.752.752,0,1,1,.752-.752A.753.753,0,0,1,8.915,26.735Z" transform="translate(0 -23.224)"/></g></g><g transform="translate(6.865 24.227)"><g transform="translate(0 0)"><path class="b" d="M224.8,55.224v4.669a.871.871,0,0,1-.256.617l-5.555,5.555.085.085a1,1,0,0,0,1.418,0l5.017-5.016a1,1,0,0,0,.294-.709v-4.2A1,1,0,0,0,224.8,55.224Z" transform="translate(-218.988 -55.224)"/></g></g></g></svg>
+                </div>
+                <div class="discount-code-wrapper">
+                  <div class="code-button">
+                    <p class="code-off">VALENTINE - Extra 10% OFF</p>
+                    <a href="javascript:void(0);">View Details</a>
+                  </div>
+                  <div class="apply-button Valentine's Day Sale">
+                    <p id="apply-discount" data-discount-code="Valentine's Day Sale">
+                      <span>Apply</span>
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="19.13" height="13.018" viewBox="0 0 19.13 13.018"><defs><style>.tick-a{fill:#ba3626;}</style></defs><g transform="translate(-15.876 -21.316)"><g transform="translate(15.876 21.316)"><path class="tick-a" d="M141.879,165.829a1.49,1.49,0,0,0-2.107-.056l-9.516,9.025-4.539-4.66a1.491,1.491,0,0,0-2.136,2.08l5.565,5.714a1.491,1.491,0,0,0,2.094.042l10.583-10.037A1.49,1.49,0,0,0,141.879,165.829Z" transform="translate(-123.158 -165.364)"/></g></g></svg>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="section__discount-description">
+                <div class="discount-details">
+                  <h5>Terms & Conditions</h5>
+                  <div class="details">
+                    <ul>
+                      <li>
+                        Offer is valid till 14th Feb,2021
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button name="button" type="submit" class="field__input-btn btn btn--disabled" data-trekkie-id="apply_discount_button" aria-busy="false" disabled="disabled">
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
+	{% include 'checkout-script' %}
+    {{ tracking_code }}
+  </body>
+</html>

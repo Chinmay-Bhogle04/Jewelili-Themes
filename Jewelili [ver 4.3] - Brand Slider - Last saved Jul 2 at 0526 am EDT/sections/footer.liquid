@@ -1,0 +1,1095 @@
+{% include 'footer-top' %}
+
+{%- assign social_icons = false -%}
+{%- assign inline_list = false -%}
+{%- assign locale_selector = false -%}
+{%- assign currency_selector = false -%}
+{%- assign show_payment_icons = false -%}
+{%- assign show_selectors = false -%}
+
+{%- if section.settings.show_currency_selector and shop.enabled_currencies.size > 1 -%}
+{%- assign currency_selector = true -%}
+{%- endif -%}
+
+{%- if section.settings.show_locale_selector and shop.published_locales.size > 1 -%}
+{%- assign locale_selector = true -%}
+{%- endif -%}
+
+{%- if section.settings.show_payment_icons -%}
+{%- unless shop.enabled_payment_types == empty -%}
+{%- assign show_payment_icons = true -%}
+{%- endunless -%}
+{%- endif -%}
+
+{%- if currency_selector or locale_selector -%}
+{%- assign show_selectors = true -%}
+{%- endif -%}
+
+{%- if
+  settings.social_twitter_link != blank
+  or settings.social_facebook_link != blank
+  or settings.social_pinterest_link != blank
+  or settings.social_instagram_link != blank
+  or settings.social_tumblr_link != blank
+  or settings.social_snapchat_link != blank
+  or settings.social_youtube_link != blank
+  or settings.social_vimeo_link != blank
+  or request.page_type == 'article'
+  or request.page_type == 'blog'
+  -%}
+  {%- assign social_icons = true -%}
+  {%- endif -%}
+  
+  {%- assign payment_width_class = "one-half" -%}
+  {%- if show_selectors -%}
+  {%- unless social_icons -%}
+  {%- assign payment_width_class = "" -%}
+  {%- endunless -%}
+  {%- endif -%}
+  
+  {%- assign copyright_show_class = "medium-up--hide" -%}
+  {%- if social_icons -%}
+  {%- unless show_selectors -%}
+  {%- assign copyright_show_class = "" -%}
+  {%- endunless -%}
+  {%- endif -%}
+  
+  {%- case section.blocks.size -%}
+  {%- when 1 -%}
+  {%- assign footer_item = 'site-footer__item--full-width' -%}
+  {%- assign inline_list = true -%}
+  {%- when 2 -%}
+  {%- assign footer_item = 'site-footer__item--one-half' -%}
+  {%- assign inline_list = true -%}
+  {%- when 3 -%}
+  {%- assign footer_item = 'site-footer__item--one-third' -%}
+  {%- for block in section.blocks -%}
+  {%- if block.type == 'newsletter' -%}
+  {%- assign footer_item = 'site-footer__item--one-quarter' -%}
+  {%- break -%}
+  {%- endif -%}
+  {%- endfor -%}
+  {%- when 4 -%}
+  {%- assign footer_item = 'site-footer__item--one-quarter' -%}
+  {%- when 5 -%}
+  {%- assign footer_item = 'site-footer__item--one-fifth' -%}
+  {%- when 6 -%}
+  {%- assign footer_item = 'site-footer__item--one-sixth' -%}
+  {%- endcase -%}
+  
+  {% comment %} Create an appropriate hover color based on text color and brightness {% endcomment %}
+  {%- assign footer_text_color = section.settings.color_footer_text -%}
+  {%- assign footer_text_color_brightness = section.settings.color_footer_text | color_brightness -%}
+  {%- if footer_text_color_brightness <= 26 -%}
+  {%- assign footer_text_color_hover = footer_text_color | color_lighten: 25 -%}
+  {%- elsif footer_text_color_brightness <= 65 -%}
+  {%- assign footer_text_color_hover = footer_text_color | color_lighten: 15 -%}
+  {%- else -%}
+  {%- assign footer_text_color_hover = footer_text_color | color_darken: 10 -%}
+  {%- endif -%}
+  
+  <style>
+    .site-footer__hr {
+      border-bottom: 1px solid {{ section.settings.color_footer_bg | color_darken: 10 }};
+    }
+    
+    .site-footer p,
+    .site-footer__linklist-item a,
+    .site-footer__rte a,
+    .site-footer h4,
+    .site-footer small,
+    .site-footer__copyright-content a,
+    .site-footer__newsletter-error,
+    .site-footer__social-icons .social-icons__link {
+      color: {{ section.settings.color_footer_text }};
+    }
+    
+    .site-footer {
+      color: {{ section.settings.color_footer_text }};
+      background-color: {{ section.settings.color_footer_bg }};
+    }
+    
+    .site-footer__rte a {
+      border-bottom: 1px solid {{ section.settings.color_footer_text }};
+    }
+    
+    .site-footer__rte a:hover,
+    .site-footer__linklist-item a:hover,
+    .site-footer__copyright-content a:hover {
+      color: {{ footer_text_color_hover }};
+      border-bottom: 1px solid {{ footer_text_color_hover }};
+    }
+    
+    .site-footer__social-icons .social-icons__link:hover {
+      color: {{ footer_text_color_hover }};
+    }
+  </style>
+  
+  
+  {%- capture payment_icon_markup -%}
+  {%- if show_payment_icons -%}
+  <div class="site-footer__payment-icons">
+    {% comment %}<span>{{ 'general.payment.method' | t }}</span>{% endcomment %}
+    <ul class="payment-icons list--inline site-footer__icon-list">
+      {%- for type in shop.enabled_payment_types -%}
+      <li class="payment-icon">
+        {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+      </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  {%- endif -%}
+  {%- endcapture -%}
+  
+  <footer class="site-footer" role="contentinfo" data-section-id="{{ section.id }}" data-section-type="footer-section">
+    <div class="page-width">
+      <div class="site-footer__content">
+        {%- for block in section.blocks -%}
+        
+        <div class="site-footer__item {% if section.blocks.size == 1 %} site-footer__item--center{% endif %}
+        {{ footer_item }}
+        {% if block.type == 'newsletter' and section.blocks.size == 3 %}site-footer-newsletter__one-half{% endif %}"
+        {{ block.shopify_attributes }}>
+        <div class="site-footer__item-inner site-footer__item-inner--{{ block.type }}">
+          {%- if block.settings.title != blank -%}
+          <p class="h4 accordion_btn_foot foot_acc_{{ block.id }}">{{ block.settings.title | escape }}</p>
+          {%- endif -%}
+          
+          {%- case block.type -%}
+          {%- when 'newsletter' -%}
+          <div class="site-footer__newsletter
+          {% if section.blocks.size == 1 %} site-footer__single-block--centered{% endif %}">
+          {%- assign formId = 'ContactFooter' -%}
+          {% form 'customer', id: formId, novalidate: 'novalidate' %}
+          {%- if form.posted_successfully? -%}
+          <p class="form-message form-message--success" tabindex="-1" data-form-status>
+            {{ 'general.newsletter_form.confirmation' | t }}
+          </p>
+          {%- endif -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="input-group {% if form.errors %} input-group--error{% endif %}">
+            <input type="email"
+            name="contact[email]"
+            id="{{ formId }}-email"
+            class="input-group__field newsletter__input{% if form.errors %} input--error{% endif %}"
+            value="{{ form.email }}"
+            placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+            aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+            aria-required="true"
+            required
+            autocorrect="off"
+            autocapitalize="off"
+            {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="{{ formId }}-email-error"
+            data-form-status
+            {% endif %}>
+            <span class="input-group__btn">
+              <button type="submit" class="btn newsletter__submit" name="commit" >
+                <span class="newsletter__submit-text--large">{{ 'general.newsletter_form.submit' | t }}</span>
+              </button>
+            </span>
+          </div>
+          {% if form.errors contains 'email' %}
+          <span id="{{ formId }}-email-error" class="input-error-message">
+            <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+            {% include 'icon-error' %}
+            <span class="site-footer__newsletter-error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
+          </span>
+          {% endif %}
+          {% endform %}
+        </div>
+        
+        {%- when 'Image' -%}
+        {%- if block.settings.footer_logo != nil -%}
+        <div class="">
+          <img class="site-footer__rte {% if section.blocks.size == 1 %} site-footer__single-block--centered{% endif %} lazyload"
+          data-src="{{ block.settings.footer_logo | img_url: 'master' }}"
+          data-sizes="auto"
+          alt="logo_footer" />
+        </div>
+        {%- endif -%}
+        
+        {%- when 'text' -%}
+        {%- if block.settings.text != blank -%}
+        <div class="site-footer__rte
+        {% if section.blocks.size == 1 %} site-footer__single-block--centered{% endif %}">
+        {{ block.settings.text }}
+      </div>
+      {%- endif -%}
+      <div id="foot_acc_{{ block.id }}" class="customer_service accordion_text_foot">
+        <a href="tel:585-632-5544" class="details">
+          <svg class="contact_img" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 473.806 473.806" style="enable-background:new 0 0 473.806 473.806; fill: #3E4448;" xml:space="preserve"><g><g><path d="M374.456,293.506c-9.7-10.1-21.4-15.5-33.8-15.5c-12.3,0-24.1,5.3-34.2,15.4l-31.6,31.5c-2.6-1.4-5.2-2.7-7.7-4 c-3.6-1.8-7-3.5-9.9-5.3c-29.6-18.8-56.5-43.3-82.3-75c-12.5-15.8-20.9-29.1-27-42.6c8.2-7.5,15.8-15.3,23.2-22.8 c2.8-2.8,5.6-5.7,8.4-8.5c21-21,21-48.2,0-69.2l-27.3-27.3c-3.1-3.1-6.3-6.3-9.3-9.5c-6-6.2-12.3-12.6-18.8-18.6 c-9.7-9.6-21.3-14.7-33.5-14.7s-24,5.1-34,14.7c-0.1,0.1-0.1,0.1-0.2,0.2l-34,34.3c-12.8,12.8-20.1,28.4-21.7,46.5 c-2.4,29.2,6.2,56.4,12.8,74.2c16.2,43.7,40.4,84.2,76.5,127.6c43.8,52.3,96.5,93.6,156.7,122.7c23,10.9,53.7,23.8,88,26 c2.1,0.1,4.3,0.2,6.3,0.2c23.1,0,42.5-8.3,57.7-24.8c0.1-0.2,0.3-0.3,0.4-0.5c5.2-6.3,11.2-12,17.5-18.1c4.3-4.1,8.7-8.4,13-12.9 c9.9-10.3,15.1-22.3,15.1-34.6c0-12.4-5.3-24.3-15.4-34.3L374.456,293.506z M410.256,398.806 C410.156,398.806,410.156,398.906,410.256,398.806c-3.9,4.2-7.9,8-12.2,12.2c-6.5,6.2-13.1,12.7-19.3,20 c-10.1,10.8-22,15.9-37.6,15.9c-1.5,0-3.1,0-4.6-0.1c-29.7-1.9-57.3-13.5-78-23.4c-56.6-27.4-106.3-66.3-147.6-115.6 c-34.1-41.1-56.9-79.1-72-119.9c-9.3-24.9-12.7-44.3-11.2-62.6c1-11.7,5.5-21.4,13.8-29.7l34.1-34.1c4.9-4.6,10.1-7.1,15.2-7.1 c6.3,0,11.4,3.8,14.6,7c0.1,0.1,0.2,0.2,0.3,0.3c6.1,5.7,11.9,11.6,18,17.9c3.1,3.2,6.3,6.4,9.5,9.7l27.3,27.3 c10.6,10.6,10.6,20.4,0,31c-2.9,2.9-5.7,5.8-8.6,8.6c-8.4,8.6-16.4,16.6-25.1,24.4c-0.2,0.2-0.4,0.3-0.5,0.5 c-8.6,8.6-7,17-5.2,22.7c0.1,0.3,0.2,0.6,0.3,0.9c7.1,17.2,17.1,33.4,32.3,52.7l0.1,0.1c27.6,34,56.7,60.5,88.8,80.8 c4.1,2.6,8.3,4.7,12.3,6.7c3.6,1.8,7,3.5,9.9,5.3c0.4,0.2,0.8,0.5,1.2,0.7c3.4,1.7,6.6,2.5,9.9,2.5c8.3,0,13.5-5.2,15.2-6.9 l34.2-34.2c3.4-3.4,8.8-7.5,15.1-7.5c6.2,0,11.3,3.9,14.4,7.3c0.1,0.1,0.1,0.1,0.2,0.2l55.1,55.1 C420.456,377.706,420.456,388.206,410.256,398.806z"/> <path d="M256.056,112.706c26.2,4.4,50,16.8,69,35.8s31.3,42.8,35.8,69c1.1,6.6,6.8,11.2,13.3,11.2c0.8,0,1.5-0.1,2.3-0.2 c7.4-1.2,12.3-8.2,11.1-15.6c-5.4-31.7-20.4-60.6-43.3-83.5s-51.8-37.9-83.5-43.3c-7.4-1.2-14.3,3.7-15.6,11 S248.656,111.506,256.056,112.706z"/> <path d="M473.256,209.006c-8.9-52.2-33.5-99.7-71.3-137.5s-85.3-62.4-137.5-71.3c-7.3-1.3-14.2,3.7-15.5,11 c-1.2,7.4,3.7,14.3,11.1,15.6c46.6,7.9,89.1,30,122.9,63.7c33.8,33.8,55.8,76.3,63.7,122.9c1.1,6.6,6.8,11.2,13.3,11.2 c0.8,0,1.5-0.1,2.3-0.2C469.556,223.306,474.556,216.306,473.256,209.006z"/> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>
+          <span>585-632-5544</span>
+        </a>
+        <a href="mailto:customerservice@jewelili.com" class="details">
+          <svg class="envelope" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 483.3 483.3" style="enable-background:new 0 0 483.3 483.3; fill: #3E4448;" xml:space="preserve"><g><g><path d="M424.3,57.75H59.1c-32.6,0-59.1,26.5-59.1,59.1v249.6c0,32.6,26.5,59.1,59.1,59.1h365.1c32.6,0,59.1-26.5,59.1-59.1v-249.5C483.4,84.35,456.9,57.75,424.3,57.75z M456.4,366.45c0,17.7-14.4,32.1-32.1,32.1H59.1c-17.7,0-32.1-14.4-32.1-32.1v-249.5c0-17.7,14.4-32.1,32.1-32.1h365.1c17.7,0,32.1,14.4,32.1,32.1v249.5H456.4z"/><path d="M304.8,238.55l118.2-106c5.5-5,6-13.5,1-19.1c-5-5.5-13.5-6-19.1-1l-163,146.3l-31.8-28.4c-0.1-0.1-0.2-0.2-0.2-0.3c-0.7-0.7-1.4-1.3-2.2-1.9L78.3,112.35c-5.6-5-14.1-4.5-19.1,1.1c-5,5.6-4.5,14.1,1.1,19.1l119.6,106.9L60.8,350.95c-5.4,5.1-5.7,13.6-0.6,19.1c2.7,2.8,6.3,4.3,9.9,4.3c3.3,0,6.6-1.2,9.2-3.6l120.9-113.1l32.8,29.3c2.6,2.3,5.8,3.4,9,3.4c3.2,0,6.5-1.2,9-3.5l33.7-30.2l120.2,114.2c2.6,2.5,6,3.7,9.3,3.7c3.6,0,7.1-1.4,9.8-4.2c5.1-5.4,4.9-14-0.5-19.1L304.8,238.55z"/></g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>
+          <span>customerservice@jewelili.com</span>
+        </a>
+        <div class="details">
+          <svg class="clock" id="Capa_1" enable-background="new 0 0 443.294 443.294" height="512" viewBox="0 0 443.294 443.294" width="512" xmlns="http://www.w3.org/2000/svg" style="fill: #3E4448;"><path d="m221.647 0c-122.214 0-221.647 99.433-221.647 221.647s99.433 221.647 221.647 221.647 221.647-99.433 221.647-221.647-99.433-221.647-221.647-221.647zm0 415.588c-106.941 0-193.941-87-193.941-193.941s87-193.941 193.941-193.941 193.941 87 193.941 193.941-87 193.941-193.941 193.941z"/><path d="m235.5 83.118h-27.706v144.265l87.176 87.176 19.589-19.589-79.059-79.059z"/></svg>
+          <span>Mon-Fri 9AM to 6PM EST</span>
+        </div>
+        <a class="details" href="/pages/track-your-order">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 25" class="track-svg"><defs><style>.track-svg .a{fill:#fff;opacity:0;}.track-svg .b{fill:#3E4448;fill-rule:evenodd;}</style></defs><g transform="translate(-605 -6614)"><rect class="a" width="32" height="25" transform="translate(605 6614)"></rect><path class="b" d="M716,1338.558a1.111,1.111,0,1,0,1.111,1.111A1.112,1.112,0,0,0,716,1338.558Zm-13.335,0a1.111,1.111,0,1,0,1.111,1.111A1.112,1.112,0,0,0,702.668,1338.558Zm10,0v-10h3.377a1.112,1.112,0,0,1,.868.417l3.29,4.114a1.111,1.111,0,0,1,.243.694v3.665a1.112,1.112,0,0,1-1.111,1.111h-.19a3.335,3.335,0,0,0-6.288,0Zm-13.145,0a3.335,3.335,0,0,1,6.288,0h4.635v-12.224a1.112,1.112,0,0,0-1.111-1.111h-10a1.112,1.112,0,0,0-1.111,1.111v11.113a1.112,1.112,0,0,0,1.111,1.111ZM696,1326.334a3.334,3.334,0,0,1,3.334-3.334h10a3.334,3.334,0,0,1,3.334,3.334h3.377a3.331,3.331,0,0,1,2.6,1.251l3.292,4.114a3.334,3.334,0,0,1,.73,2.083v3.665a3.334,3.334,0,0,1-3.334,3.334h-.19a3.335,3.335,0,0,1-6.288,0h-7.048a3.335,3.335,0,0,1-6.288,0h-.19a3.334,3.334,0,0,1-3.334-3.334Z" transform="translate(-88.364 5294.34)"></path></g></svg>
+          <span>Track Your Order</span>
+        </a>
+      </div>
+      
+      {%- assign socials = "Facebook Twitter Pinterest Instagram Tumblr Snapchat YouTube Vimeo" | split: ' ' -%}
+      {%- if social_icons -%}
+      <ul class="list--inline site-footer__social-icons social-icons site-footer__icon-list">
+        <p class="h4 ">Connect with us</p>
+        {%- for social in socials -%}
+        {%- assign social_link = social | prepend: 'social_' | append: '_link' | downcase -%}
+        {%- assign icon_link = social | prepend: 'icon-' | downcase -%}
+        {%- if settings[social_link] != blank -%}
+        <li class="social-icons__item">
+          <a class="social-icons__link" target="_blank" href="{{ settings[social_link] | escape }}" aria-describedby="a11y-external-message">
+            {%- include icon_link -%}
+            <span class="icon__fallback-text">{{ social }}</span>
+          </a>
+        </li>
+        {%- endif -%}
+        {%- endfor -%}
+      </ul>
+      {% endif %}
+      
+      {%- when 'link_list' -%}
+      {%- assign footer_linklist = block.settings.menu -%}
+      <ul id="foot_acc_{{ forloop.index }}" class="site-footer__linklist {% if inline_list %}list--inline{% endif %} accordion_text_foot">
+        {%- for link in linklists[footer_linklist].links -%}
+        <li class="site-footer__linklist-item">
+          <a href="{{ link.url }}"
+          {% if link.current %} aria-current="page"{% endif %}
+          >
+          {{ link.title | escape }}
+        </a>
+      </li>
+      {%- endfor -%}
+    </ul>
+    {%- endcase -%}
+  </div>
+</div>
+{%- endfor -%}
+</div>
+</div>
+
+{% comment %}
+<hr class="site-footer__hr">
+{% endcomment %}
+
+<div class="site-footer__bottom">
+  <div class="page-width">
+    <div class="grid grid--no-gutters small--text-center grid--footer-float-right footer__copyright-row">
+      
+      {% comment %}
+      {%- if show_selectors -%}
+      <div class="grid__item one-half small--one-whole">
+        {%- form 'localization', class: 'selectors-form' -%}
+        {%- if locale_selector -%}
+        <div class="selectors-form__item">
+          <h2 class="visually-hidden" id="lang-heading">
+            {{ 'general.language.dropdown_label' | t }}
+          </h2>
+          
+          <div class="disclosure" data-disclosure-locale>
+            <button type="button" class="disclosure__toggle" aria-expanded="false" aria-controls="lang-list" aria-describedby="lang-heading" data-disclosure-toggle>
+              {{ form.current_locale.endonym_name }}
+            </button>
+            <ul id="lang-list" class="disclosure-list" data-disclosure-list>
+              {% for locale in form.available_locales %}
+              <li class="disclosure-list__item {% if locale.iso_code == form.current_locale.iso_code %}disclosure-list__item--current{% endif %}">
+                <a class="disclosure-list__option" href="#" lang="{{ locale.iso_code }}" {% if locale.iso_code == form.current_locale.iso_code %}aria-current="true"{% endif %} data-value="{{ locale.iso_code }}" data-disclosure-option>
+                  {{ locale.endonym_name }}
+                </a>
+              </li>
+              {%- endfor -%}
+            </ul>
+            <input type="hidden" name="locale_code" id="LocaleSelector" value="{{ form.current_locale.iso_code }}" data-disclosure-input/>
+          </div>
+        </div>
+        {%- endif -%}
+        
+        {%- if currency_selector -%}
+        <div class="selectors-form__item">
+          <h2 class="visually-hidden" id="currency-heading">
+            {{ 'general.currency.dropdown_label' | t }}
+          </h2>
+          
+          <div class="disclosure" data-disclosure-currency>
+            <button type="button" class="disclosure__toggle" aria-expanded="false" aria-controls="currency-list" aria-describedby="currency-heading" data-disclosure-toggle>
+              {{ form.current_currency.iso_code }} {%- if form.current_currency.symbol -%}{{ form.current_currency.symbol }}{%- endif -%}
+            </button>
+            <ul id="currency-list" class="disclosure-list" data-disclosure-list>
+              {% for currency in form.available_currencies %}
+              <li class="disclosure-list__item {% if currency.iso_code == form.current_currency.iso_code %}disclosure-list__item--current{% endif %}">
+                <a class="disclosure-list__option" href="#" {% if currency.iso_code == form.current_currency.iso_code %}aria-current="true"{% endif %} data-value="{{ currency.iso_code }}" data-disclosure-option>
+                  {{ currency.iso_code }} {%- if currency.symbol -%}{{ currency.symbol }}{%- endif -%}
+                </a>
+              </li>
+              {%- endfor -%}
+            </ul>
+            <input type="hidden" name="currency_code" id="CurrencySelector" value="{{ form.current_currency.iso_code }}" data-disclosure-input/>
+          </div>
+        </div>
+        {%- endif -%}
+        {%- endform -%}
+      </div>
+      {%- else -%}
+      <div class="grid__item small--hide {{ payment_width_class }} {% if show_payment_icons %}site-footer-item-center-vertically{% endif %}">{{ payment_icon_markup }}</div>
+      {%- endif -%}
+      {% endcomment %}
+      
+      <div class="grid__item one-half small--one-whole {{ copyright_show_class }}">
+        <small class="site-footer__copyright-content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}</small>
+        {% comment %}
+        <small class="site-footer__copyright-content site-footer__copyright-content--powered-by">{{ powered_by_link }}</small>
+        {% endcomment %}
+      </div>
+      
+      <div class="grid__item one-half small--one-whole">
+        {% if show_payment_icons %}
+        {{ payment_icon_markup }}
+        {%- else -%}
+        <div class="small--hide site-footer-item-align-right {% if show_selectors or show_payment_icons %}site-footer-item-center-vertically{% endif %}">
+          <small class="site-footer__copyright-content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}</small>
+          <small class="site-footer__copyright-content site-footer__copyright-content-powered-by">{{ powered_by_link }}</small>
+        </div>
+        {%- endif -%}
+      </div>
+      
+      {% comment %}
+      {%- if show_selectors -%}
+      <div class="grid__item small--hide {{ payment_width_class }}">{{ payment_icon_markup }}</div>
+      {%- endif -%}
+      
+      <div class="grid__item medium-up--hide {{ payment_width_class }} small--one-whole">{{ payment_icon_markup }}</div>
+      
+      {%- if social_icons and show_selectors -%}
+      <div class="grid__item small--hide site-footer-item-align-right {% if show_payment_icons %}one-half{% endif %}">
+        <small class="site-footer__copyright-content">&copy; {{ 'now' | date: "%Y" }}, {{ shop.name | link_to: routes.root_url }}</small>
+        <small class="site-footer__copyright-content site-footer__copyright-content--powered-by">{{ powered_by_link }}</small>
+      </div>
+      {%- endif -%}
+      {% endcomment %}
+    </div>
+  </div>
+</div>
+
+{% assign coll_footerdesc = collection.metafields.global.footer_desc %}
+<!-- Collection footer content Metafield app start -->
+{% if coll_footerdesc != blank %}
+<div class="site-footer__lower_bottom">
+  <div class="page-width">
+    <div class="collapsable_content">
+      <div class="accordian_text">
+        {{ coll_footerdesc }}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Collection footer content Metafield app end -->
+{% elsif template contains 'index' %}
+<div class="site-footer__lower_bottom">
+  <div class="page-width">
+    <div class="collapsable_content">
+      <div class="accordian_text">
+        <h1 class="heading">Diamond Jewelry is a Legacy Forever</h1>
+        <p>Welcome to the one-stop destination for the highest quality diamond jewelry online. At Jewelili, we take immense pride in offering the trendiest collection of jewelry for women and men, bringing you the widest selection of jewelry items at the most affordable prices, all under one roof. <a href="/collections/jewelili-diamond-jewelry">Jewelili diamonds</a> and gemstones have made a name for themselves due to the carefully curated designs used to embed them in one-of-a-kind diamond rings, bracelets, necklaces, earrings, pendants, and much more.</p>
+        <p>Why buy diamond jewelry at any other online store when you get peace of mind right here. You know that you will only get the best quality pieces at the right price at Jewelili. And don't forget to check out our special discounts, coupon codes, and offers for even greater savings. We take special care to choose our jewelry collections to ensure that there is something for every type of taste, budget, and personality. </p>
+        <p>Whether you are shopping for yourself or looking to gift diamond jewelry for a loved one, check out our collections. We have eased the search for you with filters so that you can browse through diamond jewelry online based on the price, the gemstone you are looking for, the metal, and more. From timeless classics to the latest trending designs, you will find them all right here.</p>
+        <p>Our exclusive designs in diamond Jewelry for women include:<br>
+          ●	<a href="/collections/diamond-rings">Diamond rings</a><br>
+          ●	<a href="/collections/diamond-bracelets">Diamond bracelets</a><br>
+          ●	<a href="/collections/diamond-necklaces">Diamond Necklace & Pendants</a><br>
+          ●	<a href="/collections/diamond-earrings">Diamond earrings</a>
+        </p>
+        <h2 class="heading">Celebrate Diamond Jewelry with Jewelili! </h2>
+        <p>At Jewelili, we bring you diamond jewelry for every occasion. Need to shop for a special birthday or anniversary gift? Looking for <a href="/collections/diamond-engagement-rings">bridal jewelry</a>? Or are you looking for something special for yourself? Or Do you even really need a reason to buy diamond jewelry? Every woman deserves to wear diamond jewelry that best reflects her personality, regardless of her age or walk of life. Afterall, diamonds are a girl’s best friends. So, check out our collections for all occasions:<br>
+          <b>1.	Diamond jewelry designs:</b> Our designs are a good mix of timeless pieces that embody elegance and class and the trendiest and most contemporary designs. You will be spoilt for choice while looking for jewelry for any occasion and any type of outfit.<br>
+          <b>2.	Multiple brands:</b> Choose from the Enchanted Disney collection, Made for You, and our in-house brands, Jewelili Gemstones, and Jewelili Diamonds. Each brand specializes in different types of designs so that you get the widest array of jewelry online.<br>
+          <b>3.	Something for everyone:</b> Our products are sure to put a smile on the faces of women of all ages. From young teens to young brides and for those celebrating multiple years of togetherness, at Jewelili, we have something for everyone.<br>
+          <b>4.	Diamond color and clarity:</b> When it comes to the most important C’s that represent the quality of diamonds, we are completely transparent about the cut, clarity, carat, and color, so that you can make an informed decision when you buy diamond jewelry online. We also offer lab-grown diamonds so that you can  choose from an ultra-affordable and environmentally-friendly range of jewelry.<br>
+          <b>5.	Bridal diamond jewelry:</b> Bridal Jewelry is one of our specialties. Diamonds are forever and are the perfect way to celebrate eternal love. Our designs are created keeping in mind the most important day of any woman’s life. Choose from our promise rings, engagement rings, and diamond wedding rings, to find just the perfect ring to express your love and commitment.<br>
+          <b>6.	Diamond jewelry for every occasion:</b> We take great pride in offering diamond jewelry for all occasions online. If you are looking for birthday jewelry, <a href="/collections/diamond-anniversary-rings">anniversary jewelry</a> or bridal jewelry, chunky earrings to make a style statement, or subtle solitaires to go with formal wear, we have it all.<br>
+          <b>7.	Certified Diamond Jewelry:</b> The diamonds and gemstones used in our jewelry are certified for authenticity so that you have peace of mind when you buy diamond jewelry online.
+        </p>
+        <h2 class="heading">FAQs:</h2>
+        <p>
+          <b>1.	Why buy diamond jewelry online at Jewelili?</b><br>
+          At Jewelili, you will find the widest range of diamond jewelry online, including diamond rings, bracelets, necklaces, earrings, and pendants. And, in each category of jewelry, you get to choose from numerous designs, ranging from the classics to the trendiest. Also, when you buy diamond jewelry at Jewelili, you are assured of quality, the best pricing, and no hidden charges.
+        </p>
+        <p>
+          <b>2.	What are the benefits of buying diamond jewelry online?</b><br>
+          Why go from store to store looking for the perfect jewelry item, wasting time, effort, and money when you can find it all under one roof online? Plus, when you shop online, you get the best prices, since online retailers don't have to cover for the overheads like brick-and-mortar stores do. Also, at Jewelili, we ensure that you get even more savings with our regular seasonal discounts, coupon codes, and special offers. So, don't forget to check for the latest offers.
+        </p>
+        <p>
+          <b>3.	How can I place an order on your website?</b><br>
+          Buying diamond jewelry online at Jewelili is as simple as 1, 2, 3, 4:<br>
+          1.	Choose a product<br>
+          2.	Add it to the bag<br>
+          3.	Go to cart and proceed to checkout<br>
+          4.	Fill in the delivery details and coupon code (if any) and make the payment<br>
+          Once the payment is processed, you will see a confirmation message on the screen. We will also confirm your order via email.
+        </p>
+        <p>
+          <b>4.	How can I confirm that my order has been placed?</b><br>
+          Once you make the payment, you will immediately be redirected to the order confirmation page. You will also receive an email on the email address you have provided, confirming the order. In case you have any questions, please do not hesitate to get in touch with us.
+        </p>
+        <p>
+          <b>5.	Are all your jewelry pieces real and certified?</b><br>
+          All the diamond jewelry we offer online consists of gemstones that are certified for authenticity. You can check the specifications of the diamonds, metal, etc., on each product page. We also offer lab-grown diamonds. This is also mentioned in the specifications that are provided for each product.
+        </p>
+        <p>
+          <b>6.	Do you have additional offers or discounts for regular buyers?</b><br>
+          We have offers for first-time buyers using a coupon code FIRST10. However, for regular buyers, we run regular offers and deals, along with a coupon code LOYAL10. So, check out our offers page for great savings on diamond jewelry.
+        </p>
+        <p>
+          <b>7.	Are the images on the website of real products?</b><br>
+          Yes, the images on the website are of the actual jewelry items. Each item is also accompanied by detailed specifications so that you can make an informed decision.
+        </p>
+        <p>
+          <b>8.	Are these real diamonds?</b><br>
+          Yes, all the jewelry we offer is made of either natural or lab-grown diamonds. You will find the details of the gemstones used on the product pages so that you have peace of mind when you buy diamond jewelry online.
+        </p>
+        <p>
+          <b>9. Is buying diamond Jewelry a good investment?</b><br>
+          Diamonds are known to be inflation-proof, just like the precious metals used to manufacture jewelry, such as gold and silver. Being the hardest element on Earth, they will last you for generations. Diamond jewelry makes for great family heirlooms.
+        </p>
+      </div>
+      {% comment %}
+      <button id="accordian_btn_more">Show More +</button>
+      <button id="accordian_btn_less">Show Less -</button>
+      {% endcomment %}
+    </div>
+  </div>
+</div>
+{% endif %}
+</footer>
+
+{% comment %}
+<script>
+  $(document).ready(function(){
+    $("#accordian_btn_more").click(function(){
+      // $('.accordian_text').css("height","100%");
+      // $(this).hide();
+      // $('#accordian_btn_less').show();
+    });
+    $("#accordian_btn_less").click(function(){
+      // $('.accordian_text').css("height","78px");
+      // $(this).hide();
+      // $('#accordian_btn_more').show();
+    });
+    
+    // Mobile accordian 
+    jQuery( '.accordion_btn_foot:first' ).addClass( 'active_foot' );
+    jQuery( '.accordion_text_foot:first' ).css("display","block");
+  });
+  function footeracc(evt, city) {
+    if($(window).width() < 768){
+      var hotelblock, tablinks;
+      hotelblock = document.getElementsByClassName(city);
+      tablinks = document.getElementById(city);
+      $(tablinks).slideToggle('slow');
+      $(hotelblock).toggleClass('active_foot');
+    }
+  }
+</script>
+{% endcomment %}
+
+{% schema %}
+{
+  "name": {
+    "da": "Sidefod",
+    "de": "Fußzeile",
+    "en": "Footer",
+    "es": "Pie de página",
+    "fi": "Alatunniste",
+    "fr": "Pied de page",
+    "hi": "फुटर",
+    "it": "Footer",
+    "ja": "フッター",
+    "ko": "바닥글",
+    "nb": "Footer",
+    "nl": "Voettekst",
+    "pt-BR": "Rodapé",
+    "pt-PT": "Rodapé",
+    "sv": "Sidfot",
+    "th": "ส่วนท้าย",
+    "zh-CN": "页脚",
+    "zh-TW": "頁尾"
+  },
+  "max_blocks": 6,
+  "settings": [
+  {
+    "type": "header",
+    "content": {
+      "da": "Betalingsmetoder",
+      "de": "Zahlungsmethoden",
+      "en": "Payment methods",
+      "es": "Métodos de pago",
+      "fi": "Maksutavat",
+      "fr": "Moyens de paiement",
+      "hi": "भुगतान की विधियां",
+      "it": "Metodi di pagamento",
+      "ja": "決済方法",
+      "ko": "결제 방법",
+      "nb": "Betalingsmetoder",
+      "nl": "Betaalmethoden",
+      "pt-BR": "Formas de pagamento",
+      "pt-PT": "Métodos de Pagamento",
+      "sv": "Betalningsmetoder",
+      "th": "วิธีการชำระเงิน",
+      "zh-CN": "支付方式",
+      "zh-TW": "付款方式"
+    }
+  },
+  {
+    "type": "checkbox",
+    "id": "show_payment_icons",
+    "label": {
+      "da": "Vis betalingsikoner",
+      "de": "Zahlungs-Buttons anzeigen",
+      "en": "Show payment icons",
+      "es": "Mostrar iconos de pago",
+      "fi": "Näytä maksukuvakkeet",
+      "fr": "Afficher les icônes de paiement",
+      "hi": "भुगतान आइकन दिखाएं",
+      "it": "Mostra le icone di pagamento",
+      "ja": "支払いアイコンを表示する",
+      "ko": "결제 아이콘 표시",
+      "nb": "Vis betalingsikoner",
+      "nl": "Betalingspictogrammen weergeven",
+      "pt-BR": "Exibir ícones de pagamento",
+      "pt-PT": "Mostrar ícones de pagamento",
+      "sv": "Visa betalningsikoner",
+      "th": "แสดงไอคอนการชำระเงิน",
+      "zh-CN": "显示付款图标",
+      "zh-TW": "顯示付款圖示"
+    },
+    "default": false
+  },
+  {
+    "type": "header",
+    "content": {
+      "da": "Farve",
+      "de": "Farbe",
+      "en": "Color",
+      "es": "Color",
+      "fi": "Väri",
+      "fr": "Couleur",
+      "hi": "रंग",
+      "it": "Colore",
+      "ja": "色",
+      "ko": "색상",
+      "nb": "Farge",
+      "nl": "Kleur",
+      "pt-BR": "Cor",
+      "pt-PT": "Cor",
+      "sv": "Färg",
+      "th": "สี",
+      "zh-CN": "颜色",
+      "zh-TW": "顏色"
+    }
+  },
+  {
+    "type": "color",
+    "id": "color_footer_bg",
+    "label": {
+      "da": "Baggrund",
+      "de": "Hintergrund",
+      "en": "Background",
+      "es": "Fondo",
+      "fi": "Tausta",
+      "fr": "Couleur de fond",
+      "hi": "पृष्ठभूमि",
+      "it": "Sfondo",
+      "ja": "背景",
+      "ko": "배경",
+      "nb": "Bakgrunn",
+      "nl": "Achtergrond",
+      "pt-BR": "Plano de fundo",
+      "pt-PT": "Fundo",
+      "sv": "Bakgrund",
+      "th": "พื้นหลัง",
+      "zh-CN": "背景",
+      "zh-TW": "背景"
+    },
+    "default": "#f6f6f6"
+  },
+  {
+    "type": "color",
+    "id": "color_footer_text",
+    "label": {
+      "da": "Tekst",
+      "de": "Text",
+      "en": "Text",
+      "es": "Texto",
+      "fi": "Teksti",
+      "fr": "Texte",
+      "hi": "टेक्स्ट",
+      "it": "Testo",
+      "ja": "テキスト",
+      "ko": "텍스트",
+      "nb": "Tekst",
+      "nl": "Tekst",
+      "pt-BR": "Texto",
+      "pt-PT": "Texto",
+      "sv": "Text",
+      "th": "ข้อความ",
+      "zh-CN": "文本",
+      "zh-TW": "文字"
+    },
+    "default": "#333232"
+  },
+  {
+    "type": "header",
+    "content": {
+      "da": "Sprogvælger",
+      "de": "Sprachauswahl",
+      "en": "Language Selector",
+      "es": "Selector de idioma",
+      "fi": "Kielenvalitsin",
+      "fr": "Sélecteur de langue",
+      "hi": "भाषा चयनकर्ता",
+      "it": "Selettore lingua",
+      "ja": "言語セレクター",
+      "ko": "언어 선택기",
+      "nb": "Språkvelger",
+      "nl": "Taalkiezer",
+      "pt-BR": "Seletor de idiomas",
+      "pt-PT": "Seletor de Idioma",
+      "sv": "Språkväljare",
+      "th": "ตัวเลือกภาษา",
+      "zh-CN": "语言选择器",
+      "zh-TW": "語言選擇器"
+    },
+    "info": {
+      "da": "Du kan tilføje et sprog ved at gå til dine [sprogindstillinger.](/admin/settings/languages)",
+      "de": "Gehe zu deinen [Spracheinstellungen](/admin/settings/languages), um eine Sprache hinzuzufügen.",
+      "en": "To add a language, go to your [language settings.](/admin/settings/languages)",
+      "es": "Para agregar un idioma, ve a tu[configuración de idioma](/admin/settings/languages)",
+      "fi": "Lisää kieli siirtymällä [kieliasetuksiin.](/admin/settings/languages)",
+      "fr": "Pour ajouter une langue, allez dans vos [paramètres de langue.](/admin/settings/languages).",
+      "hi": "भाषा जोड़ने के लिए, अपने [language settings.](/admin/settings/languages) पर जाएं",
+      "it": "Per aggiungere una lingua, vai su [impostazioni della lingua.](/admin/settings/languages)",
+      "ja": "言語を追加するには、[言語設定](/admin/settings/languages) に移動します。",
+      "ko": "언어를 추가하려면 [언어 설정.](/admin/settings/languages)(으)로 이동하십시오.",
+      "nb": "For å legge til et språk, går du til dine [språkinnstillinger.](/admin/settings/languages)",
+      "nl": "Ga naar je [taalinstellingen.](/admin/settings/languages) om een taal toe te voegen.",
+      "pt-BR": "Para adicionar um idioma, acesse suas [configurações de idioma. ](/admin/settings/languages)",
+      "pt-PT": "Para adicionar um idioma, aceda a [definições de idioma.](/admin/settings/languages)",
+      "sv": "För att lägga till ett språk, gå till dina [språkinställningar.](/admin/settings/languages)",
+      "th": "หากต้องการเพิ่มภาษา ให้ไปที่ [การตั้งค่าภาษา ](/admin/settings/languages) ของคุณ",
+      "zh-CN": "若要添加语言，请转到您的 [语言设置。](/admin/settings/languages)",
+      "zh-TW": "若要新增語言，請前往 [語言設定。](/admin/settings/languages)"
+    }
+  },
+  {
+    "type": "checkbox",
+    "id": "show_locale_selector",
+    "label": {
+      "da": "Vis sprogvælger",
+      "de": "Sprachauswahl anzeigen",
+      "en": "Show language selector",
+      "es": "Mostrar el selector de idioma",
+      "fi": "Näytä kielenvalitsin",
+      "fr": "Afficher le sélecteur de langue",
+      "hi": "मात्रा चयनकर्ता दिखाएं",
+      "it": "Mostra selettore lingua",
+      "ja": "言語セレクターを表示する",
+      "ko": "언어 선택기 표시",
+      "nb": "Vis språkvelger",
+      "nl": "Taalkiezer weergeven",
+      "pt-BR": "Exibir seletor de idioma",
+      "pt-PT": "Mostrar seletor de idioma",
+      "sv": "Visa språkväljare",
+      "th": "แสดงตัวเลือกภาษา",
+      "zh-CN": "显示语言选择器",
+      "zh-TW": "顯示語言選擇器"
+    },
+    "default": true
+  },
+  {
+    "type": "header",
+    "content": {
+      "da": "Valutavælger",
+      "de": "Währungsauswahl",
+      "en": "Currency Selector",
+      "es": "Selector de moneda",
+      "fi": "Valuutanvalitsin",
+      "fr": "Sélecteur de devise",
+      "hi": "मुद्रा चयनकर्ता",
+      "it": "Selettore di valuta",
+      "ja": "通貨セレクター",
+      "ko": "통화 선택기",
+      "nb": "Valutavelger",
+      "nl": "Valutakiezer",
+      "pt-BR": "Seletor de moeda",
+      "pt-PT": "Seletor de Moeda",
+      "sv": "Valutaväljare",
+      "th": "เครื่องมือเลือกสกุลเงิน",
+      "zh-CN": "货币选择器",
+      "zh-TW": "幣別選擇器"
+    },
+    "info": {
+      "da": "Du kan tilføje en valuta ved at gå til dine [betalingsindstillinger.](/admin/settings/payments)",
+      "de": "Gehe zu deinen [Zahlungseinstellungen](/admin/settings/payments), um eine Währung hinzuzufügen.",
+      "en": "To add a currency, go to your [payment settings.](/admin/settings/payments)",
+      "es": "Para agregar una moneda, ve a tu [configuración de pago.](/admin/settings/payments)",
+      "fi": "Lisää valuutta siirtymällä [maksuasetuksiisi.](/admin/settings/payments)",
+      "fr": "Pour ajouter une devise, allez dans vos [paramètres de paiement.](/admin/settings/payments)",
+      "hi": "कोई मुद्रा जोड़ने के लिए, अपनी [payment settings.](/admin/settings/payments) में जाएं",
+      "it": "Per aggiungere una valuta, vai su [impostazioni pagamento.](/admin/settings/payments)",
+      "ja": "通貨を追加するには、[決済設定](/admin/settings/payments) に移動します。",
+      "ko": "통화를 추가하려면 [결제 설정](/admin/settings/payments)(으)로 이동하십시오.",
+      "nb": "For å legge til en valuta, går du til [betalingsinnstillingene.](/admin/settings/payments)",
+      "nl": "Ga naar je [betaalinstellingen.](/admin/settings/payments) om een valuta toe te voegen.",
+      "pt-BR": "Para adicionar uma moeda, acesse as [configurações de pagamento.](/admin/settings/payments)",
+      "pt-PT": "Para adicionar uma moeda, aceda às suas [definições de pagamento.](/admin/settings/payments)",
+      "sv": "Gå till [payment settings ](/admin/settings/payments) för att lägga till en valuta.",
+      "th": "หากต้องการเพิ่มสกุลเงิน ให้ไปที่ [การตั้งค่าการชำระเงิน ](/admin/settings/payments)",
+      "zh-CN": "若要添加货币，请转到 [支付设置。](/admin/settings/payments)",
+      "zh-TW": "若要新增幣別，請前往 [付款設定。](/admin/settings/payments)"
+    }
+  },
+  {
+    "type": "checkbox",
+    "id": "show_currency_selector",
+    "label": {
+      "da": "Vis valutavælger",
+      "de": "Währungsauswahl anzeigen",
+      "en": "Show currency selector",
+      "es": "Mostrar el selector de moneda",
+      "fi": "Näytä valuutanvalitsin",
+      "fr": "Afficher le sélecteur de devise",
+      "hi": "मुद्रा चयनकर्ता दिखाएं",
+      "it": "Mostra selettore valuta",
+      "ja": "通貨セレクターを表示する",
+      "ko": "통화 선택기 표시",
+      "nb": "Vis valutavelger",
+      "nl": "Valutakiezer weergeven",
+      "pt-BR": "Exibir seletor de moeda",
+      "pt-PT": "Mostrar seletor de moeda",
+      "sv": "Visa valutaväljare",
+      "th": "แสดงเครื่องมือเลือกสกุลเงิน",
+      "zh-CN": "货币选择器显示",
+      "zh-TW": "顯示幣別選擇器"
+    },
+    "default": true
+  }
+  ],
+  "blocks": [
+  {
+    "type": "link_list",
+    "name": {
+      "da": "Menu",
+      "de": "Menü",
+      "en": "Menu",
+      "es": "Menú",
+      "fi": "Valikko",
+      "fr": "Menu",
+      "hi": "मेनू",
+      "it": "Menu",
+      "ja": "メニュー",
+      "ko": "메뉴",
+      "nb": "Meny",
+      "nl": "Menu",
+      "pt-BR": "Menu",
+      "pt-PT": "Menu",
+      "sv": "Meny",
+      "th": "เมนู",
+      "zh-CN": "菜单",
+      "zh-TW": "選單"
+    },
+    "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "da": "Overskrift",
+        "de": "Überschrift",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "da": "Hurtige links",
+        "de": "Quick-Links",
+        "en": "Quick links",
+        "es": "Enlaces rápidos",
+        "fi": "Pikalinkit",
+        "fr": "Liens rapides",
+        "hi": "त्वरित लिंक",
+        "it": "Link rapidi",
+        "ja": "クイックリンク",
+        "ko": "빠른 링크",
+        "nb": "Hurtigkoblinger",
+        "nl": "Snelle links",
+        "pt-BR": "Links rápidos",
+        "pt-PT": "Ligações rápidas",
+        "sv": "Snabblänkar",
+        "th": "ลิงก์ด่วน",
+        "zh-CN": "快速链接",
+        "zh-TW": "快速連結"
+      }
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": {
+        "da": "Menu",
+        "de": "Menü",
+        "en": "Menu",
+        "es": "Menú",
+        "fi": "Valikko",
+        "fr": "Menu",
+        "hi": "मेनू",
+        "it": "Menu",
+        "ja": "メニュー",
+        "ko": "메뉴",
+        "nb": "Meny",
+        "nl": "Menu",
+        "pt-BR": "Menu",
+        "pt-PT": "Menu",
+        "sv": "Meny",
+        "th": "เมนู",
+        "zh-CN": "菜单",
+        "zh-TW": "選單"
+      },
+      "default": "footer"
+    }
+    ]
+  },
+  {
+    "type": "text",
+    "name": {
+      "da": "Tekst",
+      "de": "Text",
+      "en": "Text",
+      "es": "Texto",
+      "fi": "Teksti",
+      "fr": "Texte",
+      "hi": "टेक्स्ट",
+      "it": "Testo",
+      "ja": "テキスト",
+      "ko": "텍스트",
+      "nb": "Tekst",
+      "nl": "Tekst",
+      "pt-BR": "Texto",
+      "pt-PT": "Texto",
+      "sv": "Text",
+      "th": "ข้อความ",
+      "zh-CN": "文本",
+      "zh-TW": "文字"
+    },
+    "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "da": "Overskrift",
+        "de": "Überschrift",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "default": {
+        "da": "Fortæl om din virksomhed",
+        "de": "Rede über dein Unternehmen",
+        "en": "Talk about your business",
+        "es": "Habla sobre tu negocio",
+        "fi": "Kerro yrityksestäsi",
+        "fr": "Parlez de votre entreprise",
+        "hi": "अपने व्यवसाय के बारे में बात करें",
+        "it": "Parla della tua attività commerciale",
+        "ja": "あなたのビジネスについて語る",
+        "ko": "비즈니스에 대한 이야기하기",
+        "nb": "Snakk om bedriften din",
+        "nl": "Vertel over je bedrijf",
+        "pt-BR": "Fale sobre o seu negócio",
+        "pt-PT": "Fale sobre o seu negócio",
+        "sv": "Prata om ditt företag",
+        "th": "พูดถึงธุรกิจของคุณ",
+        "zh-CN": "介绍您的业务",
+        "zh-TW": "描述您的商家"
+      }
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": {
+        "da": "Tekst",
+        "de": "Text",
+        "en": "Text",
+        "es": "Texto",
+        "fi": "Teksti",
+        "fr": "Texte",
+        "hi": "टेक्स्ट",
+        "it": "Testo",
+        "ja": "テキスト",
+        "ko": "텍스트",
+        "nb": "Tekst",
+        "nl": "Tekst",
+        "pt-BR": "Texto",
+        "pt-PT": "Texto",
+        "sv": "Text",
+        "th": "ข้อความ",
+        "zh-CN": "文本",
+        "zh-TW": "文字"
+      },
+      "default": {
+        "da": "<p>Del butiksoplysninger, reklamer eller brandindhold med dine kunder.</p>",
+        "de": "<p>Teile deine Shop-Details, Werbeaktionen oder Markeninhalte mit deinen Kunden.</p>",
+        "en": "<p>Share store details, promotions, or brand content with your customers.</p>",
+        "es": "<p>Comparte detalles de la tienda, promociones o contenido de la marca con tus clientes.</p>",
+        "fi": "<p>Jaa myymälän tiedot, tarjoukset tai brändin sisältö asiakkaittesi kanssa.</p>",
+        "fr": "<p>Partagez les détails de la boutique, les promotions ou le contenu de la marque avec vos clients.</p>",
+        "hi": "<p>अपने ग्राहकों के साथ स्टोर विवरण, प्रचार या ब्रांड सामग्री साझा करें.</p>",
+        "it": "<p>Condividi dettagli del negozio, promozioni o contenuti del brand con i clienti.</p>",
+        "ja": "<p>ストア詳細、プロモーション、ブランドのコンテンツをお客様と共有する。</p>",
+        "ko": "<p>스토어 세부 정보, 프로모션 또는 브랜드 콘텐츠를 고객과 공유하십시오.</p>",
+        "nb": "<p>Del butikkdetaljer, kampanjer eller merkevareinnhold med kundene dine.</p>",
+        "nl": "<p>Deel winkeldetails, promoties of merkcontent met je klanten.</p>",
+        "pt-BR": "<p>Compartilhe informações da loja, promoções ou conteúdo da marca com seus clientes.</p>",
+        "pt-PT": "<p>Partilhe detalhes da loja, promoções ou conteúdo de marca com os seus clientes.</p>",
+        "sv": "<p>Dela butikens detaljer, kampanjer eller varumärkesinnehåll med dina kunder.</p>",
+        "th": "<p>แชร์รายละเอียดร้านค้า โปรโมชัน หรือเนื้อหาแบรนด์กับลูกค้าของคุณ</p>",
+        "zh-CN": "<p>与您的客户共享商店详细信息、促销信息或品牌内容。</p>",
+        "zh-TW": "<p>與顧客分享商店的詳細資訊、宣傳活動或品牌內容。</p>"
+      }
+    }
+    ]
+  },
+  {
+    "type": "newsletter",
+    "limit": 1,
+    "name": {
+      "da": "Tilmelding til nyhedsbrev",
+      "de": "Newsletter-Anmeldung",
+      "en": "Newsletter signup",
+      "es": "Suscripción al boletín",
+      "fi": "Uutiskirjeen tilaus",
+      "fr": "Inscription",
+      "hi": "न्यूज़लेटर साइनअप",
+      "it": "Iscriviti alla Newsletter",
+      "ja": "ニュースレターの登録",
+      "ko": "뉴스레터 신청",
+      "nb": "Registrering for nyhetsbrev",
+      "nl": "Nieuwsbriefaanmelding",
+      "pt-BR": "Assinatura da newsletter",
+      "pt-PT": "Registo na newsletter",
+      "sv": "Nyhetsbrevsregistrering",
+      "th": "การสมัครรับจดหมายข่าว",
+      "zh-CN": "新闻通讯注册",
+      "zh-TW": "訂閱電子報"
+    },
+    "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "da": "Overskrift",
+        "de": "Überschrift",
+        "en": "Heading",
+        "es": "Título",
+        "fi": "Otsake",
+        "fr": "Titre",
+        "hi": "शीर्षक",
+        "it": "Heading",
+        "ja": "見出し",
+        "ko": "제목",
+        "nb": "Overskrift",
+        "nl": "Kop",
+        "pt-BR": "Título",
+        "pt-PT": "Título",
+        "sv": "Rubrik",
+        "th": "ส่วนหัว",
+        "zh-CN": "标题",
+        "zh-TW": "標題"
+      },
+      "info": {
+        "da": "Abonnenter bliver føjet til [kundelisten](/admin/customers?query=&accepts_marketing=1) for \"accepterer markedsføring\".",
+        "de": "Abonnenten werden zu deiner Liste „akzeptiert Marketingmaterial“ hinzugefügt [Kundenliste.](/admin/customers?query=&accepts_marketing=1)",
+        "en": "Subscribers will be added to your “accepts marketing” [customer list.](/admin/customers?query=&accepts_marketing=1)",
+        "es": "Se añadirá los suscriptores a tu [lista de clientes.](/admin/customers?query=&accepts_marketing=1) \"acepta marketing\".",
+        "fi": "Tilaajat lisätään \"hyväksyy markkinointi\" [-asiakasluetteloosi. ](/admin/customers?query=&accepts_marketing=1)",
+        "fr": "Les abonnés seront ajoutés à votre [liste de clients](/admin/customers?query=&accepts_marketing=1) « Accepte le marketing ».",
+        "hi": "सदस्यों को आपकी “मार्केटिंग स्वीकार करता है” [customer list.](/admin/customers?query=&accepts_marketing=1) में जोड़ दिया जाएगा",
+        "it": "Gli iscritti verranno aggiunti al tuo [elenco clienti.](/admin/customers?query=&accepts_marketing=1) «accetta marketing»",
+        "ja": "購読者は「マーケティングを受け入れる」[顧客リスト](/admin/customers?query=&accepts_marketing=1) に追加されます。",
+        "ko": "가입자가 \"마케팅 수락\" [고객 목록.](/admin/customers?query=&accepts_marketing=1)에 추가됩니다.",
+        "nb": "Abonnenter vil bli lagt til i «aksepterer markedsføring» [kundeliste.](/admin/customers?query=&accepts_marketing=1)",
+        "nl": "Abonnees worden toegevoegd aan je \"accepteert marketing\" [klantenlijst.](/admin/customers?query=&accepts_marketing=1)",
+        "pt-BR": "Os assinantes serão adicionados à “aceita marketing” [lista de clientes. ](/admin/customers?query=&accepts_marketing=1)",
+        "pt-PT": "Os subscritores serão adicionados à sua lista de \"aceitam marketing\" [lista de clientes.](/admin/customers?query=&accepts_marketing=1)",
+        "sv": "Prenumeranter läggs till i din \"accepterar marknadsföring\" [kundlista. ](/admin/customers?query=&accepts_marketing=1)",
+        "th": "ระบบจะเพิ่มผู้สมัครใช้งานไปยังส่วน “ยอมรับการตลาด” ของคุณ [รายชื่อลูกค้า](/admin/customers?query=&accepts_marketing=1)",
+        "zh-CN": "订阅者将被添加到您的“接受营销”[客户列表](/admin/customers?query=&accepts_marketing=1)中。",
+        "zh-TW": "系統會將訂閱者新增至您的「接受行銷」[客戶清單。](/admin/customers?query=&accepts_marketing=1)"
+      },
+      "default": {
+        "da": "Nyhedsbrev",
+        "de": "Newsletter",
+        "en": "Newsletter",
+        "es": "Boletín",
+        "fi": "Uutiskirje",
+        "fr": "Newsletter",
+        "hi": "न्यूज़लेटर",
+        "it": "Newsletter",
+        "ja": "ニュースレター",
+        "ko": "뉴스레터",
+        "nb": "Nyhetsbrev",
+        "nl": "Nieuwsbrief",
+        "pt-BR": "Newsletter",
+        "pt-PT": "Newsletter",
+        "sv": "Nyhetsbrev",
+        "th": "จดหมายข่าว",
+        "zh-CN": "新闻通讯",
+        "zh-TW": "電子報"
+      }
+    }
+    ]
+  },
+  {
+    "type": "Image",
+    "limit": 1,
+    "name": "Logo Image",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Logo"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1834 @@
+{%- comment -%}
+This snippet structures the micro-data using JSON-LD specification. Please note that for Product especially,
+the schema often changes. We try to output as much info as possible, but Google may add new requirements over time,
+or change the format of some info
+{%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+{%- capture main_entity_microdata -%}
+"@type": "Product",
+"name": {{ product.title | json }},
+"image": {
+  "@type": "ImageObject",
+  "url": "https:{{ product.featured_media | img_url: '1024x' }}",
+  "name": {{ product.featured_media.alt | json }},
+  "width": "1024",
+  "height": "1024"
+},
+{% if product.description != blank %}"description": {{ product.description | strip_html | json }},{% endif %}
+"brand": "Jewelili",
+"sku": {{ product.selected_or_first_available_variant.sku | json }},
+"category": {{ product.type | json }},
+"url": "{{ shop.url }}{{ product.url }}",
+"offers": [
+{%- for variant in product.variants -%}
+{
+  "@type": "AggregateOffer",
+  "url": "{{ shop.url }}{{ product.url }}",
+  "priceCurrency": {{ cart.currency.iso_code | json }},
+  "lowprice": {{ variant.price | divided_by: 100.0 | json }},
+  "highPrice": "{{ variant.compare_at_price | divided_by: 100.0 | json }}"
+}{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]
+{%- assign reviews_overview = null -%}
+{%- if product.metafields.reviewsimportify and product.metafields.reviewsimportify.reviews_overview -%}
+{%- assign reviews_overview = product.metafields.reviewsimportify.reviews_overview -%}
+{%- endif -%}
+
+{%- if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings -%}
+{%- assign ri_settings = shop.metafields.reviewsimportify.store_settings -%}
+{%- else -%}
+{%- assign ri_settings = null -%}
+{%- endif -%}
+{%- if ri_settings.product_reviews_status == "enabled" and ri_settings.app_status == "active" -%}
+{%- if ri_settings.aggregate_rating_status == "enabled" and reviews_overview.reviews_count > 0 -%}
+,"aggregateRating": {
+  "@type": "AggregateRating",
+  "ratingValue": "{{ reviews_overview.average_rating }}",
+  "bestRating": "5",
+  "worstRating": "1",
+  "ratingCount": "{{ reviews_overview.average_rating }}",
+  "reviewCount": "{{ reviews_overview.reviews_count }}"
+},
+"review": {
+  "@type": "Review",
+  "name": "{{reviews_overview.review_review_author}}",
+  "reviewBody": "{{reviews_overview.review_review_title }}",
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "{{reviews_overview.review_review_rating}}",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "datePublished": "{{reviews_overview.review_review_date_time_str}}",
+  "author": {"@type": "Person", "name": "{{reviews_overview.review_review_author}}"},
+  "publisher": {"@type": "Organization", "name": "Jewelili"}  
+}
+{%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+{%- elsif request.page_type == 'collection' -%}
+{%- capture main_entity_microdata -%}
+"@type":"ItemList",
+"name":"{{collection.title}}",
+"url":"{{ shop.url }}{{collection.url}}",
+{% if collection.description != blank %}"description":{{collection.description | strip_html | json }},{% endif %}
+"image": {
+  "@type": "ImageObject",
+  "url": "https:{{ collection.image | img_url: '1024x' }}",
+  "name": "{% if collection.image.alt != blank %}{{ collection.image.alt }}{% else %}{{collection.title}}{% endif %}",
+  "width": "1024",
+  "height": "1024"
+},
+"mainEntityOfPage":{
+  "@type":"CollectionPage",
+  "@id":"{{collection.id}}"
+},
+"itemListElement":[
+{%- for product in collection.products limit:20 -%}
+{
+  "@type":"ListItem",
+  "position":{{forloop.index}},
+  "name":{{ product.title | json }},
+  "url":"{{ shop.url }}{{product.url}}"
+}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
+{%- endcapture -%}
+{%- elsif request.page_type == 'article' -%}
+{%- capture main_entity_microdata -%}
+"@type": "BlogPosting",
+"mainEntityOfPage": "{{ article.url }}",
+"articleSection": {{ blog.title | json }},
+"keywords": "{{ article.tags | join: ', ' }}",
+"headline": {{ article.title | json }},
+"description": {{ article.excerpt_or_content | strip_html | truncatewords: 25 | json }},
+"dateCreated": "{{ article.created_at | date: '%Y-%m-%dT%T' }}",
+"datePublished": "{{ article.published_at | date: '%Y-%m-%dT%T' }}",
+"dateModified": "{{ article.published_at | date: '%Y-%m-%dT%T' }}",
+"image": {
+  "@type": "ImageObject",
+  "url": "https:{{ article.image | img_url: '1024x' }}",
+  "image": "https:{{ article.image | img_url: '1024x' }}",
+  "name": {{ article.image.alt | json }},
+  "width": "1024",
+  "height": "1024"
+},
+"author": {
+  "@type": "Person",
+  "name": "{{ article.user.first_name | escape }} {{ article.user.last_name | escape }}",
+  "givenName": {{ article.user.first_name | json }},
+  "familyName": {{ article.user.last_name | json }}
+},
+"publisher": {
+  "@type": "Organization",
+  "name": {{ shop.name | json }}
+},
+"commentCount": {{ article.comments_count }},
+"comment": [
+{%- for comment in article.comments limit: 5 -%}
+{
+  "@type": "Comment",
+  "author": {{ comment.author | json }},
+  "datePublished": "{{ comment.created_at | date: '%Y-%m-%dT%T' }}",
+  "text": {{ comment.content | json }}
+}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
+{%- endcapture -%}
+{%- elsif request.page_type == 'index' -%}
+{%- capture main_entity_microdata -%}
+"@type": "Organization",
+"name": "Jewelili",
+"url": "https://www.jewelili.com",
+"logo": "https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_logo_360x.png",
+"contactPoint": {
+  "@type": "ContactPoint",
+  "telephone": "5856325544",
+  "contactType": "customer service",
+  "areaServed": "US",
+  "availableLanguage": "en"
+},
+"sameAs": [
+"https://www.facebook.com/jewelili",
+"https://www.instagram.com/jewelili"
+]
+{%- endcapture -%}
+{%- elsif request.page_type == 'search' -%}
+{%- capture main_entity_microdata -%}
+"@type" : "WebSite", 
+"name" : "Jewelili",
+"url" : "https://www.jewelili.com",
+"potentialAction" : {
+  "@type" : "SearchAction",
+  "target" : "https://www.jewelili.com?s={{ search.terms }}",
+  "query-input" : "required name={{ search.terms }}"
+}
+{%- endcapture -%}
+{%- endif -%}
+
+<!-- Microdata -->
+{%- capture breadcrumb_entity_microdata -%}
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+  "@type": "ListItem",
+  "position": 1,
+  "name": "Home",
+  "item": "{{ shop.url }}"
+}
+{%- if request.page_type == 'product' -%}
+{%- for typelink in linklists['product-type'].links -%} 
+{%- assign linkHandle = typelink.title | handleize -%}
+{%- assign typeHandle = product.type | handleize -%}
+{%- capture type_links -%}
+{%- unless typeHandle == linkHandle -%}
+{{- typelink.url -}}
+{%- endunless -%}
+{%- endcapture -%}
+{%- endfor -%}
+{%- if type_links -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": {{ product.type | json }},
+  "item": "{{ shop.url }}{{- type_links -}}"
+},{
+  "@type": "ListItem",
+  "position": 3,
+  "name": {{ product.title | json }},
+  "item": "{{ shop.url }}{{- type_links -}}{{ product.url | within: collection }}"
+}
+{%- else -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": {{ product.title | json }},
+  "item": "{{ shop.url }}{{ product.url | within: collection }}"
+}
+{%- endif -%}
+
+{%- elsif request.page_type == 'collection' -%}
+{%- render 'breadcrumb_coll', id:"schema" -%}
+,{
+  "@type": "ListItem",
+  "position": 3,
+  "name": {{ collection.title | json }},
+  "item": "{{ shop.url }}{{ collection.url }}"
+}
+{%- elsif request.page_type == 'blog' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": {{ blog.title | json }},
+  "item": "{{ shop.url }}{{ blog.url }}"
+}
+{%- elsif request.page_type == 'article' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": {{ blog.title | json }},
+  "item": "{{ shop.url }}{{ blog.url }}"
+}, {
+  "@type": "ListItem",
+  "position": 3,
+  "name": {{ blog.title | json }},
+  "item": "{{ shop.url }}{{ article.url }}"
+}
+{%- elsif request.page_type == 'page' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": {{ page.title | json }},
+  "item": "{{ shop.url }}{{ page.url }}"
+}
+{%- endif -%}
+]
+{%- endcapture -%}
+
+{% if main_entity_microdata != blank %}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    {{ main_entity_microdata }}
+  }
+</script>
+{% endif %}
+
+{% if breadcrumb_entity_microdata != blank %}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    {{ breadcrumb_entity_microdata }}
+  }
+</script>
+{% endif %}
+
+{%- if request.page_type == 'index' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Why buy diamond jewelry online at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, you will find the widest range of diamond jewelry online, including diamond rings, bracelets, necklaces, earrings, and pendants. And, in each category of jewelry, you get to choose from numerous designs, ranging from the classics to the trendiest. Also, when you buy diamond jewelry at Jewelili, you are assured of quality, the best pricing, and no hidden charges."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2. What are the benefits of buying diamond jewelry online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Why go from store to store looking for the perfect jewelry item, wasting time, effort, and money when you can find it all under one roof online? Plus, when you shop online, you get the best prices, since online retailers don't have to cover for the overheads like brick-and-mortar stores do. Also, at Jewelili, we ensure that you get even more savings with our regular seasonal discounts, coupon codes, and special offers. So, don't forget to check for the latest offers."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3. How can I place an order on your website?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Buying diamond jewelry online at Jewelili is as simple as 1, 2, 3, 4:
+        1.	Choose a product
+        2.	Add it to the bag
+        3.	Go to cart and proceed to checkout
+        4.	Fill in the delivery details and coupon code (if any) and make the payment
+        
+        Once the payment is processed, you will see a confirmation message on the screen. We will also confirm your order via email."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. How can I confirm that my order has been placed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Once you make the payment, you will immediately be redirected to the order confirmation page. You will also receive an email on the email address you have provided, confirming the order. In case you have any questions, please do not hesitate to get in touch with us."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. Are all your jewelry pieces real and certified?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All the diamond jewelry we offer online consists of gemstones that are certified for authenticity. You can check the specifications of the diamonds, metal, etc., on each product page. We also offer lab-grown diamonds. This is also mentioned in the specifications that are provided for each product."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. Do you have additional offers or discounts for regular buyers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We have offers for first-time buyers using a coupon code FIRST10. However, for regular buyers, we run regular offers and deals, along with a coupon code LOYAL10. So, check out our offers page for great savings on diamond jewelry."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "7. Are the images on the website of real products?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, the images on the website are of the actual jewelry items. Each item is also accompanied by detailed specifications so that you can make an informed decision."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "8. Are these real diamonds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, all the jewelry we offer is made of either natural or lab-grown diamonds. You will find the details of the gemstones used on the product pages so that you have peace of mind when you buy diamond jewelry online."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "9. Is buying diamond Jewelry a good investment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Diamonds are known to be inflation-proof, just like the precious metals used to manufacture jewelry, such as gold and silver. Being the hardest element on Earth, they will last you for generations. Diamond jewelry makes for great family heirlooms."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-engagement-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. How can I check what engagement ring size will suit my fiancée?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can simply check the right size for your fiancée’s finger band by using a piece of thread or a flossing string. Wind the thread or floss around her ring finger and mark the place where the two ends meet. Now stretch out the thread/floss on a ruler that can help you check the length down to millimeters. You could also borrow her existing promise ring or any other ring that she wears to check the size."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2. How much should you spend on an engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In case you don’t have a budget in mind, you can always decide on it once you shortlist a few favorites by going through our collection online. We cover a wide price range, starting as low as $39.99. So, whatever your budget, you will find just the one that perfectly reflects your commitment right here. Our diamond ring and bridal sets are made with certified stones, so you need never worry about the quality, regardless of the price."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3. What type of ring is best suited for an engagement?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We love the traditional diamond ring. But, it all depends on what you and your special one prefer. If you want to stand out from the crowd, check out rings in other precious stones, such as sapphires and emeralds, placed exquisitely with finely cut diamonds."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. When should you give an engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Firstly, buy an engagement ring online only when you believe that both of you are ready to take your relationship to the next level. The next step is to decide when to give her the ring. You could consider a romantic dinner, during a moonlit stroll or maybe by recreating your first date. Remember, this is something that the two of you will cherish for a lifetime. So, make it special."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "5. What is the starting price for diamond rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A diamond ring made of lab-grown diamonds may start as low as $39.99, but the price also depends on various other factors, such as the metal used for the band, the size of the precious gemstone, the brand and the number of stones on the ring."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "6. Is a wedding ring worn on the right or left hand?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Different cultures might have different norms about which hand to wear a wedding ring on. In the American culture, and for Christians across the world, the engagement and wedding rings are worn on the ring finger of the left hand."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "7. Since the engagement ring is worn on a daily basis, what would you advise for cleaning and care of the ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To get the ring to look as good as new for a long time to come, some basic care tips can be followed. Here’s a look:
+        1. Avoid contact with water or sweat as much as possible.
+        2. When removing the ring before bathing or for household chores, ensure that you pull the ring out by the band and not the stone.
+        3. Place tiny dishes around the house, where you can place the ring for safekeeping when you remove it.
+        4. To clean the ring, you can place it in a glass of vodka for an hour and then wipe off the excess liquid gently with a soft, lint-free cloth. Alternatively, place the ring in a bowl of liquid detergent and lukewarm water for 30 minutes and then wipe off gently with a soft, lint-free cloth.
+        5. Don’t place it with other jewelry in a jewelry box, since rubbing against other metals or sharp edges could damage the body.
+        6. Please note that some metals or stones may require special care. Follow the instructions for care given with the ring."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "8. Why should I buy engagement rings online from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We will give you not one but four reasons why Jewelili is the right place for engagement rings for women:
+        1. Every gemstone is authentic and certified.
+        2. You get to explore and discover a wide range of choices.
+        3. There is something for every budget and every taste.
+        4. Assurance of quality is a given."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. How can I find my ring size? How do I choose a diamond ring online, which perfectly fits my finger?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "You can use a measuring tape if lying around at home or using any string or thread available. We recommend that you not use metallic materials since they are harder to bend. Cut the string once you have your finger's circumference covered and measure it on any wooden, metal, or plastic scale. You can measure it in the units provided on your scale and convert it into the required measuring system online."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2. Does the price vary with a difference in ring size? ",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our rings’ prices differ on the precious metal used and the stones encrusted on the ring. The prices do not change with size. However, you will find a wide range of prices to choose from, including discount diamond rings. So, go ahead and check out our catalog."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3. Can I change the ring size if it does not fit me in a few years?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In case the ring becomes too tight or too loose after a few years, you can easily take it to any jeweler, who will be able to adjust the size according to your finger’s circumference."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. Do you provide certification for diamond jewelry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All our gems are authentic and certified to ensure that our customers get exactly what is mentioned in the product specifications."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "5. How much will a diamond ring cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A diamond ring for women at Jewelili starts at just $17. The ring prices vary based on the quality and size of stones used, precious metals, and the brand that has manufactured the item."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "6. Is there any special way to clean diamond rings? ",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, our diamonds do need a little bit of cleaning from time to time. But you can do it easily at home. All you need is a glass of water or a solution of one-part detergent and 4-parts water. Remember that even infinity stones are not invincible, so always handle them with care. Use only a soft, lint-free cloth to wipe the stones."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "7. Why should I buy rings online from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Jewelili gives you the reliability of brands, certification of gemstones used, easy interface for a satisfying shopping experience, and an almost never-ending collection of designs of diamond rings to choose from."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-bracelets' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Does my loved one really need diamond jewelry?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "No, but your loved one and you truly deserve diamond jewelry. Plus, you can never go wrong in gifting someone else or yourself diamonds."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2. Where can I buy diamond bracelets for women?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Right here. Check out our carefully curated yet exhaustive collection of bracelets for women. They come in a wide range in styles, designs, metals, gemstones, and, most importantly, pricing."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3. Are there budget-friendly options in gifting diamond bracelets?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. Our diamond jewelry has been priced very competitively, so there is something for every budget and taste. All you have to do is add filters to your search through our catalog to find just what you are looking for."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. What association do tennis bracelets have with the sport?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A well-known tennis player had stopped a match in 1987, simply because the clasp of her bracelet had accidentally opened and she was unable to find her bracelet. This incident gave name to the specific style of bracelets. These bands come with a clasp for a sophisticated look."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "5. How do I determine my bracelet size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There are bracelet size checker tools available online, or you could do it right at home. Use a very flexible measuring tape to check the part of your forearm's circumference where you usually wear a bracelet. If you don't have a measuring tape available at home, use any ribbon or string and place it around your wrist or arm in the desired area. Mark the circumference and measure that ribbon or string on your toolbox scale to check the inches/cm."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "6. Why shop for diamond bracelets at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Diamond bracelets for women at Jewelili come with the following promises:
+        ●	Authentic and certified diamonds are used.
+        ●	Exhaustive designs, keeping the modern woman in mind.
+        ●	Ease of shopping at our user-friendly online store.
+        ●	Best pricing with quality is guaranteed."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-necklaces' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What is the simplest type of necklace?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "A single-string diamond necklace for women or one with a single gemstone on a metallic pendant is the simplest design that we have."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2. What are the different types of necklaces available on Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our online necklace collection includes baguettes, hearts, dog paws, elephants, flowers, trees, angels, chain necklaces, necklaces with various gemstones, Disney necklaces, cross pendants, family tree diamond necklaces for women, 'LOVE' engraved necklaces, and much more. Check out our extensive range to find something perfect for you or your loved one."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3. How should I store my diamond necklace?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All our necklaces come in a sophisticated and convenient little box that is easy to store. We recommend that you avoid keeping it with other jewelry pieces since brushing against sharp edges or other metals might lead to scratches or ruin the product's shine. Make sure to wrap the necklace in a soft cloth before putting it with other jewelry pieces or store it in the box it came in."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. How much does a diamond necklace cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our range of diamond necklaces for women is very affordable, with the simplest gemstone necklaces starting at just $20. The branded jewelry is priced slightly higher, with prices going up to a few hundred dollars. But whatever your budget may be, we are confident you will find just the perfect necklace right here. We do not compromise on quality while ensuring the most competitive rates."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "5. What is the difference between a diamond necklace and a gemstone necklace?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our diamond necklaces are embedded only with diamonds, while gemstone necklaces have a gemstone surrounded by diamonds. Some of the gemstones we offer are Amethyst, Sapphire, Rubies, and Blue Topaz, among many others."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "6. Why buy diamond necklaces from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We ensure that every stone, including the diamonds, is certified and authentic. Each piece is created with utmost care so that you only choose from the best. Our pricing is reasonable and our packaging is sophisticated, taking care of all your gifting needs. We ensure the latest trends and designs while making it an inclusive place to shop for necklaces online."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-cocktail-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Can you wear a cocktail ring every day?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "Cocktail rings are versatile pieces of jewelry so that you can pair them with various types of attire, including everyday office wear. Just make sure that the ring isn’t too large for a formal setup in the office. So, just like cocktail dresses, you take out the bigger ones with more bling for the night. On the other hand, if you have different rings on your fingers, it may be challenging to wear a cocktail ring daily."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. Can you use a cocktail ring as an engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This is an important question a lot of men and women have asked us. A white gold diamond cocktail ring may perhaps be the solution to this odd confusion. As mentioned earlier, these rings are generally not worn on the ring finger and are too heavy for everyday wear. But if the design is slightly more subtle than the average cocktail ring, it could be easily used as an engagement ring."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. How do I choose the perfect cocktail ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no single design or type of cocktail ring that suits everyone. So, first, consider your wardrobe and what you are likely to wear the ring with. You also have to consider the stone that you want in the center. Our cocktail rings for women are versatile and can be worn for almost any occasion - from a get-together brunch with the girls to accessorizing your evening outfit."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. How do I store my diamond ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every diamond cocktail ring bought at Jewelili comes in an attractive box, which is perfect for storing your ring and helps protect the stones and metal from getting scratches from brushing against other pieces of jewelry. By storing the ring in this box, you can keep it looking as good as new for a long time to come."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "5. What is the price of a cocktail ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer cocktail rings for every type of woman and every type of budget. This is why our collection starts at a mere $7.99. Depending on the stones and the base metal used, the prices will vary. Besides diamonds and crystals, cocktail rings also come with gemstones, such as rubies, emeralds, amethyst, and more."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "6. Why buy diamond jewelry from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, we have carefully curated a vast selection of cocktail rings for women with the promise of authentic and certified stones. We take great pride in offering the trendiest designs, brought to life painstakingly by master craftsmen."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-fashion-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Why are diamond fashion rings a great gifting idea?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "Diamond fashion rings make for an excellent anniversary, birthday, or any event gift. It indicates you are attentive to the recipient’s tastes and dress sense and ready to find the perfect ring to complement their appearance. Also, since we offer these rings at a wide range of prices, you are sure to find something that suits your budget without compromising on quality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. What are fashion rings made of at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Besides the obvious diamonds, we also offer a wide selection of gemstones in our fashion rings, such as emeralds, sapphires, aquamarine, pearls, garnets, and much more. The focal stones or designs are embedded or cast on gold-plated, rose gold, white gold, rhodium, and sterling silver metal bodies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. What is the difference between fashion rings and normal rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fashion rings for women are a sub-style of statement rings, which complement the wearer’s overall look and add to their personal style statement. Standard rings are usually simpler in design and meant for everyday wear than as an accessory to attract attention."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. Which is the best place to buy fashion rings online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Right here at Jewelili. You are already at the best place to buy diamond fashion rings for women online if you are reading this. Our range of designs, pricing, and precious stones is unmatched."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "5. Why should I buy a fashion ring at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, we take great pride in carefully curating amazing jewelry collections, including fashion rings. We ensure that we always have pieces that will suit people from all walks of life, tastes, and preferences. Our diamonds and gemstones are certified for authenticity, so you also have peace of mind while shopping online. Plus, our pricing is the most competitive in the industry."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-promise-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. On which finger do you wear a promise ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A promise ring is ideally worn on the ring finger, which is generally also used for wearing an engagement ring. But, if the individual desires, they can wear it on any finger they like, depending on their comfort."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How much does a promise ring cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Diamond promise rings are a whole lot more affordable than engagement rings and hence start as low as $179.99. There are multiple other styles and designs to choose from, including those with gemstones like garnet, emerald, sapphire, etc."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Can a promise ring be any ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, you can, but the meaning and purpose of the ring change if the ring’s focal point is large or it has too many embellishments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": " 4. What do you say when giving a promise ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You definitely don’t say, “Will you marry me?” But you don’t have to have any particular dialogue in mind when you gift it. It can simply be a casual conversation about the meaning behind gifting it to the other person. Promise rings are similar to friendship bands, except they are rings exchanged between two people who are romantically involved. You could also consider customizing the ring with words that hold special meaning for the two of you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. Why buy a promise ring from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Here are the major reasons why gifting a diamond promise ring from Jewelili is a great idea:
+        •	The carefully curated designs are exquisite and help to establish the meaning behind the gift.
+        •	You can buy diamond promise rings online worry-free because the stones are authentic and certified.
+        •	We offer a wide range of styles, designs, gemstones and metals to choose from.
+        •	All our diamond jewelry comes in tastefully designed boxes, which help store the ring safely when not in use."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'solitaire-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. How much does a solitaire ring cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, diamond solitaire rings start at a little more than $100. You can also take a look at elegant princess cuts or oval-shaped diamond solitaire rings that could cost up to a few hundred dollars. In general, these rings are more expensive because you need a bigger-sized diamond or gemstone to be the focal point. But we always work to ensure the most competitive pricing, without compromising on the quality of the gemstones used."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. What is the difference between a solitaire ring and a diamond ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As the solitaire ring is often a diamond ring but not all diamond rings are solitaire rings. Solitaire rings consist of mainly one gemstone, with the most popular being diamonds. However, when there is more than one diamond on the ring it cannot be called a solitaire ring."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. How to store diamond solitaire rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When you buy solitaire rings online at Jewelili, you receive the ring in an elegant box, which is great for storing the jewelry item as well. It ensures that the ring does not rub against any hard surfaces or sharp edges, keeping the ring looking as good as new for years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. Why is a solitaire ring so expensive as compared to other diamond rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A solitaire ring consists of one large high karat diamond. The price of the ring rises with the number of karats and clarity of the singular diamond. Other diamond rings may have multiple small diamonds, which makes them more affordable."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. What is the best place to buy solitaire rings in the USA?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In the USA, Jewelili is one of the most trusted names for buying diamond jewelry online. This is because we only offer authentic, certified gemstones and the highest-quality metals, such as white, yellow and rose gold, sterling silver and more. You can also take a look at our collection of diamond engagement rings if you want more options."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-earrings-drops-and-danglers' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Which types of earrings are more popular these days, drop or dangler earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We think that both have their fair share of the limelight. This is because each is worn for different types of occasions. Both also have great potential to take your style a notch higher. One thing is certain. While clothing trends might change as frequently as the seasons, the jewelry designs we offer are not just trendy but timeless."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How do we clean drop and dangler earrings at home?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There are multiple ways of cleaning diamond drop and dangler earrings. You could leave the earrings for an hour in a bowl of vodka or for half an hour in soap water. After this, rinse thoroughly and gently wipe them dry with a soft cloth. The metals are rust-proof, so the liquids will not harm your earrings. But, water may cause oxidation and darkening of the metals, so we recommend cleaning the earrings in liquids as little as possible. Store them safely in the lovely little jewelry box we send them in and you can keep them looking as good as new for the longest time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Why are drop earrings called drop earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Drop earrings tend to drop just below the earlobe. They are generally in the shape of a little drop of gemstone from a stud earring."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. Are diamond dangler earrings available in different colors?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, check out our collection of diamond dangler earrings in white, yellow, and rose gold or sterling silver. Choose from a variety of gemstones that complement the diamonds and add a splash of color."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-fashion-earrings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What are fashion earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are earrings that are trendy, rather than being classic fine jewelry items. You can choose from the most subtle designs to really bold ones that attract attention. Your choice of fashion earrings will determine the type of occasion you can wear them for. For instance, stud earrings could be great for daily wear, while long danglers might be more suited for an evening event. When you buy earrings, keep the outfits that you might wear them with in mind."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How much do diamond fashion earrings cost at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our extensive range of diamond fashion earrings starts at less than $50. The prices are based on the size and cut of the gemstones and the type and weight of precious metal used. You can check all the specifications of each item to make an informed choice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. What are the most popular fashion earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The most popular ones change with the times, although some designs are timeless, such as diamond stud earrings. At Jewelili, you will always find earrings that are most on-trend."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. How to store fashion earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We provide a pouch or a box with the earrings, which can help you store your earrings safely. It is best to ensure that you do not keep it with other diamond jewelry since the pieces could rub against each other and lead to scratches and scuff marks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. Why buy diamond fashion earrings at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Here are the main reasons why you should buy diamond fashion earrings from our extensive collection:
+        •	Wide variety of choices of earrings
+        •	Easy searching with the use of filters
+        •	Reliable sourcing of materials and certified for purity
+        •	Transparency regarding every product specification
+        •	Collections are based on the latest trends and fashion
+        •	Most competitive rates, without compromising on quality"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. How to clean these earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can always keep the earrings dipped in vodka for an hour or soapy water in a bowl for half an hour to clean the diamond but rinse off well and dry with a soft cloth, preferably one without lint. We recommend that you do not clean them too often and store them separately, rather than with other jewelry pieces."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'jewelili-gemstones-earrings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Can you wear gemstone earrings every day?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. There is a wide variety of styles that can be worn as daily wear, even to work. You can choose from stud or drop earrings or even small hoops. These look professional and are small and subtle enough for workwear. There also are larger danglers, hoops, and other styles that can be worn for special occasions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. What is the cost of gemstone earrings at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our range of gemstone earrings starts at just $7.99, making them very affordable. The price varies with the size of the gemstones and the metal used. You can also pair these gemstone earrings with necklaces to form a set."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. How much do I have to pay extra for shipping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all orders when you buy jewelry online at Jewelili. There are no hidden or additional charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. How to take care of my gemstone earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is best to store gemstone earrings in a dry place. You can use the pouch or box they are delivered in for storage. This way, they won’t rub against other jewelry and get scratches. You can use a soft dry cloth for cleaning, whenever required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. What if I want to return the product?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We do have a 30-day return policy, which means that you can return the product within 30 days of purchase if you are dissatisfied with the product."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'jewelili-gemstones-bracelets' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. How do I choose a perfect gemstone bracelet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you are choosing a gemstone bracelet for yourself, we recommend that you match it with the look you have in mind or your preferences for daily wear. If you are choosing one for gifting, consider bracelets made of the recipient’s birthstone or their favorite color."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. Can you wear a gemstone bracelet every day?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Depending on the design of the gemstone bracelet and your preferences, you could wear one every day. For instance, bolo bracelets with subtle symbols etched in gemstones or the simple three-stone design are inconspicuous enough for workwear. If the designs are a little larger or have larger gemstones, you could consider wearing the bracelet for special occasions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. What are the types of gemstones available when you buy gemstone bracelets online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, you will find almost every type of gemstone bracelet for women. We offer multiple designs in gemstones such as Amethyst, Blue Topaz, Diamond, Emerald, Opal, and Sapphire, among others. We also have a wide range of multi-colored bracelets."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What do I have to pay extra for shipping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all orders when you buy diamond jewelry online at Jewelili. There are no additional or hidden charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. What is the cost of gemstone bracelets at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most of our gemstone bracelets for women are extremely affordable. Our range starts at just $23.99. The prices vary based on multiple factors, like the metal body, gemstones used, design, and brand."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'three-stone-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What is the meaning of a 3 stone ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As mentioned earlier, they can mean two different interpretations. One interpretation is a symbol of the past, present, and future, which is very relevant for a couple celebrating an anniversary. The second interpretation is of friendship, love, and fidelity, which again holds special meaning for couples, regardless of whether it is an engagement ring or an anniversary gift."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. What is a 3 stone diamond ring called?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "These rings are also known as Trinity or Trio rings, due to the unique three stone design."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. What does 3 stone weight mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It means the weight of the main 3 stones that form the ring. The weight is measured in carats and the larger the stones, the higher the mass and weight."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What are the metals used for three-stone diamond rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As mentioned earlier, there are 4 major types of precious metal alloys used for these rings:
+        1.	Yellow gold
+        2.	Sterling silver
+        3.	Rose gold
+        4.	White Gold"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. How to store my three stone anniversary or engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "These rings are usually hard and can take daily wear. However, if you want to store them, keeping them with other jewelry might lead to scratches and dents. It is best to keep it in the box that we provide. The boxes are tastefully designed to compliment all kinds of jewelry cases."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. How much would a 3 stone anniversary ring cost me?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer these rings in a wide range of prices. For anniversary gifting, you can find rings priced as low as $11.99 at Jewelili. The range starts from under $50 and can go up to $800. However, we ensure that whatever price range you are comfortable with, you get the best value for money."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-cross-pendants' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What are cross pendants?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cross pendants are designed based on the Christian faith. Keeping the most significant symbol of one’s faith close to heart in the form of a pendant can be very soothing for many people. The cross is the main structure of the design of these pendants. Please note that they are not an alternative for rosaries."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How should I store my diamond cross pendant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Just like your other diamond jewelry, you can store it in your jewelry case or vanity. We package our jewelry items in high-quality pouches and boxes that can also be used to store the piece. This way they do not rub against other pieces of jewelry, which could lead to scratches or abrasions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. What is the latest cross pendant trend?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fashion trends are always changing. At Jewelili, we constantly update our collection to bring you the latest and trendiest designs in the market. At the same time, some designs are timeless classics. This way, at Jewelili, whichever cross diamond pendant you buy, rest assured that the design is on-trend or an everlasting style."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What is the cost of buying a cross diamond pendant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our cross pendants are extremely affordable and start at just $20. You can also check for discounts and special offers on our pendants."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. Do I have to pay extra for shipping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, all orders are shipped free of any additional shipping charges. So, go ahead and order diamond jewelry online, without any fear of hidden costs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. What if I want to return the diamond cross pendant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No problem. With our easy return policy, you can return the item within 30 days of purchase and receive a complete refund."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "7. How do we know that the diamonds in the cross pendants are sourced responsibly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We are very careful in choosing our diamond suppliers. We ensure that they comply with the Kimberley Process to ensure that the diamonds are conflict-free."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-bolo-bracelets' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Are bolo bracelets popular?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When you buy bolo bracelets online at our store, you can be sure to find only the most popular and trendiest designs. We constantly update our collections to ensure that you get the latest as well as the most timeless designs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How do you wear a bolo bracelet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can loosen the two ends of the bracelet with the help of the attached clasp or tighten it, based on your comfort and the size of your wrist."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Where I can buy bolo bracelets?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You will find among the widest selections of bolo bracelets online right here at Jewelili. When you buy bolo bracelets from us, you know that you will get exactly what you see online."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. How to store my bolo diamond bracelet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, we package our products in style, in a tastefully designed pouch and box. They are perfect for storage as well and will prevent the bracelet from rubbing against other pieces of jewelry."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. How much do bolo bracelets cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our diamond bolo bracelets start as low as $20 so that you can enjoy wearing or gifting these exquisite pieces of jewelry without burning a hole in your pocket. The prices differ based on the gemstones and precious metals used."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. Do I have to pay extra for the delivery charges when I buy a bolo bracelet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all our bolo bracelets and other diamond jewelry. All the prices shown on our website are inclusive of taxes and other charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "7. Why buy diamond bolo bracelets at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When you buy diamond bolo bracelets at Jewelili, you can be sure that:
+        1.	All the gemstones are sourced responsibly, through conflict-free means.
+        2.	The most stringent guideline and quality checks are followed.
+        3.	You get an easy 30-day return policy.
+        4.	You will be able to browse through our site seamlessly via our product filters.
+        5.	You will find the most competitive rates, without compromising on quality."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'solitaire-pendants' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What does solitaire pendant mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A solitaire pendant is basically a pendant with a single gemstone pronged or placed in a round throng, based on the cut of the diamond or gemstone."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How much does a solitaire pendant cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, solitaire pendants start as low as $15.99. The price can rise based on the gemstone, the cut of the gemstone, the metal used, etc. Don’t forget to check for discounts and special offers for even better pricing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Why is a solitaire pendant more expensive than other diamond pendants?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our solitaire pendants are not expensive at all but they do tend to cost more than the other types of diamond pendants because they have a larger diamond at the centerpiece. The larger the size of the gemstone, the higher the price is likely to be."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What is the best way to store diamond solitaire pendants?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We deliver all our diamond jewelry in convenient boxes or pouches that are perfect for storage as well as gifting."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. What are the delivery charges for diamond jewelry at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all orders of diamond jewelry online. There are no extra or hidden charges at Jewelili."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. What if I don’t like the diamond solitaire pendant and want to return it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No problem. With our easy return policy, you can simply return the item within 30 days of purchase and receive a full refund."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-anniversary-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What kind of ring should one gift for an anniversary?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Since anniversary rings are gifted to celebrate relationship milestones, they can come in designs similar to wedding bands and engagement rings. However, they can be of any design that catches your eye, from the Trinity ring to floral patterns with a central gemstone, surrounded by smaller diamonds. You can also choose solitaire diamond anniversary rings to commemorate the occasion."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How do I store anniversary rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Generally, these rings are very hardy but if stored with other jewelry, they are often subject to abrasions and scratches, which can rob the ring of its luster. Therefore, it is recommended to store the ring in the jewelry box that it comes packaged in. Jewelili offers very convenient packaging to serve this purpose and it is also tasteful enough for your vanity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. How much should you spend on an anniversary ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Anniversary rings are more about celebrating a milestone and do not need to cost as much as engagement rings or wedding bands. You can start looking for something in the very affordable range. It could be something as low as a $50 diamond ring at Jewelili, without compromising on the quality of the product."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What are the most popular styles of anniversary rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Anniversary rings don’t really follow any fashion trends. It all depends on what you think she would love. However, in recent times, the 3 stone anniversary rings and baguette rings have been popular choices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. What finger is an anniversary ring worn on?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It can be worn on the same hand and finger as the wedding ring. But if you feel that it overpowers the wedding band, you can wear it on your right hand. Also, since anniversary rings are milestone rings, they do not need to be worn all the time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. Where can I get the most popular style of anniversary ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Right here at Jewelili. We take great care in selecting every piece of jewelry we offer so that there is something for every taste and budget. We constantly update our online collections to include the latest trends and most popular styles of anniversary rings. Do check out our selection of other diamond jewelry as well."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "7. What is the difference between a wedding ring and an anniversary ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Wedding rings are more minimalistic and can be simply a row of diamonds and gemstones or a plain gold band. Wedding anniversary rings, on the other hand, can be larger, with intricate designs and any color of gemstone, including diamonds."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "8. What are the metals used for anniversary diamond rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most commonly, 4 choices of precious metal alloys are used for diamond anniversary rings:
+        1.	Yellow gold: Purest alloy of gold available.
+        2.	Sterling silver: Purest and very durable silver alloy
+        3.	Rose gold: Copper and gold alloy with a pinkish tinge
+        4.	White gold: Silver and gold alloy that is white in color"
+      }
+    }
+    ]
+  }
+</script>
+{%-  elsif collection.handle == 'jewelili-gemstones-rings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Can you wear gemstone rings every day?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We encourage our customers to do as they please. Some people might be happy to wear them on a daily basis, while others might find them more suitable with evening wear or for special occasions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How do I choose a perfect gemstone ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you are choosing a gemstone ring for yourself, choose something that perfectly reflects your personality or personal style. For instance, if you love nature, check out rings inspired by natural elements. On the other hand, if you want to contrast it with a specific outfit, check out the colors that would work best with the outfit you have in mind."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Do I have to pay anything extra for shipping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all orders of jewelry online at Jewelili."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What is the cost of a gemstone ring at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most of our gemstone rings for women are extremely affordable. Our range starts from less than $20 so that you don’t have to restrict your shopping to just one ring."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-family-necklaces' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What is a family necklace?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is a necklace designed to depict a family unit and can be gifted to anyone who values their family. There are different designs showcasing different types of family units so that you can choose the one that perfectly represents the family of the wearer. These necklaces are symbols of the individual's love for their family."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. Can you wear a family tree necklace every day?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, these necklaces are delicately designed to be subtle enough for everyday wear, while the sterling silver body is strong enough to withstand regular wear."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Do I have to pay for shipping when I buy jewelry online from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all our products, regardless of price. When you shop at Jewelili, you have peace of mind that there are no hidden or extra charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What if I don’t like the design after I buy a family necklace online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No problem. We have an easy 30-day return policy. So, if you are dissatisfied with your purchase, you can easily return the item within 30 days of purchase and receive a full refund."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. How do I store the diamond family necklace?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can store family tree necklaces in the box that we deliver them in. These high-quality boxes are perfect for keeping the necklace safe and prevent it from rubbing against other pieces of jewelry, which could scratch its surface."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6. What is the cost of these family tree necklaces online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Gemstone or diamond family necklaces online at our store start as low as $27.99. The price is based on the design, the metal used, the weight of the gemstones used, etc."
+      }
+    }
+    ]
+  } 
+</script>
+{%- elsif collection.handle == 'jewelili-gemstones-necklaces' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What are the types of gemstones available when buying gemstone necklaces online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer gemstone necklaces for women designed in a multitude of gemstones, including Amethyst, Aquamarine, Blue Topaz, Citrine, Diamond, Emerald, Jade, Morganite, Onyx, Opal, Pearl, Peridot, Rose De France, Ruby, Sapphire, and Topaz. Don’t forget to check further details about the gemstones in the specifications of the product for clarity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. Can you wear a gemstone necklace every day?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We encourage our customers to do as they please, but considering that gemstone necklaces are slightly on the heavier side and generally bought to match a particular look, they might be more suitable for special occasions or with formal wear. For everyday wear, check out our diamond and gemstone pendants."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Do I have to pay anything extra for shipping?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all orders of jewelry online at Jewelili. There are no extra or hidden charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What is the cost of gemstone necklaces at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most of our gemstone necklaces for women are extremely affordable. Our range starts at less than $19.99, so you don’t have to restrict your shopping to just one of these necklaces."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-hearts-pendants' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What is a heart pendant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is a pendant designed in the shape of a heart. Please note that none of these heart shapes are anatomically correct and are not intended to be, by any means."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. Can you wear a heart pendant every day?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, you can wear diamond heart pendants every single day of your life. Why just wear your heart on your sleeve, when you can wear it around your neck too?"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. How do I choose a perfect heart pendant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use our filters for pricing, gemstones, metals, and more to effortlessly browse through our collection of gemstone and diamond heart pendants. You are sure to find one that catches your eye or feels just right."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. How much does a heart pendant cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Diamond heart pendants at Jewelili start as low as $19.99 but may go up to over $300, based on multiple factors, including the make, design, metal, gemstone, and a few other elements. Check out the specifications of the products for further clarity."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-fashion-bracelets' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. How to store my fashion diamond bracelet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, we package our products in style, in a pouch, and or a tastefully designed  box. They are perfect for storage and will help you keep the product as good as new for years to come."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. How much do fashion bracelets cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our diamond fashion bracelets start as low as $40. The prices differ, based on a variety of factors, such as sourcing of gemstones, their weight, metal, brand, and designs, etc."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Do I have to pay extra for the delivery charges when I buy a fashion bracelet?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer free shipping on all our fashion bracelets and other diamond jewelry and all the prices shown for each product are inclusive of taxes and other charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. Do you have any return policy for your diamond jewelry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we have a 30-day return policy, which means you can return the product within 30 days of purchase and get a full refund."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-bangle-bracelets' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. What are the prices of diamond bangles?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Jewelili, diamond bangles start at $427. The prices vary according to the metal and diamonds or gemstones used. We constantly add to our collection, so keep an eye on the newest additions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. What if I don’t like the product?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We guarantee satisfaction with each product that we offer. However, if you are dissatisfied, we also have a 30-day return policy, which means you can return the product within 30 days of purchase and get a full refund."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. Are there any additional delivery charges?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All orders come with free shipping, so you don’t have to worry about any other additional charges."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. How to store diamond bangle and bracelets?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We deliver the jewelry items in a high-quality pouch or box, which can help you store your bangles with ease. However, please ensure that you do not keep it with other diamond jewelry, since this could cause abrasions and scratches on the diamonds and metal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. How to clean diamond bangles?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can always clean diamond bangles by soaking them in vodka for an hour or soapy water for half an hour. After this, rinse with water and dry with a soft cloth, preferably ones used for cleaning spectacle lens. We recommend that you do not clean them too often and store them carefully when not in use."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-hoop-earrings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. Which is the latest hoop earrings trend?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Earrings trends change very frequently but diamond hoop earrings are an everlasting style. A single row of diamonds set on the hoop is a classic and elegant design that never goes out of fashion."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "2. Where I can buy hoop earrings online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You are already at the right place for gemstone and diamond hoop earrings for women. At Jewelili, we take great care to bring you the latest designs in hoop earrings, while ensuring the most competitive prices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "3. How much do hoop earrings at Jewelili cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our hoop earrings start at a very affordable price of just $19.99. The price varies based on the gemstone and metal used and their weight. However, when you buy diamond jewelry online at Jewelili, you can be sure of getting the best price without any compromise on quality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "4. What are the types of hoop earrings designs available at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer a vast range of hoop earring designs, which include: 
+        1.	Regular round diamond hoops
+        2.	Gold-plated earrings
+        3.	J-hoop earrings
+        4.	Cross-over hoops
+        5.	Inside-out hoops
+        6.	Circle-hinged earrings
+        7.	Sapphire hoop earrings
+        8.	And much more."
+      }
+    }
+    ]
+  }
+</script>
+{%- elsif collection.handle == 'diamond-studs-earrings' -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1. How do I clean my diamond stud earrings?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "You can dip the diamond stud earrings in a bowl of vodka and let them rest for an hour. Alternately, immerse them in a bowl of soap water (not detergent) for half an hour. Make sure that you rinse the earrings with clean water after this and gently wipe dry with a soft cloth."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2. What is the advantage of stud earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are light on the ears, can be worn almost everywhere, and are very affordable at Jewelili. They also make for great gifts, since they come in classic designs."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3. If I have sensitive skin which metal should I choose for diamond stud earrings for women?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both gold and sterling silver are hypoallergenic and therefore suitable for sensitive skin. Sterling silver is recommended for those with super sensitive skin."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4. What is the difference between hoop earrings and diamond stud earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Stud earrings come with a pin that is inserted in the hole in the earlobe. The earring is small and does not hang below the earlobes. Hoops, on the other hand, can have pins but are in the shape of a circle that hangs below the earlobes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5. How much would stud earrings cost me at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We bring you the highest quality stud earrings for women at the most competitive prices, starting as low as $23.99. The prices are based on multiple factors, such as design, weight of the gemstone, the metal used, and brand."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'jewelili-diamonds-bracelets' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1.	What are the prices of Jewelili diamond bracelets?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "Our bracelets start as low as $15.99 and can go up to $2,000. You can use the filters to choose the pricing range most suitable for your needs."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2.	What if I don’t like the product?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We guarantee satisfaction with every product on our website. But we also offer an easy 30-day return policy, which means that you can return the item within 30 days of the date of purchase for a full refund."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3.	Are there any additional delivery charges?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, we offer free shipping with every order, regardless of the price of the item. There are no additional or hidden charges at Jewelili."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4.	How to store diamond bracelets for women?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We deliver all our jewelry in high quality and elegant pouches or boxes, which are great for storage, since they prevent the item from rubbing against other jewelry pieces and getting scratches and abrasions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5.	How to clean Jewelili Diamond Bracelets?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An easy way to clean Jewelili diamond bracelets is to dip the piece in vodka for an hour or soapy water in a bowl for half an hour. Rinse well with water and dry with a soft, lint-free cloth, similar to that used for cleaning your spectacles. We recommend that you do not clean it too often and store it carefully when not in use. Better still, take it to a retailer near you or write to us. We’ll polish the bracelet to upgrade the look to as good as new."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'jewelili-diamonds-necklaces' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "1.	What is the simplest type of diamond necklace online?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "A simple diamond necklace for women with a single gemstone on a metallic pendant is the simplest design that we have, better known as the solitaire diamond necklace."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "2.	What are the different types of necklaces available on Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our online necklace collection includes hearts, dog paws, elephants, flowers, trees, angels, and more. You can also choose from various gemstones or words like “LOVE” or “MOM” engraved on them and much more."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "3.	How should I store my diamond necklace?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All our necklaces come in high-quality and convenient little boxes for easy storage. We recommend that you avoid storing it with other jewelry pieces since this will help you avoid scratches and retain the piece’s shine for a long time."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "4.	How much does a diamond necklace cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our range of diamond necklaces for women is very affordable, with the simplest diamond pendants starting at just $20. Unfortunately, the branded jewelry tends to be priced higher. On the other hand, if you choose lab-grown diamonds over naturally mined ones, you can get your hands on some excellent pieces at great prices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "5.	What is the difference between diamond necklaces and gemstone necklaces?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our diamond necklaces are embedded only with diamonds, while the gemstone necklaces have a gemstone surrounded by diamonds in the design. Some of the gemstones in our designs include Amethyst, Sapphire, Rubies, and Blue Topaz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "6.	Why buy diamond necklaces from Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We ensure that the gemstones, including diamonds, are all certified for authenticity. At the same time, each piece of jewelry is carefully designed and created to bring you the most comprehensive range of choices. We also offer the most competitive pricing, along with regular discounts, for better savings. In addition, we ensure the latest in trends and designs for all Jewelili diamond necklaces online."
+      }
+    }
+    ]
+  }
+</script>
+{% endif %}

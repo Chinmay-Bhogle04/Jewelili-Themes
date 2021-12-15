@@ -1,0 +1,214 @@
+{% assign collection = collections[section.settings.bestdeal_collection] %}
+<div class="grid grid--uniform best__deal-top">
+  {% unless section.settings.bestdeal_collection == blank %}
+      {% for product in collection.products %}
+        {% if forloop.first %}
+          <div class="grid__item small--one-half medium-up--one-fifth medium-up--push-one-fifth text-center">
+            {% include 'product-card-grid-alt', product: product, max_height: 200 %}
+          </div>
+        {% endif %}
+      {% endfor %}
+  {% endunless %}
+  <div class="grid__item small--one-half medium-up--three-fifths medium-up--push-one-fifth deal-info">
+    <div class="title-bar">
+      {% unless section.settings.title == blank %}
+        <h2 class="h2">{{ section.settings.title }}</h2>
+      {% endunless %}
+    </div>
+    {% unless section.settings.subtitle == blank %}
+      {{ section.settings.subtitle }}
+    {% endunless %}
+    
+    <div class="tab_content-test">
+      <h3>Description</h3>
+      {{ section.settings.productDescription }}
+    </div>
+  </div>
+</div>
+<div class="grid grid--uniform best__deal-mid">
+  <div class="grid__item small--one medium-up--three-fifths medium-up--push-one-fifth" style="padding-left: 0;">
+    {% unless section.settings.bestdeal_collection == blank %}
+      {% for product in collection.products %}
+        {% if forloop.index > 1 %}
+          {% unless forloop.last %}
+            <div class="grid__item small--one-half medium-up--one-third text-center">
+              {% include 'product-card-grid-alt', product: product, max_height: 200 %}
+            </div>
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+    {% endunless %}
+  </div>
+</div>
+<div class="grid grid--uniform best__deal-bottom">
+  <div class="grid__item small--one-half medium-up--two-fifths medium-up--push-one-fifth newsletter-box">
+    <div class="newsletter-container">
+      <div class="newsletter-title">
+        {% unless section.settings.newsletter_title == blank %}
+          <h3 class="h3">{{ section.settings.newsletter_title }}</h2>
+        {% endunless %}
+      </div>
+      <div class="newsletter-body">
+        {% unless section.settings.newsletter_image == nil %}
+          <img src="{{ section.settings.newsletter_image | img_url: '220x' }}" />
+        {% endunless %}
+      </div>
+      <div class="newsletter-form">
+        {% unless section.settings.newsletter_subtitle == blank %}
+          <h4 class="h4">{{ section.settings.newsletter_subtitle }}</h4>
+        {% endunless %}
+        {%- assign formId = 'ContactFooter' -%}
+        {% form 'customer', id: formId, novalidate: 'novalidate' %}
+        {%- if form.posted_successfully? -%}
+        <p class="form-message form-message--success" tabindex="-1" data-form-status>
+          {{ 'general.newsletter_form.confirmation' | t }}
+        </p>
+        {%- endif -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <div class="input-group {% if form.errors %} input-group--error{% endif %}">
+          <input type="email"
+                 name="contact[email]"
+                 id="{{ formId }}-email"
+                 class="input-group__field newsletter__input{% if form.errors %} input--error{% endif %}"
+                 value="{{ form.email }}"
+                 placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                 aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                 aria-required="true"
+                 required
+                 autocorrect="off"
+                 autocapitalize="off"
+                 {% if form.errors %}
+                 aria-invalid="true"
+                 aria-describedby="{{ formId }}-email-error"
+                 data-form-status
+                 {% endif %}>
+          <span class="input-group__btn">
+            <button type="submit" class="btn newsletter__submit" name="commit" >
+              <span class="newsletter__submit-text--large">{{ 'general.newsletter_form.submit' | t }}</span>
+            </button>
+          </span>
+        </div>
+        {% if form.errors contains 'email' %}
+        <span id="{{ formId }}-email-error" class="input-error-message">
+          <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+          {% include 'icon-error' %}
+          <span class="site-footer__newsletter-error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
+        </span>
+        {% endif %}
+        {% endform %}
+      </div>
+    </div>
+  </div>
+  {% unless section.settings.bestdeal_collection == blank %}
+    {% for product in collection.products %}
+      {% if forloop.last %}
+        <div class="grid__item small--one-half medium-up--one-fifth medium-up--push-one-fifth text-center">
+          {% include 'product-card-grid-alt', product: product, max_height: 200 %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endunless %}
+</div>
+<div class="grid grid--uniform best__deal-footer">
+  <div class="grid__item medium-up--four-fifths">
+    <div class="grid__item small--one-half medium-up--one-quarter small--push-one-half medium-up--push-three-quarters shop-all-link">
+      {% unless section.settings.button_label == blank %}
+      <a {% if section.settings.button_url != blank %}href="{{ section.settings.button_url }}"{% endif %}>
+      	{{ section.settings.button_label }}
+        {% include 'icon-circle-arrow' %}
+      </a>
+      {% endunless %}
+    </div>
+  </div>
+</div>
+
+<style>
+  {% unless section.settings.vertical_title == blank %}
+  .jewelili-best-deals .best__deal-top .grid__item:first-of-type .product-card:after,
+  .jewelili-best-deals .best__deal-bottom .product-card:after {
+    content: "{{ section.settings.vertical_title }}";
+  }
+  {% endunless %}
+</style>
+
+{% schema %}
+  {
+    "name": "Best Deal Section",
+	"class": "index-section jewelili-best-deals",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Title"
+      },
+	  {
+        "type": "text",
+        "id": "vertical_title",
+        "label": "Vertical Title",
+        "default": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "subtitle",
+        "label": "Subtitle"
+      },
+	  {
+        "type": "textarea",
+        "id": "productDescription",
+        "label": "Product description"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button Label",
+        "default": "Shop All"
+      },
+      {
+        "type": "url",
+        "id": "button_url",
+        "label": "Button URL"
+      },
+      {
+        "type": "header",
+        "content": "Newsletter Content"
+      },
+	  {
+        "type": "text",
+        "id": "newsletter_title",
+        "label": "Title",
+        "default": "Title"
+      },
+      {
+        "type": "image_picker",
+        "id": "newsletter_image",
+        "label": "Image",
+        "info": "Recommended size 220x215"
+      },
+	  {
+        "type": "text",
+        "id": "newsletter_subtitle",
+        "label": "Subtitle",
+        "default": "Subtitle"
+      },
+	  {
+        "type": "collection",
+        "id": "bestdeal_collection",
+        "label": "Select Collection",
+		"info": "Choose a collection to show its top 8 products automatically!"
+	  }
+	],
+    "presets": [
+      {
+        "name": "Best Deal Section",
+        "category": "Advanced layout"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

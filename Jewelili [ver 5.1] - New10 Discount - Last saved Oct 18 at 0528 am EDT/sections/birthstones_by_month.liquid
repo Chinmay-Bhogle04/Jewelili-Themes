@@ -1,0 +1,95 @@
+<section data-section-id="{{ section.id }}" >
+  <div class="page-width gemstone-grid-section">
+    <header class="header-title-wrapper">
+      {% if section.settings.heading != blank %}
+      <h3 class="header--sub-heading">{{ section.settings.heading }}</h3>
+      {% endif %}
+      {%  if section.settings.sub_heading != blank %}
+      <h1 class="header--main-heading">{{ section.settings.sub_heading }}</h1>
+      {% endif %}
+    </header>
+    <div class="stones-grid grid">
+      {% for block in section.blocks %}
+      <div class="grid__item grid--uniform medium-up--one-sixth small--one-half">
+        {%- assign current_month = "now" | date: "%B" -%}
+        <div class="stone-item text-center{% if current_month == block.settings.month %} current-month{% endif %}">
+          <a {% if block.settings.gemstone-link != blank %}href="{{ block.settings.gemstone-link }}"{% endif %}>
+            {% unless block.settings.gemstone_img == nil %}
+            {%- assign img_url = block.settings.gemstone_img | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <div class="gemstone">
+              {% capture img_id %}gemstoneColumnImage-{{ block.id }}{% endcapture %}
+              {%- assign max_height = 194 -%}
+              {% include 'image-style', image: block.settings.gemstone_img, height: max_height, wrapper_id: wrapper_id, img_id: img_id %}
+              <div style="padding-top:{{ 1 | divided_by: block.settings.gemstone_img.aspect_ratio | times: 100}}%;">
+                <img id="{{ img_id }}" class="custom__image lazyload"
+                     data-src="{{ img_url }}"
+                     data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                     data-aspectratio="{{ block.settings.gemstone_img.aspect_ratio }}"
+                     data-sizes="auto"
+                     alt="{{ block.settings.gemstone_name | escape }}">
+              </div>
+            </div>
+            {% endunless %}
+            {% if block.settings.month != blank %}
+            <h5>{{ block.settings.month }}</h5>
+            {% endif %}
+            {% if block.settings.gemstone_name != blank %}
+            <p>{{ block.settings.gemstone_name }}</p>
+            {% endif %}
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+"name": "Gemstone Grid",
+"class": "index-section",
+"max_blocks": 12,
+"settings": [
+{
+"type": "text",
+"id": "heading",
+"label": "Heading",
+"default": "For your loved ones"
+},
+{
+"type": "text",
+"id": "sub_heading",
+"label": "Paragraph",
+"default": "Shop Birthstones by month"
+}
+],
+"blocks": [
+{
+"type": "Gemstone-content",
+"name": "Gemstone Content",
+"settings": [
+{
+"type": "image_picker",
+"id": "gemstone_img",
+"label": "Gemstone"
+},
+{
+"type": "text",
+"id": "month",
+"label": "Birth Month"
+},
+{
+"type": "text",
+"id": "gemstone_name",
+"label": "Gemstone Name"
+},
+{
+"type": "url",
+"id": "gemstone-link",
+"label": "Gemstone Link"
+}
+]
+}    
+]
+}
+{% endschema %}

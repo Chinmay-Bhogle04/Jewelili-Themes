@@ -1,0 +1,548 @@
+{% assign pagination_type = section.settings.pagination_type %}
+{% assign no_products_image = section.settings.no_products_image %}
+{% assign empty_collection_text = section.settings.empty_collection_text %}
+{% assign show_collection_title = section.settings.show_collection_title %}
+{% assign enable_collection_sorting = section.settings.enable_collection_sorting %}
+{% assign show_collection_breadcrumb = section.settings.show_collection_breadcrumb %}
+{% assign show_collection_description = section.settings.show_collection_description %}
+
+{% assign show_pagination = false %}
+{% if pagination_type != 'infinite_scroll' %}
+  {% assign show_pagination = true %}
+{% endif %}
+
+<section data-section-id="{{ section.id }}" data-section-type="mm-collection-template" class="mm-collection">
+  
+  {% if show_collection_title %}
+  <div class="container">
+    <div class="row mm-collection-title">
+	  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2>{{ collection.title }}</h2>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if show_collection_breadcrumb %}
+  <div class="row mm-collection-breadcrumb">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <nav class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+        <a href="/" title="Home">Home</a>  
+        {% if template contains 'collection' and collection.handle %}
+        <span aria-hidden="true"></span>
+        {% if current_tags %}
+        {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+        {{ collection.title | link_to: url }}
+        <span aria-hidden="true"></span>
+        <span>{{ current_tags | join: " + " }}</span>
+        {% else %}
+        <span>{{ collection.title }}</span>
+        {% endif %}
+        {% endif %}
+      </nav>
+    </div>
+  </div>
+  {% endif %}
+  
+  <div class="mm-collection-banner">
+    <div class="image-container">
+      {% if collection.metafields.global.collection_banner != blank %}
+      <img src="{{ collection.metafields.global.collection_banner }}" alt="{{ collection.title }}" class="small--hide">
+      <img src="{{ collection.metafields.global.collection_mobile_banner }}" alt="{{ collection.title }}" class="medium-up--hide">
+      {% else %}
+      {% if collection.handle == 'swarovski' or collection.handle == 'enchanted-disney-fine-jewelry' or collection.handle == 'made-for-you' %}
+      <img src="{{ collection.image | img_url:"master" }}" alt="{{ collection.title }}" class="sss">
+      {% else %}
+      <img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/collections/CategoryBanner_d990302e-dc87-4a52-bc1f-63139fea734d.jpg?v=1605074165" alt="{{ collection.title }}" class="small--hide">
+      {% if collection.handle == 'all-discounts' %}
+      <img src="//cdn.shopify.com/s/files/1/0252/9620/7926/files/mobile-banner-test.png?v=1606030489" alt="{{ collection.title }}" class="medium-up--hide">
+      {% else %}
+      <img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/all_jewelry_mob_v_wt.png?v=1605094905" alt="{{ collection.title }}" class="medium-up--hide">
+      {% endif %}
+      <div class="mm-collection-title {% if collection.handle == 'all-discounts' %}hide{% endif %}">
+        <h2>{{ collection.title }}</h2>
+      </div>
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+  <style>
+    .mm-collection-banner {
+      background-image: url("{{ collection.metafields.img.collection_desktop_banner }}");
+      background-position: right top;
+      background-color: #e7def2;
+      background-size: cover;
+    }
+    @media (max-width: 768px) {
+      .mm-collection-banner {
+    	background-image: url("{{ collection.metafields.img.collection_mobile_banner }}");
+        background-position: center center;
+        background-size: cover;
+      }
+    }
+  </style>
+  
+  <div class="container">
+    <div class="row mm-sticky-block">
+      <div class="col-xs-12">
+        {% assign pt_filter = section.settings.enable_pt_filter %}
+        {% assign pt_filter_search = section.settings.enable_pt_filter_search %}
+        {% if section.settings.pt_filter_heading != blank %}
+        {% assign pt_heading = section.settings.pt_filter_heading %}
+        {% else %}
+        {% assign pt_heading = 'Product Type' %}
+        {% endif %}
+        {% if pt_filter %}
+        {% assign pts = '' %}
+        {% paginate collection.products by 1000 %}
+        {% for product in collection.products %}
+        {% if product.type != blank %}
+        {% assign pts = pts | append: product.type | append: ',' %}
+        {% endif %}
+        {% endfor %}
+        {% endpaginate %}
+        {% assign pts = pts | split: ',' | uniq %}
+        {% endif %}
+
+        {% if pt_filter %}
+        <div class="filter-pt">
+          <div class="filter-pt-flex and" data-tag="ProductType">
+            {% for pt in pts %}
+            <div class="or filter-item filter-flex-item" data-tag="{{ pt | replace:' ','_' }}">
+              {{ pt | capitalize }}
+              <span></span>
+            </div>
+            {% endfor %}               
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-xs-12 col-sm-4 col-md-3 col-lg-3">
+        <div id="sidebar-filter">          
+          <div class="mm-filter-sidebar mm-sticky-sidebar">          
+            <div class="mm-sticky-inner">
+              {% include 'mm-filter-sidebar' %}
+			  
+              {% comment %}
+              {% if enable_collection_sorting %}
+              <div class="mm-sort-content">
+                <div class="mm-filter-heading">
+                  <h4><span class="heading-name">Sort By</span></h4>
+                </div>
+                <select id="ajaxSort" class="sort-wrapper">
+                  <option value="best-selling">Best Selling</option>
+                  <option value="price-ascending">Price: Low to High</option>
+                  <option value="price-descending">Price: High to Low</option>                
+                  <option value="title-ascending">Alphabetically: A-Z</option>
+                  <option value="title-descending">Alphabetically: Z-A</option>
+                  <option value="created-descending">Date: New to Old</option>
+                  <option value="created-ascending">Date: Old to New</option>
+                </select>
+              </div>
+              {% endif %}
+              {% endcomment %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-8 col-md-9 col-lg-9">        
+        <div class="mm-product-header">
+          {% if section.settings.sidebar_filter_heading %}
+          {% assign sidebar_filter_heading = section.settings.sidebar_filter_heading %}
+          {% else %}
+          {% assign sidebar_filter_heading = 'Filter By' %}
+          {% endif %}
+
+          <div class="mm-filter-btn">
+            <button class="mm-button" id="sidebar-filter-opener">{{ sidebar_filter_heading }}</button>
+          </div>
+          
+          {% if enable_collection_sorting %}
+            <div class="mm-sort-content">
+              <div class="mm-filter-heading">
+                <h4><span class="heading-name">Sort By</span></h4>
+              </div>
+              <select id="ajaxSort" class="sort-wrapper">
+                <option value="best-selling">Best Selling</option>
+                <option value="price-ascending">Price: Low to High</option>
+                <option value="price-descending">Price: High to Low</option>                
+                <option value="title-ascending">Alphabetically: A-Z</option>
+                <option value="title-descending">Alphabetically: Z-A</option>
+                <option value="created-descending">Date: New to Old</option>
+                <option value="created-ascending">Date: Old to New</option>
+              </select>
+            </div>
+          {% endif %}
+          
+          <p></p>
+        </div>
+                
+        <div class="product-container">
+          <div id="product-loop" class="row"></div>
+          <div class="no-products" 
+               id="empty-products" 
+               style="display: none;">
+            {% if no_products_image != nil %}
+              <img src="{{ no_products_image | img_url: '150x' }}" alt="Empty Collection Image">
+            {% endif %}
+            {% if empty_collection_text != blank %}
+              <p>{{ empty_collection_text }}</p>
+            {% else %}
+              <p>We are sorry, no products match your filter selections. Please adjust them further.</p>
+            {% endif %}
+          </div>
+          
+          <div class="mm-pagination" {% if show_pagination == false %}style="opacity: 0;"{% endif %}>
+            <div id="mm-pagination-holder"></div>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if collection.title contains 'Jewelili Gemstones' or collection.title contains 'Jewelili Diamonds' %}
+{% include 'mm-filter-content-v2' %}
+{% elsif collection.title contains 'EVERYDAY STYLE' or collection.title contains 'WEDDING' or collection.title contains 'CELEBRATIONS' %}
+{% include 'mm-filter-content-v3' %}
+{% else %}
+{% include 'mm-filter-content' %}
+{% endif %}
+  
+{% assign price_slider = section.settings.price_range_slider %}
+{% if price_slider %}
+<script defer src="{{ 'mm-slider.min.js' | asset_url }}"></script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Collection Page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Heading and Description"
+      },
+	  {
+        "type": "checkbox",
+        "id": "show_collection_title",
+        "label": "Show collection title",
+		"default": true
+	  },
+	  {
+        "type": "checkbox",
+        "id": "show_collection_description",
+        "label": "Show collection description",
+		"default": true
+	  },
+	  {
+        "type": "checkbox",
+        "id": "show_collection_breadcrumb",
+        "label": "Show breadcrumb links",
+        "default": true
+      },
+	  {
+        "type": "header",
+        "content": "Product Layout"
+      },
+	  {
+        "type": "checkbox",
+        "id": "show_product_vendor",
+        "label": "Show Vendor",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "show_sale_badge",
+        "label": "Show Sale Badge",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "sale_badge_text",
+        "label": "Sale Badge Text",
+        "default": "Sale"
+      },
+	  {
+        "type": "checkbox",
+        "id": "show_soldout_badge",
+        "label": "Show Soldout Badge",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "soldout_badge_text",
+        "label": "Soldout Badge Text",
+        "default": "Soldout"
+      },
+	  {
+        "type": "header",
+        "content": "Empty Collection"
+      },
+	  {
+        "type": "image_picker",
+        "id": "no_products_image",
+        "label": "Empty Collection Image"
+      },
+	  {
+        "type": "textarea",
+        "id": "empty_collection_text",
+        "label": "Empty Collection Text",
+        "default": "We are sorry, no products match your filter selections. Please adjust them further."
+      },
+      {
+        "type": "header",
+        "content": "Pagination"
+      },
+	  {
+        "type": "select",
+        "id": "pagination_type",
+        "label": "Pagination Type",
+        "options": [
+          {
+            "value": "basic_pagination",
+            "label": "Page Links"
+          },
+          {
+            "value": "infinite_scroll",
+            "label": "Infinite Scroll"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "pagination_limit_template1",
+        "label": "Products per page (Collections Page)",
+        "min": 3,
+        "max": 45,
+        "step": 1,
+        "default": 15
+      },
+      {
+        "type": "range",
+        "id": "pagination_limit_template2",
+        "label": "Products per page (Brands Page)",
+        "min": 3,
+        "max": 45,
+        "step": 1,
+        "default": 15
+      },
+	  {
+        "type": "header",
+        "content": "Filter Sidebar"
+      },	  
+	  {
+        "type": "checkbox",
+        "id": "show_filter_heading",
+        "label": "Show Filter Heading",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_sticky_sidebar",
+        "label": "Enable Sticky Sidebar",
+        "default": false
+      },
+	  {
+        "type": "text",
+        "id": "sidebar_filter_heading",
+        "label": "Heading",
+        "default": "Filter By"
+      },
+	  {
+        "type": "select",
+        "id": "mobile_sidebar_style",
+        "label": "Mobile Sidebar Style",
+        "options": [
+          {
+            "value": "from_down",
+            "label": "Open From Down"
+          },
+          {
+            "value": "from_side",
+            "label": "Open From Side"
+          }
+        ]
+      },
+	  {
+        "type": "header",
+        "content": "Collection Sorting"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_collection_sorting",
+        "label": "Enable Collection Sorting",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "show_product_count",
+        "label": "Show product count",
+        "default": true
+      },
+	  {
+        "type": "header",
+        "content": "Brand Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_brand_filter",
+        "label": "Enable Brand Filter",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_brand_filter_search",
+        "label": "Enable Search Box",
+		"info": "This will show search box for brand filter, which will help user to search brands.",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "brand_filter_heading",
+        "label": "Heading",
+        "default": "Brand"
+      },
+	  {
+        "type": "header",
+        "content": "Product Type Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_pt_filter",
+        "label": "Enable Product Type Filter",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_pt_filter_search",
+        "label": "Enable Search Box",
+		"info": "This will show search box for product type filter, which will help user to search product types.",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "pt_filter_heading",
+        "label": "Heading",
+        "default": "Product Type"
+      },
+	  {
+        "type": "header",
+        "content": "Price Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_price_filter",
+        "label": "Enable Price Filter",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "price_filter_heading",
+        "label": "Heading",
+        "default": "Price"
+      },
+	  {
+        "type": "textarea",
+        "id": "price_ranges",
+        "label": "Price Range",
+        "default": "0-500,500-1000,1000-2000,2000-3000,3000-100000"
+      },
+	  {
+        "type": "checkbox",
+        "id": "price_range_slider",
+        "label": "Enable Price Slider",
+		"default": false
+      },
+	  {
+        "type": "header",
+        "content": "Size Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_size_filter",
+        "label": "Enable Size Filter",
+		"info": "Sizes will appear only when products has the size variant.",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_size_filter_swatch",
+        "label": "Enable Size Swatch",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "size_filter_heading",
+        "label": "Heading",
+        "default": "Size"
+      },
+	  {
+        "type": "header",
+        "content": "Color Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_color_filter",
+        "label": "Enable Color Filter",
+		"info": "Colors will appear only when products has the color variant.",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_color_filter_swatch",
+        "label": "Enable Color Swatch",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "color_filter_heading",
+        "label": "Heading",
+        "default": "Color"
+      },
+	  {
+        "type": "header",
+        "content": "Tag Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_tag_filter",
+        "label": "Enable Tag Filter",
+		"info": "Add tag filters in sidebar by adding content blocks.",
+        "default": true
+      },
+	  {
+        "type": "header",
+        "content": "Multi-level Filter"
+      },
+	  {
+        "type": "checkbox",
+        "id": "enable_multilevel_filter",
+        "label": "Enable Multi Level Filter",
+        "default": true
+      },
+	  {
+        "type": "paragraph",
+        "content": "Add tag in to the products to activate multi level filters. Syntax: mf___First Level__Second Level--Tag"
+      }
+	],
+	"blocks": [
+      {
+		"type": "tag_filters",
+		"name": "Tag Filter",
+		"settings": [
+          {
+			"type": "text",
+			"id": "filter_name",
+			"label": "Heading",
+			"default": "Heading"
+          },
+		  {
+			"type": "textarea",
+			"id": "filter_tags",
+			"label": "Tags",
+			"info": "Add a comma-separated list of product tags. Only the tags found in the collection will be displayed as filters."
+		  }
+		]
+      }
+	]
+  }
+{% endschema %}

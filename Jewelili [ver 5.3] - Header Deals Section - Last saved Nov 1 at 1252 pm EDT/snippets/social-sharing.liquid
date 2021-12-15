@@ -1,0 +1,42 @@
+<!-- /snippets/social-sharing.liquid -->
+<ul class="social-sharing">
+
+  {% if settings.share_facebook %}
+    <li>
+      <a target="_blank" href="//www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}" class="btn btn--small btn--share share-facebook">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="24" viewBox="0 0 16 24"><defs><style>.ss-fb-a{fill:#fff;opacity:0;}.ss-fb-b{fill:#292d36;}</style></defs><g transform="translate(0)"><rect class="ss-fb-a" width="16" height="24" transform="translate(0)"/><g transform="translate(1.943 1.515)"><path class="ss-fb-b" d="M6.767,20.355H2.255V10.743H0v-3.7H2.255V4.817C2.255,1.8,3.528,0,7.145,0h3.011V3.7H8.275c-1.408,0-1.5.517-1.5,1.483L6.767,7.039h3.411l-.4,3.7H6.767v9.612Z"/></g></g></svg>
+        <!-- <span class="share-title" aria-hidden="true">{{ 'general.social.share_on_facebook' | t }}</span> -->
+        <span class="visually-hidden">{{ 'general.social.alt_text.share_on_facebook' | t }}</span>
+      </a>
+    </li>
+  {% endif %}
+
+  {% comment %}
+  <li>
+    <a target="_blank" href="" class="btn btn--small btn--share share-instagram">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><style>.ss-insta-a{fill:#fff;opacity:0;}.ss-insta-b{fill:#292d36;}</style></defs><g transform="translate(-0.282)"><rect class="ss-insta-a" width="24" height="24" transform="translate(0.282)"/><g transform="translate(2.591 1.516)"><path class="ss-insta-b" d="M13.831,19.7H5.868A5.875,5.875,0,0,1,0,13.831V5.868A5.875,5.875,0,0,1,5.868,0h7.962A5.875,5.875,0,0,1,19.7,5.868v7.962A5.875,5.875,0,0,1,13.831,19.7ZM5.868,1.982A3.891,3.891,0,0,0,1.982,5.868v7.962a3.891,3.891,0,0,0,3.886,3.887h7.962a3.892,3.892,0,0,0,3.887-3.887V5.868a3.891,3.891,0,0,0-3.887-3.886ZM9.85,14.945a5.095,5.095,0,1,1,5.1-5.1A5.1,5.1,0,0,1,9.85,14.945Zm0-8.209A3.113,3.113,0,1,0,12.963,9.85,3.117,3.117,0,0,0,9.85,6.736Zm5.105-.722a1.221,1.221,0,1,1,1.221-1.221A1.222,1.222,0,0,1,14.955,6.014Z" transform="translate(0 0)"/></g></g></svg>
+    </a>
+  </li>
+  {% endcomment %}
+  
+  {% if settings.share_twitter %}
+    <li>
+      <a target="_blank" href="//twitter.com/share?text={{ share_title | url_param_escape }}&amp;url={{ shop.url | append: share_permalink }}" class="btn btn--small btn--share share-twitter">
+        {% include 'icon-twitter' %}
+        <!-- <span class="share-title" aria-hidden="true">{{ 'general.social.share_on_twitter' | t }}</span> -->
+        <span class="visually-hidden">{{ 'general.social.alt_text.share_on_twitter' | t }}</span>
+      </a>
+    </li>
+  {% endif %}
+
+  {% if settings.share_pinterest %}
+    <li>
+      <a target="_blank" href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | img_url: '1024x1024' }}&amp;description={{ share_title | url_param_escape }}" class="btn btn--small btn--share share-pinterest">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><style>.ss-pin-a{fill:#fff;opacity:0;}.ss-pin-b{fill:#292d36;}</style></defs><g transform="translate(0.368)"><rect class="ss-pin-a" width="24" height="24" transform="translate(-0.368)"/><g transform="translate(4.159 1.515)"><path class="ss-pin-b" d="M6.694,13.463c-.549,2.8-1.221,5.489-3.209,6.893-.614-4.236.9-7.417,1.605-10.794C3.89,7.6,5.234,3.646,7.764,4.62c3.113,1.2-2.7,7.3,1.2,8.063,4.071.8,5.733-6.87,3.209-9.363C8.529-.28,1.557,3.237,2.414,8.392c.209,1.26,1.547,1.641.535,3.381C.615,11.269-.082,9.478.008,7.09.152,3.183,3.618.448,7.095.068c4.4-.478,8.524,1.569,9.094,5.592.641,4.54-1.984,9.456-6.687,9.1-1.274-.1-1.809-.709-2.808-1.3Z"/></g></g></svg>
+        <!-- <span class="share-title" aria-hidden="true">{{ 'general.social.share_on_pinterest' | t }}</span> -->
+        <span class="visually-hidden">{{ 'general.social.alt_text.share_on_pinterest' | t }}</span>
+      </a>
+    </li>
+  {% endif %}
+
+</ul>

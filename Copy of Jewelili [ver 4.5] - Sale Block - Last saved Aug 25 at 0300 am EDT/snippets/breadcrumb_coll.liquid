@@ -1,0 +1,143 @@
+{% if id == 'schema' %}
+{%- if collection.handle == 'diamond-anniversary-rings' or collection.handle == 'diamond-engagement-rings' or collection.handle == 'three-stone-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Engagement",
+  "item": "{{ shop.url }}/collections/diamond-engagement-rings"
+}
+{%- elsif collection.handle == 'diamond-cocktail-rings' or collection.handle == 'diamond-fashion-rings' or collection.handle == 'jewelili-gemstones-rings' or collection.handle == 'diamond-promise-rings' or collection.handle == 'solitaire-rings' or collection.handle == 'three-stone-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Rings",
+  "item": "{{ shop.url }}/collections/diamond-rings"
+}
+{%- elsif collection.handle == 'diamond-cross-necklaces-and-pendants' or collection.handle == 'diamond-family-necklaces-and-pendants' or collection.handle == 'diamond-fashion-necklaces-and-pendants' or collection.handle == 'jewelili-gemstones-necklaces-and-pendants' or collection.handle == 'diamond-hearts-necklaces-and-pendants' or collection.handle == 'solitaire-necklaces-and-pendants' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Necklace",
+  "item": "{{ shop.url }}/collections/diamond-necklaces-and-pendants"
+}
+{%- elsif collection.handle == 'diamond-earrings-drops-and-danglers' or collection.handle == 'diamond-fashion-earrings' or collection.handle == 'jewelili-gemstones-earrings' or collection.handle == 'diamond-hoop-earrings' or collection.handle == 'diamond-studs-earrings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Earrings",
+  "item": "{{ shop.url }}/collections/diamond-earrings"
+}
+{%- elsif collection.handle == 'diamond-bangle-bracelets' or collection.handle == 'diamond-bolo-bracelets' or collection.handle == 'diamond-fashion-bracelets' or collection.handle == 'jewelili-gemstones-bracelets' or collection.handle == 'diamond-tennis-bracelets' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Bracelets",
+  "item": "{{ shop.url }}/collections/diamond-bracelets"
+}
+{%- elsif collection.handle == 'anchor-diamond-jewelry' or collection.handle == 'angel-wing-diamond-jewelry' or collection.handle == 'bow-diamond-jewelry' or collection.handle == 'bow-arrow-diamond-jewelry' or collection.handle == 'butterfly-diamond-jewelry' or collection.handle == 'cross-diamond-jewelry' or collection.handle == 'celestial-diamond-jewelry' or collection.handle == 'dog-paw-diamond-jewelry' or collection.handle == 'dragonfly-diamond-jewelry' or collection.handle == 'drop-pear-diamond-jewelry' or collection.handle == 'family-jewelry' or collection.handle == 'flower-jewelry' or collection.handle == 'heart-shaped-diamond-jewelry' or collection.handle == 'infinity-diamond-jewelry' or collection.handle == 'inspirational-symbols-diamond-jewelry' or collection.handle == 'key-diamond-jewelry' or collection.handle == 'knot-diamond-jewelry' or collection.handle == 'love-diamond-jewelry' or collection.handle == 'pets-and-critters-diamond-jewelry' or collection.handle == 'snowflake-diamond-jewelry' or collection.handle == 'star-shaped-diamond-jewelry' or collection.handle == 'twist-diamond-jewelry' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Shop By Design",
+  "item": "{{ shop.url }}/collections/diamond-jewelry-shop-by-shape"
+}
+{%- elsif collection.handle == 'enchanted-disney-fine-jewelry-diamond-bracelets' or collection.handle == 'enchanted-disney-fine-jewelry-diamond-earrings' or collection.handle == 'enchanted-disney-fine-jewelry-diamond-necklaces' or collection.handle == 'enchanted-disney-fine-jewelry-diamond-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Enchanted Disney Fine Jewelry",
+  "item": "{{ shop.url }}/collections/enchanted-disney-fine-jewelry"
+}
+{%- elsif collection.handle == 'jewelili-diamonds-bracelets' or collection.handle == 'jewelili-diamonds-earrings' or collection.handle == 'jewelili-diamonds-necklaces' or collection.handle == 'jewelili-diamonds-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Jewelili Diamonds",
+  "item": "{{ shop.url }}/collections/jewelili-diamond-jewelry"
+}
+{%- elsif collection.handle == 'jewelili-gemstones-bracelets' or collection.handle == 'jewelili-gemstones-earrings' or collection.handle == 'jewelili-gemstones-necklaces-and-pendants' or collection.handle == 'jewelili-gemstones-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Jewelili Gemstone",
+  "item": "{{ shop.url }}/collections/jewelili-gemstone-jewelry"
+}
+{%- elsif collection.handle == 'made-for-you-diamond-bracelets' or collection.handle == 'made-for-you-diamond-earrings' or collection.handle == 'made-for-you-diamond-necklaces' or collection.handle == 'made-for-you-diamond-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Made For You",
+  "item": "{{ shop.url }}/collections/made-for-you-diamond-jewelry"
+}
+{%- elsif collection.handle == 'swarovski-diamond-bracelets' or collection.handle == 'swarovski-diamond-earrings' or collection.handle == 'swarovski-diamond-necklaces' or collection.handle == 'swarovski-diamond-rings' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Swarovski",
+  "item": "{{ shop.url }}/collections/swarovski-diamond-jewelry"
+}
+{%- elsif collection.handle == 'diamond-jewelry-deep-discount' or collection.handle == '60-off-on-diamond-jewelry' or collection.handle == '45-off-on-diamond-jewelry' or collection.handle == '30-off-on-diamond-jewelry' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Jewelili Deals",
+  "item": "{{ shop.url }}/collections/jewelili-deals"
+}
+{%- elsif collection.handle == 'gifts-for-mom' or collection.handle == 'gifts-for-her' or collection.handle == 'gifts-for-daughter' or collection.handle == 'birthday-gifts' or collection.handle == 'graduation-gifts' or collection.handle == 'diamond-jewelry-gifts-under-500' or collection.handle == 'diamond-jewelry-gifts-under-300' or collection.handle == 'diamond-jewelry-gifts-under-100' or collection.handle == 'diamond-jewelry-gifts-under-50' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Gifting",
+  "item": "{{ shop.url }}/collections/gifts-for-mom"
+}
+{%- elsif collection.handle == 'january-garnet-birthstone-jewelry' or collection.handle == 'february-amethyst-birthstone-jewelry' or collection.handle == 'march-aquamarine-birthstone-jewelry' or collection.handle == 'april-diamond-birthstone-jewelry' or collection.handle == 'may-emerald-birthstone-jewelry' or collection.handle == 'june-pearl-birthstone-jewelry' or collection.handle == 'july-ruby-birthstone-jewelry' or collection.handle == 'august-peridot-birthstone-jewelry' or collection.handle == 'september-sapphire-birthstone-jewelry' or collection.handle == 'october-tourmaline-birthstone-jewelry' or collection.handle == 'november-citrine-birthstone-jewelry' or collection.handle == 'december-tanzanite-birthstone-jewelry' -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Birthstones Jewelry by Months",
+  "item": "{{ shop.url }}/pages/birthstones-jewelry-by-months"
+}
+{%- else -%}
+,{
+  "@type": "ListItem",
+  "position": 2,
+  "name": "Shop",
+  "item": "{{ shop.url }}/collections/silver-and-gold-diamond-jewelry"
+}
+{%- endif -%}
+
+{% else %}
+
+{%- if collection.handle == 'diamond-anniversary-rings' or collection.handle == 'diamond-engagement-rings' or collection.handle == 'three-stone-rings' -%}
+<a href="/collections/diamond-engagement-rings">Engagement</a>
+{%- elsif collection.handle == 'diamond-cocktail-rings' or collection.handle == 'diamond-fashion-rings' or collection.handle == 'jewelili-gemstones-rings' or collection.handle == 'diamond-promise-rings' or collection.handle == 'solitaire-rings' or collection.handle == 'three-stone-rings' -%}
+<a href="/collections/diamond-rings">Rings</a>
+{%- elsif collection.handle == 'diamond-cross-necklaces-and-pendants' or collection.handle == 'diamond-family-necklaces-and-pendants' or collection.handle == 'diamond-fashion-necklaces-and-pendants' or collection.handle == 'jewelili-gemstones-necklaces-and-pendants' or collection.handle == 'diamond-hearts-necklaces-and-pendants' or collection.handle == 'solitaire-necklaces-and-pendants' -%}
+<a href="/collections/diamond-necklaces-and-pendants">Necklace & Pendants</a>
+{%- elsif collection.handle == 'diamond-earrings-drops-and-danglers' or collection.handle == 'diamond-fashion-earrings' or collection.handle == 'jewelili-gemstones-earrings' or collection.handle == 'diamond-hoop-earrings' or collection.handle == 'diamond-studs-earrings' -%}
+<a href="/collections/diamond-earrings">Earrings</a>
+{%- elsif collection.handle == 'diamond-bangle-bracelets' or collection.handle == 'diamond-bolo-bracelets' or collection.handle == 'diamond-fashion-bracelets' or collection.handle == 'jewelili-gemstones-bracelets' or collection.handle == 'diamond-tennis-bracelets' -%}
+<a href="/collections/diamond-bracelets">Bracelets</a>
+{%- elsif collection.handle == 'anchor-diamond-jewelry' or collection.handle == 'angel-wing-diamond-jewelry' or collection.handle == 'bow-diamond-jewelry' or collection.handle == 'bow-arrow-diamond-jewelry' or collection.handle == 'butterfly-diamond-jewelry' or collection.handle == 'cross-diamond-jewelry' or collection.handle == 'celestial-diamond-jewelry' or collection.handle == 'dog-paw-diamond-jewelry' or collection.handle == 'dragonfly-diamond-jewelry' or collection.handle == 'drop-pear-diamond-jewelry' or collection.handle == 'family-jewelry' or collection.handle == 'flower-jewelry' or collection.handle == 'heart-shaped-diamond-jewelry' or collection.handle == 'infinity-diamond-jewelry' or collection.handle == 'inspirational-symbols-diamond-jewelry' or collection.handle == 'key-diamond-jewelry' or collection.handle == 'knot-diamond-jewelry' or collection.handle == 'love-diamond-jewelry' or collection.handle == 'pets-and-critters-diamond-jewelry' or collection.handle == 'snowflake-diamond-jewelry' or collection.handle == 'star-shaped-diamond-jewelry' or collection.handle == 'twist-diamond-jewelry' -%}
+<a href="/collections/diamond-jewelry-shop-by-shape">Shop By Design</a>
+{%- elsif collection.handle == 'enchanted-disney-fine-jewelry-diamond-bracelets' or collection.handle == 'enchanted-disney-fine-jewelry-diamond-earrings' or collection.handle == 'enchanted-disney-fine-jewelry-diamond-necklaces' or collection.handle == 'enchanted-disney-fine-jewelry-diamond-rings' -%}
+<a href="/collections/enchanted-disney-fine-jewelry">Enchanted Disney Fine Jewelry</a>
+{%- elsif collection.handle == 'jewelili-diamonds-bracelets' or collection.handle == 'jewelili-diamonds-earrings' or collection.handle == 'jewelili-diamonds-necklaces' or collection.handle == 'jewelili-diamonds-rings' -%}
+<a href="/collections/jewelili-diamond-jewelry">Jewelili Diamonds</a>
+{%- elsif collection.handle == 'jewelili-gemstones-bracelets' or collection.handle == 'jewelili-gemstones-earrings' or collection.handle == 'jewelili-gemstones-necklaces-and-pendants' or collection.handle == 'jewelili-gemstones-rings' -%}
+<a href="/collections/jewelili-gemstone-jewelry">Jewelili Gemstone</a>
+{%- elsif collection.handle == 'made-for-you-diamond-bracelets' or collection.handle == 'made-for-you-diamond-earrings' or collection.handle == 'made-for-you-diamond-necklaces' or collection.handle == 'made-for-you-diamond-rings' -%}
+<a href="/collections/made-for-you-diamond-jewelry">Made For You</a>
+{%- elsif collection.handle == 'swarovski-diamond-bracelets' or collection.handle == 'swarovski-diamond-earrings' or collection.handle == 'swarovski-diamond-necklaces' or collection.handle == 'swarovski-diamond-rings' -%}
+<a href="/collections/swarovski-diamond-jewelry">Swarovski</a>
+{%- elsif collection.handle == 'diamond-jewelry-deep-discount' or collection.handle == '60-off-on-diamond-jewelry' or collection.handle == '45-off-on-diamond-jewelry' or collection.handle == '30-off-on-diamond-jewelry' -%}
+<a href="/collections/jewelili-deals">Jewelili Deals</a>
+{%- elsif collection.handle == 'gifts-for-mom' or collection.handle == 'gifts-for-her' or collection.handle == 'gifts-for-daughter' or collection.handle == 'birthday-gifts' or collection.handle == 'graduation-gifts' or collection.handle == 'diamond-jewelry-gifts-under-500' or collection.handle == 'diamond-jewelry-gifts-under-300' or collection.handle == 'diamond-jewelry-gifts-under-100' or collection.handle == 'diamond-jewelry-gifts-under-50' -%}
+<a href="/collections/gifts-for-mom">Gifting</a>
+{%- elsif collection.handle == 'january-garnet-birthstone-jewelry' or collection.handle == 'february-amethyst-birthstone-jewelry' or collection.handle == 'march-aquamarine-birthstone-jewelry' or collection.handle == 'april-diamond-birthstone-jewelry' or collection.handle == 'may-emerald-birthstone-jewelry' or collection.handle == 'june-pearl-birthstone-jewelry' or collection.handle == 'july-ruby-birthstone-jewelry' or collection.handle == 'august-peridot-birthstone-jewelry' or collection.handle == 'september-sapphire-birthstone-jewelry' or collection.handle == 'october-tourmaline-birthstone-jewelry' or collection.handle == 'november-citrine-birthstone-jewelry' or collection.handle == 'december-tanzanite-birthstone-jewelry' -%}
+<a href="/pages/birthstones-jewelry-by-months">Birthstones Jewelry by Months</a>
+{%- else -%}
+<a href="/collections/silver-and-gold-diamond-jewelry">Shop</a>
+{%- endif -%}
+
+{% endif %}

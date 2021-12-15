@@ -1,0 +1,22 @@
+<ul class="site-nav">
+  {% for link in menu.links  %}
+  {% comment %}Normal Menu{% endcomment %}
+  {% if link.links and link.links.size > 0 %}
+  <li class="main__link has-submenu{% if link.active %} active{% endif %}" aria-haspopup="true" aria-expanded="false" >
+    <a href="{{ link.url }}" class="font--accent" role="menuitem" data-menuname="{{ link.title | handle }}" >
+      {{ link.title }}
+    </a>
+    <ul class="submenu" data-submenu="{{link.title | handle }}">
+      <div class="normal--dropdown">
+        {% include 'desktop-nav' menu: link %}
+      </div>
+    </ul>
+  </li>
+  {% else %}
+  <li class="main__link {% if link.active %}active{% endif %}">
+    <a href="{{ link.url }}" class="font--accent" role="menuitem" data-menuname="{{ link.title | handle }}" >{{ link.title }}</a>
+    <ul class="submenu hide" data-submenu="{{link.title | handle }}"></ul>
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>

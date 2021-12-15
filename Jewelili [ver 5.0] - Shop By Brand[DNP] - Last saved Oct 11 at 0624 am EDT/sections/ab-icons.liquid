@@ -1,0 +1,77 @@
+{% if section.settings.enable_section %}
+<section>
+  <div class="page-width">
+    <div class="grid grid--no-gutters">
+      <div class="grid__item grid__content small--text-center">
+        {% if section.settings.title != blank %}
+        <h2>{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.text != blank %}
+        {{ section.settings.text }}
+        {% endif %}
+      </div>
+      <div class="grid__item grid__icons small--text-center">
+        <ul class="text-center">
+          {% for block in section.blocks %}
+          <li>
+            {% if block.settings.icon != blank %}
+            <div class="svg-icon">{{ block.settings.icon }}</div>
+            {% endif %}
+            {% if block.settings.title != blank %}
+            <p>{{ block.settings.title }}</p>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Icons",
+	"class": "ab-icons",
+	"max_blocks": 3,
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_section",
+        "label": "Enable section",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Text goes here.</p>"
+      }
+	],
+	"blocks": [
+      {
+        "type": "column",
+        "name": "Column",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "icon",
+            "label": "Icon"
+          },
+		  {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+			"default": "Title"
+          }
+        ]
+      }
+	]
+  }
+{% endschema %}

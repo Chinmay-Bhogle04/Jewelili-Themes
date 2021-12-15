@@ -1,0 +1,52 @@
+<section data-section-id="{{ section.id }}" data-section-type="jewelili-instagram-section">
+  {% if section.settings.title != blank %}
+  <h2 class="h2 small--hide">{{ section.settings.title }}</h2>
+  {% endif %}
+  <div id="insta-feed"></div>
+</section>
+
+{% schema %}
+  {
+    "name": "Instagram Section",
+	"class": "index-section jewelili-instagram-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Title"
+      }
+	],
+    "blocks": [
+      {
+        "type": "instagram-content",
+        "name": "Instagram Content",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "post_image",
+            "label": "Post Image",
+            "info": "Recommended size 264x264"
+          },
+          {
+            "type": "url",
+            "id": "instagram_url",
+            "label": "Instagram URL"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Instagram Section",
+        "category": "Advanced layout"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

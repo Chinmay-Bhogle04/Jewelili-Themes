@@ -1,0 +1,98 @@
+<div class="page-width four-block-banner">
+  {% if section.settings.title != blank %}
+  <div class="section-header text-center">
+    <h3>{{ section.settings.title | escape }}</h3>
+  </div>
+  {% endif %}
+  <div class="grid display-flex {% unless block.blocks.size == 5 %}grid--uniform{% endunless %} grid--flush-bottom">
+    {% for block in section.blocks %}
+      {%- assign grid_item_width = 'small--one-half medium-up--one-quarter' -%}
+      {%- assign max_height = 345 -%}
+      <div class="grid__item {{ grid_item_width }} text-{{ block.settings.align_text }}" {{ block.shopify_attributes }}>
+        {% if block.settings.enable_image %}
+        {% if block.settings.image != blank %}
+
+        {% capture img_id %}TextColumnImage-{{ block.id }}{% endcapture %}
+        {% capture wrapper_id %}TextColumnImageWrapper-{{ block.id }}{% endcapture %}
+        {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <div id="{{ wrapper_id }}" class="feature-row__image-wrapper js">
+          <a href="{{ block.settings.button_link }}">
+            <img id="{{ img_id }}"
+                 class=" lazyload"
+                 src="{{ block.settings.image | img_url: '300x300' }}"
+                 data-src="{{ img_url }}"
+                 data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                 data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+                 data-sizes="auto"
+                 alt="{{ block.settings.image.alt | escape }}">
+          </a>
+        </div>
+        <noscript>
+          <p>
+            {{ block.settings.image | img_url: '480x480', scale: 2 | img_tag: block.settings.image.alt, 'feature-row__image' }}
+          </p>
+        </noscript>
+        {% else %}
+        <p>
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </p>
+        {% endif %}
+        {% endif %}
+        <p class="four-grid-title">{{ block.settings.title }}</p>
+      </div>
+
+    {% endfor %}
+  </div>
+</div>
+
+
+
+
+{% schema %}
+{
+  "name": "Three banner",
+  "class": "index-section",
+  "settings": [
+	  {
+          "type": "text",
+          "id": "title",
+          "label": "Section title"
+        }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enable_image",
+          "label": "Show image",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+		{
+          "type": "text",
+          "id": "title",
+          "label": "Block title"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Banner link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "four block images",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

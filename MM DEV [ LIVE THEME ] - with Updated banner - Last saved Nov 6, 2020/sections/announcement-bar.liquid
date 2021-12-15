@@ -1,0 +1,92 @@
+{% if section.settings.message %}
+{% if section.settings.home_page_only == false or request.page_type == 'index' %}
+<style>
+  .announcement-bar {
+    background-color: {{ section.settings.color_bg }};
+  }
+
+  .announcement-bar__link,
+  .announcement-bar__link p {
+    color: {{ section.settings.color_text }};
+  }
+</style>
+
+<div class="announcement-bar" role="region" aria-label="{{ 'sections.header.announcement_bar_label' | t }}">
+  <div class="page-width">
+    <div class="announcement-text-wrapper">
+      {% for block in section.blocks %}
+      <div class="announcement-text">
+        {%- unless block.settings.link == blank -%}
+        <a href="{{ block.settings.link }}" class="announcement-bar__link">
+          {%- endunless -%}
+          <p>{{ block.settings.text }}</p>
+          {%- unless block.settings.link == blank -%}
+        </a>
+        {%- endunless -%}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endif %}
+{% endif %}
+{% schema %}
+  {
+    "name": "Announcement bar",
+    "settings": [
+		{
+          "type": "header",
+          "content": "Announcement bar"
+        },
+        {
+          "type": "checkbox",
+          "id": "message",
+          "label": "Show announcement",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "home_page_only",
+          "label": "Home page only",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "color_bg",
+          "label": "Bar",
+          "default": "#3a3a3a"
+        },
+        {
+          "type": "color",
+          "id": "color_text",
+          "label":  "Text",
+          "default": "#ffffff"
+        }
+	],
+    "blocks": [
+      {
+        "type": "text_block",
+        "name": "Column",
+        "settings": [
+          {
+            "type": "textarea",
+            "id": "text",
+            "label": "Text"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

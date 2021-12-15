@@ -1,0 +1,24 @@
+<div style="display:none" class="dropdown_container mega-menu {{menu_name}}" data-dropdown="{{ section.settings.parent | handleize }}">
+  <div class="dropdown">
+    {% for block in section.blocks %}
+    {% if block.type == 'megamenu_nav' %}
+    <a href="{{ collections[block.settings.collection_url].url }}/">
+      <img src="{{ block.settings.brand_image | img_url: '200x' }}" />
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+    $(function() {
+      $('[data-submenu="{{section.settings.parent | handle }}"]').html('');
+      var $submenu = $('[data-submenu="{{section.settings.parent | handle }}"]');
+      $submenu.append($('[data-dropdown="{{section.settings.parent | handle }}"] > div'));
+      $submenu.parents('.main__link').addClass('megamenu has-submenu');
+      
+      if ($('[data-dropdown="{{section.settings.parent | handle }}"]').length > 0) {
+        $submenu.removeClass('hide');
+      }
+    });
+</script>

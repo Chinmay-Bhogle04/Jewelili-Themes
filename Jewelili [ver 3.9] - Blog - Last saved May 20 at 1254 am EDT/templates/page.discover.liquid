@@ -1,0 +1,157 @@
+{% include 'discover-css' %}
+
+<div class="page-discover">
+  {% include 'breadcrumbs' %}
+  <div class="page-width">
+    <div class="section-header text-center blogs-section-header">
+      <h1>{{ page.title }}</h1>
+      <div class="blogs-nav small--text-left">
+        <a href="" class="medium-up--hide mobile-nav-btn">
+          Menu
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="9" viewBox="0 0 14 9"><defs><style>.blogs-nav-arr-a{fill:#fff;opacity:0;}.blogs-nav-arr-b{fill:none;stroke:#292d36;stroke-linecap:round;stroke-width:2px;}</style></defs><g transform="translate(-388 -198)"><rect class="blogs-nav-arr-a" width="14" height="9" transform="translate(388 198)"/><g transform="translate(71.5 -404.5)"><line class="blogs-nav-arr-b" x2="5" y2="5" transform="translate(318.5 604.5)"/><line class="blogs-nav-arr-b" x1="5" y2="5" transform="translate(323.5 604.5)"/></g></g></svg>
+        </a>
+        <ul class="nav">
+          {% assign blog = 'blog-category' %}
+          {% for link in linklists.blog-category.links %}
+          <li {% if link.active %}class="active"{% endif %}> 
+            <a href="{{ link.url }}">{{ link.title  }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+	
+    {% for link in linklists.blog-category.links %}
+    {% if link.handle == 'gifting' %}
+    {% assign blog = link.object %}
+    {% for article in blog.articles offset:2 limit:1 %}
+    <div class="full-width-article-card">
+      <div class="article-card medium-up--text-center">
+        <a href="{{ article.url }}">
+          <div class="article-card_image">
+            <img class="lazyload medium-up--hide"
+                 src="{{ article.metafields.global.mobile_banner }}"
+                 data-src="{{ article.metafields.global.mobile_banner }}"
+                 data-sizes="auto"
+                 alt="" />
+
+            {% if article.image %}
+            {% capture img_id %}ArticleImage-{{ article.image.id }}{% endcapture %}
+            {% capture img_wrapper_id %}ArticleImageWrapper-{{ article.image.id }}{% endcapture %}
+            {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+            {% include 'image-style' with image: article.image, small_style: true, width: 345, height: 345, wrapper_id: img_wrapper_id, img_id: img_id %}
+            <div id="{{ img_wrapper_id }}" class="article__grid-image-wrapper small--hide js">
+              <div class="article__grid-image-container" style="padding-top:{{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;">
+                <img id="{{ img_id }}"
+                     class="article__grid-image lazyload"
+                     src="{{ article.image | img_url: '300x300' }}"
+                     data-src="{{ img_url }}"
+                     data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                     data-aspectratio="{{ article.image.aspect_ratio }}"
+                     data-sizes="auto"
+                     alt="">
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          <div class="article-card_details">
+            <p class="sub-title">{{ blog.title }}</p>
+            <h3 class="title">{{ article.title }}</h3>
+            <span class="article-date">
+              {{ article.published_at | time_tag: format: 'basic' }}
+            </span>
+            <span href="{{ article.url }}" class="btn">Discover</span>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+
+    {% for link in linklists.blog-category.links offset:1 %}
+    {% assign length = forloop.index %}
+    {% assign mod = length | modulo:2 %}
+    {% if mod != 0 %}
+    <div class="articles-list_wrapper">
+      <div class="list-header">
+        <div>
+          <h2>{{ link.title }}</h2>
+          <p>Discover the {{ link.title }}</p>
+        </div>
+        <a href="{{ link.url }}" class="btn small--hide">Explore all {{ link.title }}</a>
+      </div>
+      <div class="articles-list two-columns">
+        <div class="grid">
+          {% assign blog = link.object %}
+          {% for article in blog.articles limit:2 %}
+          <div class="grid__item medium-up--one-half">
+            <div class="article-card">
+              <a href="{{ article.url }}">
+                <div class="article-card_image">
+                  <img class="lazyload"
+                       src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/e0e0e0.jpg?v=1620961593"
+                       data-src="{{ article.metafields.global.mobile_banner }}"
+                       data-sizes="auto"
+                       alt="" />
+                </div>
+                <div class="article-card_details">
+                  <p class="sub-title">{{ link.title }}</p>
+                  <h3 class="title">{{ article.title }}</h3>
+                  <span class="article-date">
+                    {{ article.published_at | time_tag: format: 'basic' }}
+                  </span>
+                  <span href="{{ article.url }}" class="btn">Discover</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <a href="{{ link.url }}" class="medium-up--hide btn explore-all-btn">Explore all {{ link.title }}</a>
+    </div>
+    {% else %}
+    <div class="articles-list_wrapper">
+      <div class="list-header">
+        <div>
+          <h2>{{ link.title }}</h2>
+          <p>Discover the {{ link.title }}</p>
+        </div>
+        <a href="{{ link.url }}" class="btn small--hide">Explore all {{ link.title }}</a>
+      </div>
+      <div class="articles-list">
+        <div class="grid">
+          {% assign blog = link.object %}
+          {% for article in blog.articles limit:3 %}
+          <div class="grid__item medium-up--one-third">
+            <div class="article-card">
+              <a href="{{ article.url }}">
+                <div class="article-card_image">
+                  <img class="lazyload"
+                       src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/e0e0e0.jpg?v=1620961593"
+                       data-src="{{ article.metafields.global.mobile_banner }}"
+                       data-sizes="auto"
+                       alt="" />
+                </div>
+                <div class="article-card_details">
+                  <p class="sub-title">{{ link.title }}</p>
+                  <h3 class="title">{{ article.title }}</h3>
+                  <span class="article-date">
+                    {{ article.published_at | time_tag: format: 'basic' }}
+                  </span>
+                  <span href="{{ article.url }}" class="btn">Discover</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <a href="{{ link.url }}" class="medium-up--hide btn explore-all-btn">Explore all {{ link.title }}</a>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>

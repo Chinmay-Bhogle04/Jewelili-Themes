@@ -1,0 +1,71 @@
+{% if section.settings.enable_section %}
+<section class="section-wrapper section-spacing">
+  <div class="page-width">
+    <div class="section-header text-center">
+      {% if section.settings.sub_title != blank %}
+      <span class="sub-title">{{ section.settings.sub_title }}</span>
+      {% endif %}
+      {% if section.settings.title != blank %}
+      <h2>{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.text != blank %}
+      <div class="text">{{ section.settings.text }}</div>
+      {% endif %}
+      {% if section.settings.btn_label and section.settings.btn_link != blank %}
+      <a href="{{ section.settings.btn_link }}" class="btn" target="_blank" download>
+        {{ section.settings.btn_label }}
+        <svg xmlns="http://www.w3.org/2000/svg" height="28" width="28" viewBox="0 0 26.65 26.6167">
+          <g id="Group_132255" data-name="Group 132255" transform="translate(0 0)">
+            <path id="Path_47444" data-name="Path 47444" d="M13.3,26.6A13.392,13.392,0,0,0,26.6,13.3,13.412,13.412,0,0,0,13.289,0,13.4,13.4,0,0,0,0,13.3,13.4,13.4,0,0,0,13.3,26.6Zm7.616-13.315a1.217,1.217,0,0,1-.4.887l-4.995,4.982a1.175,1.175,0,0,1-.782.313,1.075,1.075,0,0,1-1.1-1.082,1.121,1.121,0,0,1,.339-.8l1.839-1.8,1.774-1.5-3.143.117H6.807a1.122,1.122,0,0,1,0-2.243h7.642l3.143.13-1.774-1.487L13.98,8.985a1.144,1.144,0,0,1-.339-.782,1.075,1.075,0,0,1,1.1-1.082,1.1,1.1,0,0,1,.782.3l4.995,4.995A1.157,1.157,0,0,1,20.917,13.289Z" fill="#aa2942" transform="translate(0 0)"/>
+          </g>
+        </svg>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Option 2",
+	"class": "rsg-option option-2",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_section",
+        "label": "Enable section",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Printable PDF guide on how to measure your ring size at home"
+      },
+	  {
+        "type": "text",
+        "id": "sub_title",
+        "label": "Sub title",
+        "default": "Option 2"
+      },
+	  {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+		"default": "<p>If you’re still unsure about how to know your ring size, download the printable size guide for more options that give you a step by step process on how to calculate the correct ring size.</p>"
+      },
+	  {
+        "type": "text",
+        "id": "btn_label",
+        "label": "Button label",
+        "default": "Download PDF"
+      },
+	  {
+        "type": "url",
+        "id": "btn_link",
+        "label": "Button link"
+      }
+	]
+  }
+{% endschema %}

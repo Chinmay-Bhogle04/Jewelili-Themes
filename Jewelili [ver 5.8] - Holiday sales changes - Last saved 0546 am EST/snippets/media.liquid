@@ -1,0 +1,73 @@
+{% comment %}
+  Renders a media element for the product gallery.
+  Media types include: image, video, external_video and model.
+  Accepts:
+  - media: {Object} Media Liquid object (required)
+  - featured_media: {Object} Media Liquid object (required) - featured media of a given product or variant
+  - height: {Number} Maximum height of the gallery (required)
+  - image_zoom_size: {String} Size of the zoomed image (e.g., '1024x1024') (required for media type image)
+  - enable_image_zoom: {Boolean} Image zoom setting (required for media type image)
+  - image_scale:  {String} Image scale (e.g., '2') (required for media type image)
+
+  Usage:
+  {%- for media in product.media -%}
+    {% include 'media', media: media, featured_media: featured_media, height: height %}
+  {%- endfor -%}
+
+  {%- for media in product.media -%}
+    {% include 'media', media: media, featured_media: featured_media, height: height,
+     enable_image_zoom: enable_image_zoom, image_zoom_size: product_image_zoom_size, image_scale: product_image_scale %}
+  {%- endfor -%}
+{% endcomment %}
+
+{% capture media_id %}FeaturedMedia-{{ section.id }}-{{ media.id }}{% endcapture %}
+{% capture media_class %}product-featured-media{% endcapture %}
+{% capture media_wrapper_id %}{{ media_id }}-wrapper{% endcapture %}
+
+{%- comment -%}
+  Load different poster image sizes depending on the product layout
+{%- endcomment -%}
+{% capture image_size %}{{ height }}x{{ height }}{% endcapture %}
+
+<div class="slide {{ colorName1 | split:"`~`" | first | handle | replace: "sterling-silver","14k-white-gold" | replace: "10k-white-gold","14k-white-gold" | replace: "10k-yellow-gold","14k-yellow-gold" | replace: "10k-rose-gold","14k-rose-gold" }}">
+  <div id="{{ media_wrapper_id }}"
+       class="product-single__media-wrapper  js"
+       data-product-single-media-wrapper
+       data-media-id="{{ section.id }}-{{ media.id }}"
+       tabindex="-1">
+    {% case media.media_type %}
+    {% when 'image' %}
+    {%- assign img_url = media | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+    <div class="{% if product.media.size > 1 %} product-single__media--has-thumbnails{% endif %}">
+      <a href="{{ media | img_url: '2400x' }}" data-options="zoomPosition: inner" class="MagicZoom">
+        <img id="{{ media_id }}"
+             class="feature-row__image lazyload {% unless featured_media == media %} lazypreload{% endunless %}"
+             src="{{ media | img_url: '800x' }}"
+             data-src="{{ media | img_url: '800x' }}"
+             data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+             data-aspectratio="{{ media.preview_image.aspect_ratio }}"
+             data-sizes="auto"
+             alt="{{ media.alt | escape }}">
+      </a>
+    </div>
+    {% when 'external_video' %}
+    <div class="product-single__media" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100 }}%;">
+      {{ media | external_video_tag }}
+    </div>
+    {% when 'video' %}
+    {% capture videoCount %}product-video-{{ forloop.index }}{% endcapture %}
+    <div class="product-single__media product-video-{{ forloop.index }} product-single__media--video product-single__media--{{ media.id }}" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100 }}%;">
+      {{ media | video_tag: loop: "1", id:videoCount, muted: "1", autoplay:"autoplay", class: 'media-video', image_size: image_size }}
+    </div>
+    {% when 'model' %}
+    <div class="product-single__media" style="padding-top: 100%">
+      {{ media | model_viewer_tag: image_size: image_size, reveal: 'interaction', toggleable: true, data-model-id: media.id }}
+    </div>
+    {% else %}
+    <div class="product-single__media" style="padding-top: {{ 1 | divided_by: media.aspect_ratio | times: 100 }}%;">
+      {{ media | media_tag: class: 'media-item', image_size: image_size }}
+    </div>
+    {% endcase %}
+    
+  </div>
+</div>

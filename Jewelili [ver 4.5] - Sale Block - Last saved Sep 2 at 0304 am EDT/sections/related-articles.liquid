@@ -1,0 +1,68 @@
+{% if blog.articles_count > 1 %}
+<div class="page-width">
+  {% if section.settings.title != blank %}
+  <div class="section-header text-center">
+    <h2>{{ section.settings.title }}</h2>
+  </div>
+  {% endif %}
+  {% assign articleURL = article.url %}
+  {% assign current_article = article.handle | prepend : "/blogs/" %}
+  {% assign current_article_found = false %}
+
+  <div class="articles-list {{ article.handle }}">
+    <div class="grid">
+      {% assign count = 0 %}
+      {% for article in blog.articles %}
+      {% if article.url == current_article %}
+      {% assign current_article_found = true %}
+      {% else %}
+      {% unless current_article_found == false and forloop.last and count == 2 %}
+      {% assign count = count | plus:1 %}
+      <div class="grid__item medium-up--one-half">
+        <div class="article-card">
+          <div class="article-card_image">
+            <a href="{{ article.url }}">
+              <img class="lazyload"
+                   src="{{ article.metafields.global.mobile_banner }}"
+                   data-src="{{ article.metafields.global.mobile_banner }}"
+                   data-sizes="auto"
+                   alt="{{ article.image.alt }}" />
+            </a>
+          </div>
+          <div class="article-card_details">
+            <p class="sub-title">{{ blog.title }}</p>
+            <h3 class="title">{{ article.title }}</h3>
+            <span class="article-date">
+              {% for tag in article.tags %}
+              {% if tag contains 'date__' %}
+              {{ tag | split:"date__" | last }}
+              {% endif %}
+              {% endfor %}
+            </span>
+            <a href="{{ article.url }}" class="btn">Discover</a>
+          </div>
+          <a href="{{ article.url }}" class="articlecard_link"></a>
+        </div>
+      </div>
+      {% endunless %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Related articles",
+    "class": "related-articles-sction",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "You might also like"
+      }
+    ]
+  }
+{% endschema %}

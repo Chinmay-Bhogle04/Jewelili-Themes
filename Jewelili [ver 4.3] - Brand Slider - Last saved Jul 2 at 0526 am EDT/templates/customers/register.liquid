@@ -1,0 +1,109 @@
+<div class="page-width">
+  <div class="customer__register">
+    <div class="register__container">
+
+      <div class="register__form" id="CustomerRegisterForm">
+        {% form 'create_customer', id: formId, novalidate: 'novalidate' %}
+        <h1 class="register__heading">Hey there!</h1>
+
+        {%- if form.errors -%}
+        <div class="form__errors">
+          {{ form.errors | default_errors }}
+        </div>
+        {%- else -%}
+        <div class="register__subheading">Please enter your details to create a new account</div>
+        {%- endif -%}
+
+        <div class="input__group">
+          <div class="select-container">
+            <select class="" id="title-dropdown">
+              <option data-display-text="Select title">Select title</option>
+              <option value="Mr">Mr</option>
+              <option value="Mrs">Mrs</option>
+              <option value="Ms">Ms</option>
+            </select>
+          </div>
+          <div data-form-error></div>
+        </div>
+
+        <div class="input__group">
+          <span class="input__icon"></span>
+          <input type="text" 
+                 name="customer[first_name]" 
+                 placeholder="Enter your first name"
+                 autocomplete="given-name">
+          <div data-form-error></div>
+        </div>
+
+        <div class="input__group">
+          <span class="input__icon"></span>
+          <input type="text" 
+                 name="customer[last_name]" 
+                 placeholder="Enter your last name"
+                 autocomplete="given-name">
+          <div data-form-error></div>
+        </div>
+
+        <div class="input__group">
+          <div class="birthdate">
+            <input type="date" value="" name="customer[note][birthday]" id="birthday"  aria-required="true" placeholder="Birth Date" required>
+            <label for="birthday">Birth Date</label>
+          </div>
+          <div data-form-error></div>
+        </div>
+
+        <div class="input__group">
+          <span class="input__icon"></span>
+          <input type="email"
+                 name="customer[email]"
+                 class="{% if form.errors contains 'email' %}input--error{% endif %}"
+                 {% if form.email %}value="{{ form.email }}"{% endif %}
+                 autocorrect="off"
+                 autocapitalize="off"
+                 autocomplete="email"
+                 aria-required="true"
+                 placeholder="Enter your email">            
+          <div data-form-error></div>
+        </div>
+
+        <div class="input__group">
+          <span class="input__icon"></span>
+          <input type="password"
+                 name="customer[password]"
+                 class="{% if form.errors contains 'password' %} input--error{% endif %}"
+                 aria-required="true"
+                 placeholder="Enter your password">
+          <div data-form-error></div>
+        </div>
+
+        <div class="input__group">
+          <span class="input__icon"></span>
+          <input type="password"
+                 data-password-reenter
+                 placeholder="Re-enter your password">
+          <div data-form-error></div>            
+        </div>
+
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="information" name="customer[accepts_marketing]" checked="">
+          <label for="information"> I wish to receive information from Jewelili about our latest news and creations.</label>
+        </div>
+
+        <div class="form__submission">
+          <button type="submit" class="btn btn--primary">
+            <span class="sign-up-text">Signup now</span>
+            <span class="hide spinner" data-loader="">
+              <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-spinner" viewBox="0 0 20 20"><path d="M7.229 1.173a9.25 9.25 0 1 0 11.655 11.412 1.25 1.25 0 1 0-2.4-.698 6.75 6.75 0 1 1-8.506-8.329 1.25 1.25 0 1 0-.75-2.385z" fill="#919EAB"></path></svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="form__message">
+          <p>Already have an account? <a href="{{ routes.account_login_url }}">Login now</a></p>
+        </div>
+        {% endform %}
+      </div>
+
+    </div>
+  </div>
+</div>

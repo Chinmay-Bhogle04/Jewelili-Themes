@@ -1,0 +1,75 @@
+{% if section.settings.enable_section %}
+<section>
+  <div class="page-width">
+    <div class="wrapper">
+      <div class="content small--text-center">
+        {% if section.settings.title != blank %}
+        <h2>{{ section.settings.title }}</h2>
+        {% endif %}
+        {% assign image_mob = section.settings.image_mob | img_url: 'master' %}
+        <div class="image-wrapper medium-up--hide">
+          <img class="lazyload" 
+               src="{{ image_mob }}"
+               data-src="{{ image_mob }}" 
+               data-sizes="auto" 
+               alt="" />
+        </div>
+        {% if section.settings.text != blank %}
+        {{ section.settings.text }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<style>
+  @media screen and (min-width: 750px) {
+    .ab-content-with-image .wrapper {
+      background-image: url({{ section.settings.image_desk | img_url: "master" }});
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Content with image",
+	"class": "ab-content-with-image",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_section",
+        "label": "Enable section",
+        "default": true
+      },
+	  {
+        "type": "image_picker",
+        "id": "image_desk",
+        "label": "Image (Desktop)"
+      },
+	  {
+        "type": "image_picker",
+        "id": "image_mob",
+        "label": "Image (Mobile)"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+        "default": "<p>Text goes here.</p>"
+      }
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

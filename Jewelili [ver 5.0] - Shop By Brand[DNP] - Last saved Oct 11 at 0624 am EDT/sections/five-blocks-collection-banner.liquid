@@ -1,0 +1,122 @@
+<!-- Five-block-collection-banner.liquid -->
+<div class="page-width four-block-banner">
+  {% if section.settings.seasonal-heading != blank or section.settings.seasonal-subheading != blank %}
+  <header class="header-title-wrapper">
+    {% if section.settings.seasonal-heading != blank %}
+    <h3 class="header--sub-heading">{{ section.settings.seasonal-heading }}</h3>
+    {% endif %}
+    {% if section.settings.seasonal-subheading != blank %}
+    <h6 class="header--main-heading">{{ section.settings.seasonal-subheading }}</h6>
+    {% endif %}
+  </header>
+  {% endif %}
+  <div class="slider-wrapper">
+    <div class="{% if section.settings.one-half-banner %}one-half-block-sldier{% else %}five-block-collection-slider{% endif%}">
+      {% for block in section.blocks %}
+      <div class="single-grid-wrapper">
+        {% if block.settings.enable_image %}
+        {% if block.settings.image != blank %}
+        {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        {%- assign img_url_mob  = block.settings.image_mob | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <div class="hover_image">
+          <a class="wrapper_link" {% if block.settings.tackin_id != blank %}id="{{ block.settings.tackin_id }}"{% endif %} {% if block.settings.button_link != blank %}href="{{ block.settings.button_link }}"{% endif %}>
+            <div class="custom__image__wrapper {% if block.settings.image_mob != blank %}small--hide{% endif %}" style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%;">
+              <img class="custom__image lazyload image_scale" data-src="{{ img_url }}" data-widths="[142, 200, 210, 380, 414, 767, 1024, 1280]"data-aspectratio="{{ block.settings.image.aspect_ratio }}" 
+                   data-sizes="auto" alt="{{ block.settings.image.alt | escape }}">
+            </div>
+            {% if block.settings.image_mob != blank %}
+            <div class="custom__image__wrapper medium-up--hide" style="padding-top:{{ 1 | divided_by: block.settings.image_mob.aspect_ratio | times: 100}}%;">
+              <img class="custom__image lazyload" data-src="{{ img_url_mob }}" data-widths="[330, 345, 380, 414, 501, 767]"
+                   data-aspectratio="{{ block.settings.image_mob.aspect_ratio }}" data-sizes="auto" alt="{{ block.settings.image_mob.alt | escape }}">
+            </div>
+            {% endif %}
+            {% if block.settings.title  != blank %}
+            <div class="block_text">
+              <p>
+                {{ block.settings.title }}
+                <svg class="white_arrow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><defs><style>.white_arrow .a{fill:#fff;opacity:0;}.white_arrow .b{fill:#fdfffd;}</style></defs><g transform="translate(-1210 -1907)"><rect class="a" width="48" height="48" transform="translate(1210 1907)"/><path class="b" d="M27.74-47.059a19.129,19.129,0,0,0,19-19,19.157,19.157,0,0,0-19.019-19,19.137,19.137,0,0,0-18.981,19A19.141,19.141,0,0,0,27.74-47.059ZM38.619-66.077a1.739,1.739,0,0,1-.577,1.267l-7.134,7.116a1.678,1.678,0,0,1-1.118.447,1.535,1.535,0,0,1-1.565-1.546,1.6,1.6,0,0,1,.484-1.136L31.335-62.5l2.533-2.142-4.489.168H18.464a1.521,1.521,0,0,1-1.583-1.6,1.531,1.531,0,0,1,1.583-1.6H29.379l4.489.186-2.533-2.123-2.626-2.608a1.635,1.635,0,0,1-.484-1.118,1.535,1.535,0,0,1,1.565-1.546,1.578,1.578,0,0,1,1.118.428l7.134,7.134A1.652,1.652,0,0,1,38.619-66.077Z" transform="translate(1206.19 1998.059)"/></g></svg>
+              </p>
+            </div>
+            {% endif %}
+          </a>
+        </div>
+        {% endif %}
+        {% endif %}
+      </div>
+
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+"name": "Five block slider",
+"class": "index-section collection-five-blocks",
+"settings": [
+{
+"type": "text",
+"id": "seasonal-heading",
+"label": "Heading",
+"default": "Jewelili seasonal deals"
+},
+{
+"type": "text",
+"id": "seasonal-subheading",
+"label": "Sub Heading",
+"default": "Select styles at a great value"
+},
+{
+"type": "checkbox",
+"id": "one-half-banner",
+"label": "One whole banner",
+"default": false
+}
+],
+"blocks": [
+{
+"type": "text_block",
+"name": "Image",
+"settings": [
+{
+"type": "checkbox",
+"id": "enable_image",
+"label": "Show image",
+"default": true
+},
+{
+"type": "image_picker",
+"id": "image",
+"label": "Desktop Image"
+},
+{
+"type": "image_picker",
+"id": "image_mob",
+"label": "Mobile Image"
+},
+{
+"type": "text",
+"id": "title",
+"label": "Block title"
+},
+{
+"type": "text",
+"id": "tackin_id",
+"label": "Tracking ID"
+},
+{
+"type": "url",
+"id": "button_link",
+"label": "Banner link"
+}
+]
+}
+],
+"presets": [
+{
+"name": "Five Block collection Slider",
+"category": "Image"
+}
+]
+}
+{% endschema %}

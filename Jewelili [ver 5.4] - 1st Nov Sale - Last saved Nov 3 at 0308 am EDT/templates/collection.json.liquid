@@ -1,0 +1,14 @@
+{% layout none %}
+{% paginate collection.products by 100 %}
+[
+  {% for product in collection.products%}
+    {% assign pJSON = product | json %}
+    {% assign size = pJSON | size | minus: 1 %}
+    {% assign pJSON = pJSON | slice: 0, size %}
+    {{pJSON}},
+    "metafields":{{ product.metafields.reviewsimportify | json }}
+	}
+   {% if forloop.last == false %},{% endif %}
+  {% endfor %}
+]
+{% endpaginate %}

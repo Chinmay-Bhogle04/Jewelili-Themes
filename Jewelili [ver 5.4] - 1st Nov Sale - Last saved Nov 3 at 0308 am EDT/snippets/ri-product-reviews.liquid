@@ -1,0 +1,55 @@
+{% assign reviews_overview = null %}
+{% if product.metafields.reviewsimportify and product.metafields.reviewsimportify.reviews_overview %}
+{% assign reviews_overview = product.metafields.reviewsimportify.reviews_overview %}
+{% endif %}
+
+{% if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings %}
+{% assign ri_settings = shop.metafields.reviewsimportify.store_settings %}
+{% else %}
+{% assign ri_settings = null %}
+{% endif %}
+
+{% if ri_settings.product_reviews_status == "enabled" and ri_settings.app_status == "active" %}
+
+{% if ri_settings.aggregate_rating_status == "enabled" and reviews_overview.reviews_count > 0 %}
+<span itemtype="http://schema.org/Product" itemscope>
+  <meta itemprop="name" content="{{ product.title | escape }}" />
+  <link itemprop="url" href="{{ product.url }}" />
+  <meta itemprop="description" content="{{ product.description | strip_html | escape }}" />
+  <meta itemprop="image" content="{{ product.featured_image }}" />
+  <meta itemprop="sku" content="{{ product.selected_or_first_available_variant.sku | escape }}" />
+  <span itemprop="brand" itemtype="http://schema.org/Thing" itemscope>
+    <meta itemprop="name" content="{{ product.vendor | escape }}" />
+  </span>
+  <meta itemprop="mpn" content="{{ product.selected_or_first_available_variant.barcode }}" />
+  <span itemprop="offers" itemscope itemtype="http://schema.org/AggregateOffer">
+    <meta itemprop="priceCurrency" content="{{ shop.currency }}" />
+    <meta itemprop="price" content="{{ product.price | money_without_currency | replace:",","." }}" />
+    <meta itemprop="lowPrice" content="{{ product.price_min | money_without_currency | replace:",","." }}">
+    <meta itemprop="highPrice" content="{{ product.price_max | money_without_currency | replace:",","." }}">
+    <meta itemprop="offerCount" content="1">
+  </span>
+  <span itemscope itemprop="aggregateRating" itemtype="http://schema.org/AggregateRating">
+    <meta itemprop="bestRating" content="5">
+    <meta itemprop="worstRating" content="1">
+    <meta itemprop="reviewCount" content="{{ reviews_overview.reviews_count }}">
+    <meta itemprop="ratingValue" content="{{ reviews_overview.average_rating }}">
+  </span>
+  {% if reviews_overview.review_review_author %}
+  <span itemprop="review" itemtype="http://schema.org/Review" itemscope>
+    <span itemprop="author" itemtype="http://schema.org/Person" itemscope>
+      <meta itemprop="name" content="{{reviews_overview.review_review_author}}" />
+    </span>
+    <span itemprop="reviewRating" itemtype="http://schema.org/Rating" itemscope>
+      <meta itemprop="ratingValue" content="{{reviews_overview.review_review_rating}}" />
+      <meta itemprop="bestRating" content="5" />
+    </span>
+  </span>
+  {% endif %}
+</span>
+{% endif %}
+
+<div class="reviews-importify-element" ng-controller="RIReviewsController" ng-init="loadReviews()">
+  {% include 'ri-product-reviews-template' with reviews_overview:reviews_overview, ri_settings:ri_settings %}
+</div>
+{% endif %}

@@ -1,0 +1,36 @@
+{% comment %}
+  The contents of the product.liquid template can be found in /sections/product-template.liquid
+{% endcomment %}
+
+{% render 'breadcrumbs' %}
+{% section 'product-template' %}
+<div class="page-width">
+{% section 'product-recommendations' %}
+</div>
+{% section 'packaging-banner' %}
+<div class="page-width">
+  {% include 'ri-product-reviews', product:product %}
+</div>
+<script>
+  // Override default values of shop.strings for each template.
+  // Alternate product templates can change values of
+  // add to cart button, sold out, and unavailable states here.
+  theme.productStrings = {
+    addToCart: {{ 'products.product.add_to_cart' | t | json }},
+    soldOut: {{ 'products.product.sold_out' | t | json }},
+    unavailable: {{ 'products.product.unavailable' | t | json }}
+  }
+</script>
+
+ 
+ <div id='Areviewsapp' class='page-full'>{%  render 'aliexpress_reviews' , product: product %}</div>					
+<!-- RYVIU APP :: WIDGET -->
+<div class="lt-block-reviews"> 
+	<ryviu-widget  
+        handle="{{product.handle}}"
+        product_id="{{product.id}}"
+	    title_product="{{product.title}}"
+	    total_meta="{{ product.metafields.ryviu.r_count }}"
+		image_product="{{ product.featured_image.src | img_url: '180x' }}"></ryviu-widget>
+</div>
+<!-- / RYVIU APP -->

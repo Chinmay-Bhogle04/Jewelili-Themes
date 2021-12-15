@@ -1,0 +1,86 @@
+<div class="page-width">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center">
+      <h3 class="h3">{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  <div class="collection_slider">
+    {% for block in section.blocks %}
+      <div class="collection_grid">
+        {% assign collection = collections[block.settings.collection] %}
+        <a href="{{ collection.url }}">
+          <img class="lazyload"
+               src="{{ block.settings.collection_image | img_url: 'master' }}"
+               data-src="{{ block.settings.collection_image | img_url: 'master' }}"
+               data-sizes="auto"
+               alt="" />
+          <span class="btn_style1">
+            {% if block.settings.collection_title != blank %}
+            {{ block.settings.collection_title }}
+            {% else %}
+            {{ collection.title }}
+          	{% endif %}
+          </span>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection Slider",
+  "class": "index-section jewelili-collection-section",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Slider title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "collection_image",
+          "label": "Collection Image",
+          "info": "Recommended size 748x564"
+        },
+		{
+          "type": "text",
+          "id": "collection_title",
+          "label": "Collection Title"
+		},
+        {
+          "label": "Collection",
+          "id": "collection",
+          "type": "collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Slider",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

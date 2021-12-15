@@ -1,0 +1,71 @@
+<section data-section-id="{{ section.id }}" data-section-type="jewelili-instagram-section">
+  <div class="insta_logo">
+    <img class="lazyload"
+         data-src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Instagram_logo.png?v=1608810128"
+         data-sizes="auto"
+         alt="" />
+  </div>
+  {% if section.settings.title != blank %}
+  <h2 class="header--main-heading">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  {% if section.settings.subtitle != blank %}
+  <h3 class="header--sub-heading">{{ section.settings.subtitle }}</h3>
+  {% endif %}
+
+  <div class="page-width">
+    <div id="insta-feed"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+"name": "Instagram Section",
+"class": "index-section jewelili-instagram-section",
+"settings": [
+{
+"type": "text",
+"id": "title",
+"label": "Title",
+"default": "Title"
+},
+{
+"type": "text",
+"id": "subtitle",
+"label": "Sub Title",
+"default": "#RedefiningJoy"
+}
+],
+"blocks": [
+{
+"type": "instagram-content",
+"name": "Instagram Content",
+"settings": [
+{
+"type": "image_picker",
+"id": "post_image",
+"label": "Post Image",
+"info": "Recommended size 264x264"
+},
+{
+"type": "url",
+"id": "instagram_url",
+"label": "Instagram URL"
+}
+]
+}
+],
+"presets": [
+{
+"name": "Instagram Section",
+"category": "Advanced layout"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,11 @@
+<script>
+  $(document).on('page:load page:change', function() {
+    var checkoutAmount = $(".payment-due__price").attr("data-checkout-payment-due-target");
+    console.log(checkoutAmount);
+    if(checkoutAmount<50000){
+      $('[data-select-gateway="39613988918"]').hide();
+    }
+    //  add $ 0.0 as shipping charges
+    $("[data-checkout-total-shipping-target]").html('<b>Free</b>')
+  })
+</script>

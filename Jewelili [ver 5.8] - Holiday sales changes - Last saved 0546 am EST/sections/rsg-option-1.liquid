@@ -1,0 +1,89 @@
+{% if section.settings.enable_section %}
+<section class="section-wrapper section-spacing">
+  <div class="page-width">
+    <div class="section-header text-center">
+      {% if section.settings.sub_title != blank %}
+      <span class="sub-title">{{ section.settings.sub_title }}</span>
+      {% endif %}
+      {% if section.settings.title != blank %}
+      <h2>{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.text != blank %}
+      <div class="text">{{ section.settings.text }}</div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="steps-wrapper">
+    {% for block in section.blocks %}
+    <div class="step step-{{forloop.index}}">
+      <div class="step-info">
+        <h3>Step</h3>
+        {% if block.settings.text != blank %}
+        {{ block.settings.text }}
+        {% endif %}
+      </div>
+      {% if block.settings.step_svg != blank %}
+      <div class="step-svg">{{ block.settings.step_svg }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Option 1",
+	"class": "rsg-option option-1",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_section",
+        "label": "Enable section",
+        "default": true
+      },
+	  {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Measure by string or paper test"
+      },
+	  {
+        "type": "text",
+        "id": "sub_title",
+        "label": "Sub title",
+        "default": "Option 1"
+      },
+	  {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text",
+		"default": "<p>Chose the finger you want to wear the ring on, keeping in mind that your dominant hand tends to have larger fingers than your non dominant hand and then take your measurements.</p>"
+      }
+	],
+	"blocks": [
+      {
+        "type": "block",
+        "name": "Block",
+        "settings": [
+		  {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text"
+          },
+		  {
+            "type": "textarea",
+            "id": "step_svg",
+            "label": "Step SVG"
+          }
+        ]
+      }
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

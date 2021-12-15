@@ -1,0 +1,107 @@
+<div class="page-width shop-by-design">  
+  {% if section.settings.heading != blank or section.settings.subtitle != blank %}
+  <div class="section-header header-title-wrapper">
+    {% if section.settings.heading != blank %}
+    <h5 class="sub-title header--sub-heading">{{ section.settings.heading | escape }}</h5>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+    <h2 class="title header--main-heading">{{ section.settings.subtitle | escape }}</h2>
+    {% endif %}
+    
+  </div>
+  {% endif %}
+  <div class="feature-row__image mother-category-index">
+    {% for block in section.blocks %}
+    <div class="txt-img-block" data-child="{{ forloop.index }}">
+        {% if block.settings.image != blank %}
+        {%- assign img_url = block.settings.image | img_url: 'master' -%}
+        {%- assign mob_img_url = block.settings.mobImage | img_url: 'master' -%}
+        <div class="feature-row__image-wrapper small--hide">
+          <img class="lazyload" data-src="{{ img_url }}"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+          data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+          data-sizes="auto"
+          alt="{{ block.settings.image.alt | escape }}">
+        </div>
+        <div class="feature-row__image-wrapper medium-up--hide">
+          <img class="lazyload" data-src="{{ mob_img_url }}"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+          data-aspectratio="{{ block.settings.mobImage.aspect_ratio }}"
+          data-sizes="auto"
+          alt="{{ block.settings.mobImage.alt | escape }}">
+        </div>
+        {% endif %}
+        <div class="text-block">
+          {% if block.settings.title != blank %}<h5 class="name" style="color:{{ block.settings.textColor }};">{{ block.settings.title }}</h5>{% endif %}
+          {% if block.settings.subtitle != blank %}<h5 class="profession" style="color:{{ block.settings.textColor }};">{{ block.settings.subtitle }}</h5>{% endif %}
+          {% if block.settings.link != blank %}
+          <a class="block_link" href="{{ block.settings.link }}">
+            SHOP NOW 
+            <svg class="mother-linksvg" xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11"><defs><style> .mother-linksvg .a{fill:#fff;opacity:0;}.mother-linksvg .b{fill:#292d36;}</style></defs><g transform="translate(-176 -853)"><rect class="a" width="12" height="11" transform="translate(176 853)"/><path class="b" d="M13.97-74.6a5.265,5.265,0,0,0,5.23-5.23,5.273,5.273,0,0,0-5.235-5.23,5.267,5.267,0,0,0-5.225,5.23A5.268,5.268,0,0,0,13.97-74.6Zm2.994-5.235a.479.479,0,0,1-.159.349l-1.964,1.959a.462.462,0,0,1-.308.123.422.422,0,0,1-.431-.426.441.441,0,0,1,.133-.313l.723-.708.7-.59-1.236.046h-3a.419.419,0,0,1-.436-.441.421.421,0,0,1,.436-.441h3l1.236.051-.7-.584-.723-.718a.45.45,0,0,1-.133-.308.422.422,0,0,1,.431-.426.434.434,0,0,1,.308.118l1.964,1.964A.455.455,0,0,1,16.964-79.834Z" transform="translate(168.002 938.33)"/></g></svg>
+          </a>
+          {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Shop by design",
+  "class": "index-section shop-by-design-section",
+  "settings": [
+  {
+    "type": "text",
+    "id": "heading",
+    "label": "Heading",
+    "default": "Our happy Customers"
+  },
+  {
+    "type": "text",
+    "id": "subtitle",
+    "label": "Sub Heading",
+    "default": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquy."
+  }
+  ],
+  "blocks": [
+  {
+    "type": "text_block",
+    "name": "Text Block",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobImage",
+      "label": "Mobile image"
+    },
+    {
+      "type": "color",
+      "id": "textColor",
+      "label": "Text color"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Name"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}

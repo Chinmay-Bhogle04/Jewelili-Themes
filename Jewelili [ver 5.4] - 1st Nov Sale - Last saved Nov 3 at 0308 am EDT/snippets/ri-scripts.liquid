@@ -1,0 +1,8 @@
+{% if ri_settings.app_status == "active" %}
+{{ riAppBaseUrl | append:'/public/shopify/js/app-scripts.js' | script_tag }}
+{% comment %}
+{{ 'app-scripts.js' | asset_url | script_tag }}
+{% endcomment %}
+<script type="text/javascript">
+</script>
+{% endif %}

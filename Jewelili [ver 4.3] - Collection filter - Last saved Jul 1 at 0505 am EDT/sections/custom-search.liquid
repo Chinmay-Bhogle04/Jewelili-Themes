@@ -1,0 +1,92 @@
+<section data-section-id="{{ section.id }}" data-section-type="jewelili-search-section">
+
+  {% assign searchCollection = collections['all']%}
+  {% paginate searchCollection.products by 1000 %}
+  {% for product in searchCollection.products %}
+    {% if product.type != blank %}
+    	{% assign s_pts = s_pts | append: product.type | append: ',' %}
+    {% endif %}
+  {% endfor %}
+  {%- endpaginate -%}
+  
+  {% assign s_pts = s_pts | split: ',' | uniq %}
+  
+  <div class="search_form">
+    <select id="{{ section.settings.search_name | downcase }}" name="q">
+      <option value="hide">{{ section.settings.search_name }}</option>
+      {% for s_pt in s_pts %}
+        <option value="{{ s_pt | replace:' ','_'}}">{{ s_pt }}</option>
+      {% endfor %}
+    </select>
+    
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        {% if block.type == 'tag_search' %}
+          {% assign search_name = block.settings.search_name %}
+  		  {% assign search_tags = block.settings.search_tags | split: ',' | uniq %} 
+            <select id="{{ search_name |handle | downcase }}" name="{{ search_name |handle | downcase }}">
+              <option value="hide">{{ search_name }}</option>
+              {% for tag in search_tags %}               
+                  {% assign search_formatted_tags = tag | strip %}
+                  	<option value="{{ search_formatted_tags | replace:' ','_'}}">{{ search_formatted_tags }}</option>
+              {% endfor %}
+            </select>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    
+    <button type="button" id="search-items">Search Jewelry</button>
+  </div>
+</section>
+{% schema %}
+  {
+    "name": "Search Section",
+	"class": "jewelili-search-section",
+    "max_blocks": 3,
+    "settings": [
+	  {
+        "type": "header",
+        "content": "Type Filter",
+        "info": "Types are coming from product type"
+      },
+      {
+        "type": "text",
+        "id": "search_name",
+        "label": "Heading",
+        "default": "Type"
+      }
+	],
+	"blocks": [
+      {
+		"type": "tag_search",
+		"name": "Tag Search",
+		"settings": [
+          {
+			"type": "text",
+			"id": "search_name",
+			"label": "Heading",
+			"default": "Heading"
+          },
+		  {
+			"type": "textarea",
+			"id": "search_tags",
+			"label": "Tags",
+			"info": "Add a comma-separated list of product tags. Only the tags found in the collection will be displayed as filters."
+		  }
+		]
+      }
+	],
+	"presets": [
+      {
+        "name": "Search Section",
+        "category": "Advanced layout"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

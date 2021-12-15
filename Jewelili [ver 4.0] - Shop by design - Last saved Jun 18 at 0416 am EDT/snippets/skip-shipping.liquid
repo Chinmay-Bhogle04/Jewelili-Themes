@@ -1,0 +1,32 @@
+<style>
+  .shipping__overlay {
+    pointer-events: none;
+  }
+  .shipping__overlay .full-page-overlay__text {
+    font-size: 16px;
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }  
+</style>
+
+<script> 
+  $(document).on('page:load page:change', function() {
+//     $('.breadcrumb__item .breadcrumb__link:contains(Cart)').parent().hide();
+    $('.breadcrumb__item .breadcrumb__text:contains(Shipping)').parent().hide();
+    $('.breadcrumb__item .breadcrumb__link:contains(Shipping)').parent().hide();      
+    
+    if ($('.step[data-step="contact_information"]').length > 0) {
+      $('.step__footer__previous-link').hide();
+      $('.step__footer__continue-btn .btn__content').html('Continue to payment method');
+    }
+    if ($('.step[data-step="shipping_method"]').length > 0) {
+      $(".section--shipping-method [data-shipping-method] input").prop("checked", true);
+      $('.step__footer__continue-btn').first().click();
+    }
+    if ($('.step[data-step="payment_method"]').length > 0) {
+      $('.review-block:last-child').hide();
+      $('.step__footer__previous-link-content').html("Return to customer information");
+      $('.step__footer__previous-link').attr("href", "/checkout?step=contact_information");
+    }
+  });
+</script>

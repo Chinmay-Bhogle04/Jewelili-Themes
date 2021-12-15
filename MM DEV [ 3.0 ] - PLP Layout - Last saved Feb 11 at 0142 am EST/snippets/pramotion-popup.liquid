@@ -1,0 +1,57 @@
+<script>
+  /*! js-cookie v3.0.0-beta.3 | MIT */
+  !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e=e||self,function(){var n=e.Cookies,r=e.Cookies=t();r.noConflict=function(){return e.Cookies=n,r}}())}(this,function(){"use strict";var e={read:function(e){return e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent)},write:function(e){return encodeURIComponent(e).replace(/%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,decodeURIComponent)}};function t(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)e[r]=n[r]}return e}return function n(r,o){function i(e,n,i){if("undefined"!=typeof document){"number"==typeof(i=t({},o,i)).expires&&(i.expires=new Date(Date.now()+864e5*i.expires)),i.expires&&(i.expires=i.expires.toUTCString()),n=r.write(n,e),e=encodeURIComponent(e).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape);var c="";for(var u in i)i[u]&&(c+="; "+u,!0!==i[u]&&(c+="="+i[u].split(";")[0]));return document.cookie=e+"="+n+c}}return Object.create({set:i,get:function(t){if("undefined"!=typeof document&&(!arguments.length||t)){for(var n=document.cookie?document.cookie.split("; "):[],o={},i=0;i<n.length;i++){var c=n[i].split("="),u=c.slice(1).join("=");'"'===u[0]&&(u=u.slice(1,-1));try{var f=e.read(c[0]);if(o[f]=r.read(u,f),t===f)break}catch(e){}}return t?o[t]:o}},remove:function(e,n){i(e,"",t({},n,{expires:-1}))},withAttributes:function(e){return n(this.converter,t({},this.attributes,e))},withConverter:function(e){return n(t({},this.converter,e),this.attributes)}},{attributes:{value:Object.freeze(o)},converter:{value:Object.freeze(r)}})}(e,{path:"/"})});
+
+  /*! Popup JS | Marmeto | AJ */
+  $(document).ready(function() {
+    var newsletter_popup = {
+      init: function(){
+        var popup = Cookies.get('popup');
+        var cookie_enabled = true;
+
+        if (cookie_enabled && popup == 'open') {
+          return false;
+        } else {
+          newsletter_popup.open();
+        }
+        if (cookie_enabled) {
+
+        }
+      },
+      open: function(){
+        $('body').addClass('mm-popup--opened');
+      }
+    }
+    newsletter_popup.init();
+
+    $("#size-chart-popup").click(function(e){
+      if($(e.target).closest(".popup").length<1){
+        $(this).css({"visibility":"hidden","opacity":"0"});
+        $("body").css("overflow","unset").removeClass('mm-popup--opened');
+        Cookies.set('popup', 'open');
+      }
+    });
+
+    $(".overlay .close-popup").click(function(e){
+      $(this).closest('.overlay').css({"visibility":"hidden","opacity":"0"});
+      $("body").css("overflow","unset").removeClass('mm-popup--opened');
+      Cookies.set('popup', 'open');
+    });
+  })
+</script>
+
+<div id="size-chart-popup" class="overlay">
+  <div class="popup-wrapper">
+    <div class="popup-header text-center">
+      <!--       <h2 class="popup-title">Size chart</h2> -->
+      <a href="javascript:void(0);" class="close-popup"><svg width="33" height="32" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="33" height="32"><rect x="16.4995" y="0.346771" width="22.1372" height="22.1372" transform="rotate(45 16.4995 0.346771)" fill="#C4C4C4"/></mask><g mask="url(#mask0)"><path d="M17.1074 16.5065L20.9271 20.3263L20.3195 20.934L16.4997 17.1142L12.68 20.934L12.0723 20.3263L15.892 16.5065L12.0723 12.6868L12.68 12.0791L16.4997 15.8989L20.3195 12.0791L20.9271 12.6868L17.1074 16.5065Z" fill="#575555" stroke="#575555"/></g></svg></a>
+    </div>
+    <div class="popup-content">
+      <a href="https://www.jewelili.com/collections/all">
+        <img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Pop_Up_2x_1.png?v=1612548147" style="display:block;">
+      </a>
+      {% comment %}<p>*Not applicable on all Enchanted Disney Fine Jewelry products</p>{% endcomment %}
+    </div>
+  </div>
+</div>
+

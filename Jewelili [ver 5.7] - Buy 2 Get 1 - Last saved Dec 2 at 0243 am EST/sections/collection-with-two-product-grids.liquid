@@ -1,0 +1,119 @@
+<div class="page-width">
+  <div class="single__collection">
+    {% for block in section.blocks %}
+    {% assign productOne = all_products[block.settings.product] %}
+    {% if forloop.first %}
+    <div class="product_card">
+      {% include 'product-card-grid-alt', product: productOne, max_height: 300 %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div class="single__collection-banner">
+      {% assign collection = collections[section.settings.collection] %}
+      <a href="{{ collection.url }}">
+        <img class="lazyload"
+             src="{{ section.settings.collection_image | img_url: 'master' }}"
+             data-src="{{ section.settings.collection_image | img_url: 'master' }}"
+             data-sizes="auto"
+             alt="" />
+      </a>
+      <div class="overlay--text">
+        {% if section.settings.text1 != blank %}
+        <p class="grid---title1">
+          {{ section.settings.text1 }}
+        </p>
+        {% endif %}
+        {% if section.settings.text2 != blank %}
+        <p class="grid---title2">
+          {{ section.settings.text2 }}
+        </p>
+        {% endif %}
+        {% if section.settings.text3 != blank %}
+        <p class="grid---title3">
+          {{ section.settings.text3 }}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+    {% for block in section.blocks %}
+    {% assign productTwo = all_products[block.settings.product] %}
+    {% if forloop.last %}
+    <div class="product_card">
+      {% include 'product-card-grid-alt', product: productTwo, max_height: 300 %}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Collection with product",
+	"class": "index-section jewelili-collection-with-product",
+	"max_blocks": 2,
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "collection_image",
+        "label": "Collection Image",
+        "info": "Recommended size 1142x1324"
+      },
+      {
+        "label": "Collection",
+        "id": "collection",
+        "type": "collection"
+      },
+	  {
+        "label": "text 1",
+        "id": "text1",
+        "type": "textarea",
+		"default":"For your sun, your moon, your entire galaxy! Express the unbreakable bond with Jewelili."
+	  },
+	  {
+        "label": "text 2",
+        "id": "text2",
+        "type": "textarea",
+		"default":"For your sun, your moon, your entire galaxy! Express the unbreakable bond with Jewelili."
+	  },
+	  {
+        "label": "text 3",
+        "id": "text3",
+        "type": "textarea",
+		"default":"For your sun, your moon, your entire galaxy! Express the unbreakable bond with Jewelili."
+	  }
+	],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Product",
+        "settings": [
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          }
+        ]
+      }
+	],
+    "presets": [
+      {
+        "name": "Collection with two product",
+        "category": "Collection",
+        "blocks": [
+          {
+          	"type": "product"
+          },
+          {
+          	"type": "product"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

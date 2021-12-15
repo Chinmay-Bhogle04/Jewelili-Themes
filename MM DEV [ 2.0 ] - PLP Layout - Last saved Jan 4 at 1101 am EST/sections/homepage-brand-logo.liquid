@@ -1,0 +1,61 @@
+{% comment %}
+** Mega menu - homepage partial **
+- Static section
+- Uses blocks
+- Must be enabled through general settings
+{% endcomment %}
+
+<div class="brand-logo page-width">
+  <div class="logo">
+    {% for block in section.blocks %}
+    {% if block.type == 'megamenu_nav' %}
+    <a href="{{ collections[block.settings.collection_url].url }}">
+      <img src="{{ block.settings.brand_image | img_url: '200x' }}" />
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Brands",
+    "class": "mega-menu-section",
+    "max_blocks": 6,
+    "settings": [
+      {
+        "type": "text",
+        "id": "parent",
+        "label": "Link title",
+        "info": "The mega menu will appear below this parent link"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "megamenu_nav",
+        "name": "Brand Logo",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collection_url",
+            "label": "Brand Url"
+          },
+          {
+            "type": "image_picker",
+            "id": "brand_image",
+            "label": "Brand Image",
+			"info": "Recommended image size 200x95 (px)"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Brand Logo",
+        "category": "Image"
+      }
+    ]
+  }
+  
+  {% endschema %}
+  

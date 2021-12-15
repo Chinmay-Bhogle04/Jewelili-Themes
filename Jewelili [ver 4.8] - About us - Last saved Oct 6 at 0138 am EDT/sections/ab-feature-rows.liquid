@@ -1,0 +1,123 @@
+{% if section.settings.enable_section %}
+<section>
+  <div class="page-width">
+    <div class="wrapper ab-feature-rows-slider">
+      {% for block in section.blocks %}
+      {% capture image_layout %}
+      <div class="image-wrapper image-desk small--hide">
+        <img class="lazyload small--hide" 
+        src="{{ block.settings.image_desk | img_url: 'master' }}"
+        data-src="{{ block.settings.image_desk | img_url: 'master' }}" 
+        data-sizes="auto" 
+        alt="" />
+      </div>
+      {% endcapture %}
+      <div class="row-wrapper {% if block.settings.layout == 'right' %}image-right{% else %}image-left{% endif %}">
+        <div class="row">
+          {% if block.settings.layout == 'left' %}
+          {{ image_layout }}
+          {% endif %}
+          <div class="content small--text-center">
+            <div class="top-content">
+              {% if block.settings.title != blank %}
+              <h2>{{ block.settings.title }}</h2>
+              {% endif %}
+              <div class="image-wrapper image-mob">
+                <img class="lazyload medium-up--hide" 
+                src="{{ block.settings.image_mob | img_url: 'master' }}"
+                data-src="{{ block.settings.image_mob | img_url: 'master' }}" 
+                data-sizes="auto" 
+                alt="" />
+              </div>
+              {% if block.settings.text != blank %}
+              {{ block.settings.text }}
+              {% endif %}
+            </div>
+            {% if block.settings.btn_link != blank %}
+            <a class="feature_link" href="{{ block.settings.btn_link }}">Shop Now 
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 15.819 15.819"><g id="Right_Arrow" data-name="Right Arrow" transform="translate(0 0)"><path id="Path_198132" data-name="Path 198132" d="M16.65-69.239a7.963,7.963,0,0,0,7.91-7.91,7.975,7.975,0,0,0-7.917-7.91,7.967,7.967,0,0,0-7.9,7.91A7.968,7.968,0,0,0,16.65-69.239Zm4.529-7.917a.724.724,0,0,1-.24.527l-2.97,2.962a.7.7,0,0,1-.465.186.639.639,0,0,1-.651-.644.666.666,0,0,1,.2-.473l1.093-1.07L19.2-76.56l-1.869.07H12.788a.633.633,0,0,1-.659-.667.637.637,0,0,1,.659-.667h4.544l1.869.078-1.055-.884-1.093-1.086a.681.681,0,0,1-.2-.465.639.639,0,0,1,.651-.644.657.657,0,0,1,.465.178l2.97,2.97A.688.688,0,0,1,21.178-77.157Z" transform="translate(-8.74 85.059)" fill="#b45283"></path></g></svg>
+            </a>
+            {% endif %}
+          </div>
+          {% if block.settings.layout == 'right' %}
+          {{ image_layout }}
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Feature rows",
+  "class": "ab-feature-rows",
+  "settings": [
+  {
+    "type": "checkbox",
+    "id": "enable_section",
+    "label": "Enable section",
+    "default": true
+  }
+  ],
+  "blocks": [
+  {
+    "type": "row",
+    "name": "Row",
+    "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Text goes here.</p>"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desk",
+      "label": "Image (Desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mob",
+      "label": "Image (Mobile)"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Image alignment",
+      "default": "right",
+      "options": [
+      {
+        "value": "left",
+        "label": "Left"
+      },
+      {
+        "value": "right",
+        "label": "Right"
+      }
+      ]
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

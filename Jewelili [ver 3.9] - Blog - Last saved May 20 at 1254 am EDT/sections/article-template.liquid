@@ -1,0 +1,187 @@
+<div class="section-header">
+  <div>
+    <p class="article_sub-title">Fashion - week</p>
+    <h1 class="article__title" id="title-0">{{ article.title }}</h1>
+    {% if section.settings.blog_show_author %}
+    <span class="article__author">{{ 'blogs.article.by_author' | t: author: article.author }}</span>
+    {% endif %}
+
+    {% if section.settings.blog_show_date %}
+    <span class="article__date">
+      {{ article.published_at | time_tag: format: 'date' }}
+    </span>
+    {% endif %}
+  </div>
+  {% if section.settings.show_share_buttons %}
+  <div class="article-social-sharing small--hide">
+    <span>Share</span>
+    {% include 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image %}
+  </div>
+  {% endif %}
+</div>
+
+<div class="article-content rte">
+  <div class="article__image-wrapper">
+    <img class="lazyload medium-up--hide"
+         src="{{ article.metafields.global.mobile_banner }}"
+         data-src="{{ article.metafields.global.mobile_banner }}"
+         data-sizes="auto"
+         alt="" />
+    
+    {% if article.image %}
+    {% capture img_id %}ArticleImage-{{ article.image.id }}{% endcapture %}
+    {% capture img_wrapper_id %}ArticleImageWrapper-{{ article.image.id }}{% endcapture %}
+    {%- assign img_url = article.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+    {% include 'image-style' with image: article.image, small_style: true, width: 345, height: 345, wrapper_id: img_wrapper_id, img_id: img_id %}
+    <div id="{{ img_wrapper_id }}" class="article__grid-image-wrapper small--hide js">
+      <div class="article__grid-image-container" style="padding-top:{{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%;">
+        <img id="{{ img_id }}"
+             class="article__grid-image lazyload"
+             src="{{ article.image | img_url: '300x300' }}"
+             data-src="{{ img_url }}"
+             data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+             data-aspectratio="{{ article.image.aspect_ratio }}"
+             data-sizes="auto"
+             alt="">
+      </div>
+    </div>
+    <noscript>
+      <div class="article__grid-image-wrapper">
+        {{ article | img_url: '345x345', scale: 2 | img_tag: article.title, 'article__grid-image' }}
+      </div>
+    </noscript>
+    {% endif %}
+  </div>
+  
+  <div class="article__content-wrapper">
+    {{ article.content }}
+  </div>
+</div>
+
+{% if section.settings.show_share_buttons %}
+<div class="article-social-sharing bottom text-center">
+  <h4>Want to stay updated with the latest in jewellery design and our amazing offers?</h4>
+  <span>Connect with us</span>
+  {%- assign socials = "Facebook Twitter Pinterest Instagram Tumblr Snapchat YouTube Vimeo" | split: ' ' -%}
+  <ul class="list--inline social-icons">
+    {%- for social in socials -%}
+    {%- assign social_link = social | prepend: 'social_' | append: '_link' | downcase -%}
+    {%- assign icon_link = social | prepend: 'icon-' | downcase -%}
+    {%- if settings[social_link] != blank -%}
+    <li class="social-icons__item">
+      <a class="social-icons__link" target="_blank" href="{{ settings[social_link] | escape }}" aria-describedby="a11y-external-message">
+        {%- include icon_link -%}
+        <span class="icon__fallback-text">{{ social }}</span>
+      </a>
+    </li>
+    {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>
+{% endif %}
+
+
+
+{% schema %}
+{
+  "name": {
+    "da": "Opslag",
+    "de": "Posts",
+    "en": "Posts",
+    "es": "Publicaciones",
+    "fi": "Julkaisut",
+    "fr": "Articles",
+    "hi": "पोस्ट",
+    "it": "Articoli",
+    "ja": "投稿",
+    "ko": "게시물",
+    "nb": "Innlegg",
+    "nl": "Berichten",
+    "pt-BR": "Posts",
+    "pt-PT": "Publicações",
+    "sv": "Inlägg",
+    "th": "โพสต์",
+    "zh-CN": "文章",
+    "zh-TW": "貼文"
+  },
+  "class": "article-template-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "blog_show_author",
+      "label": {
+        "da": "Vis forfatter",
+        "de": "Autor anzeigen",
+        "en": "Show author",
+        "es": "Mostrar autor",
+        "fi": "Näytä tekijä",
+        "fr": "Afficher l'auteur",
+        "hi": "लेखक दिखाएं",
+        "it": "Mostra autore",
+        "ja": "執筆者を表示する",
+        "ko": "작성자 표시",
+        "nb": "Vis forfatter",
+        "nl": "Auteur weergeven",
+        "pt-BR": "Exibir autor",
+        "pt-PT": "Mostrar autor",
+        "sv": "Visa författare",
+        "th": "แสดงผู้เขียน",
+        "zh-CN": "显示作者",
+        "zh-TW": "顯示作者"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_show_date",
+      "label": {
+        "da": "Vis dato",
+        "de": "Datum anzeigen",
+        "en": "Show date",
+        "es": "Mostrar fecha",
+        "fi": "Näytä päivämäärä",
+        "fr": "Afficher la date",
+        "hi": "दिनांक दिखाएं",
+        "it": "Mostra data",
+        "ja": "日付を表示する",
+        "ko": "날짜 표시",
+        "nb": "Vis dato",
+        "nl": "Datum weergeven",
+        "pt-BR": "Exibir data",
+        "pt-PT": "Mostrar data",
+        "sv": "Visa datum",
+        "th": "แสดงวันที่",
+        "zh-CN": "显示日期",
+        "zh-TW": "顯示日期"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": {
+        "da": "Vis knapper til deling på sociale medier",
+        "de": "Buttons für Social Media anzeigen",
+        "en": "Show social sharing buttons",
+        "es": "Mostrar botones para compartir en redes sociales",
+        "fi": "Näytä sosiaalisen median jakamispainikkeet",
+        "fr": "Afficher les boutons de partage sur les médias sociaux",
+        "hi": "सोशल शेयरिंग बटन दिखाएं",
+        "it": "Mostra i pulsanti per la condivisione sui social",
+        "ja": "ソーシャルメディアでの共有ボタンを表示する",
+        "ko": "소셜 공유 버튼 표시",
+        "nb": "Vis knapper for deling på sosiale medier",
+        "nl": "Knoppen voor sociaal delen weergeven",
+        "pt-BR": "Exibir botões de compartilhamento em redes sociais",
+        "pt-PT": "Mostrar botões de partilha nas redes sociais",
+        "sv": "Visa knappar för delning i sociala medier",
+        "th": "แสดงปุ่มสำหรับแชร์ลงโซเชียล",
+        "zh-CN": "显示社交分享按钮",
+        "zh-TW": "顯示社群分享按鈕"
+      },
+      "default": true
+    }
+  ]
+}
+{% endschema %}

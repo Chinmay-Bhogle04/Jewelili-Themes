@@ -1,0 +1,176 @@
+<section data-section-id="{{ section.id }}" >
+  <div class="page-width birthstone_banners">
+    <header class="header-title-wrapper">
+      {% if section.settings.heading != blank %}
+      <h6 class="header--main-heading">{{ section.settings.heading }}</h6>
+      {% endif %}
+    </header>
+    <div class="month-sticky-height">
+      <div class="month-wrapper">
+        <div class="month-grid">
+          {% for block in section.blocks %}
+          {% if block.settings.month_link != blank %}
+          <div class="month_grid-item">
+            <div class="month-item">
+              <a href="#{{ block.settings.month_link }}_banner">{{ block.settings.month_link }}</a>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% for block in section.blocks %}
+    <div id="{{ block.settings.month_link }}_banner" class="banner_bg {% if block.settings.text_position == 'left' %}toleft-bg{% endif %}">
+      {% capture text_content %}
+      <div class="text_container">
+        {% comment %}
+        {% if block.settings.gemstone != blank %}
+        <p class="gemstone_name">{{ block.settings.gemstone }}</p>
+        {% endif %}
+        {% endcomment %}
+        {% if block.settings.birthstone_month != blank %}
+        <h2 class="birth_month">{{ block.settings.birthstone_month }} - {% if block.settings.gemstone != blank %} {{ block.settings.gemstone }}{% endif %}</h2>
+        {% endif %}
+        {% if block.settings.birthstone_detail %}
+        <p class="gemstone_detail">{{ block.settings.birthstone_detail }}</p>
+        {% endif %}
+        {% if block.settings.button_name != blank %}
+        <a {% if block.settings.button_url != blank %}href="{{ block.settings.button_url }}" {% endif %}>
+          {{ block.settings.button_name }}<svg class="gem_svg" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 14 14"><defs><style>.gem_svg .gem_a{fill:#fff;opacity:0;}.gem_svg .gem_b{fill:#292d36;}</style></defs><g transform="translate(-708 -1684)"><rect class="gem_a" width="14" height="14" transform="translate(708 1684)"/><path class="gem_b" d="M14.74-73.059a6.041,6.041,0,0,0,6-6,6.05,6.05,0,0,0-6.006-6,6.043,6.043,0,0,0-5.994,6A6.044,6.044,0,0,0,14.74-73.059Zm3.435-6.006a.549.549,0,0,1-.182.4L15.74-76.417a.53.53,0,0,1-.353.141.485.485,0,0,1-.494-.488.506.506,0,0,1,.153-.359l.829-.812.8-.676-1.418.053H11.811a.48.48,0,0,1-.5-.506.483.483,0,0,1,.5-.506h3.447l1.418.059-.8-.671-.829-.824a.516.516,0,0,1-.153-.353.485.485,0,0,1,.494-.488.5.5,0,0,1,.353.135l2.253,2.253A.522.522,0,0,1,18.175-79.064Z" transform="translate(700.191 1770.021)"/></g></svg>
+        </a>
+        {% endif %}
+      </div>
+      {% endcapture %}
+
+      {% if block.settings.text_position == 'left' %}
+      {{ text_content }}
+      {% endif %}      
+      {% unless block.settings.pendent == nil %}
+      {%- assign pendent = block.settings.pendent | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      <div class="pendent stones_banner">
+        {% capture img_id %}pendentColumnImage-{{ block.id }}{% endcapture %}
+        {%- assign max_height = 277 -%}
+        {% include 'image-style', image: block.settings.pendent, height: max_height, wrapper_id: wrapper_id, img_id: img_id %}
+        <div style="padding-top:{{ 1 | divided_by: block.settings.pendent.aspect_ratio | times: 100}}%;">
+          <img id="{{ img_id }}" class="custom__image lazyload"
+               data-src="{{ pendent }}"
+               data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+               data-aspectratio="{{ block.settings.pendent.aspect_ratio }}"
+               data-sizes="auto"
+               alt="{{ block.settings.gemstone | escape }} pendent">
+        </div>
+      </div>
+      {% endunless %}
+      {% unless block.settings.ring == nil %}
+      {%- assign ring = block.settings.ring | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      <div class="ring stones_banner">
+        {% capture img_id %}ringColumnImage-{{ block.id }}{% endcapture %}
+        {% include 'image-style', image: block.settings.ring, height: max_height, wrapper_id: wrapper_id, img_id: img_id %}
+        <div  style="padding-top:{{ 1 | divided_by: block.settings.ring.aspect_ratio | times: 100}}%;">
+          <img id="{{ img_id }}" class="custom__image lazyload"
+               data-src="{{ ring }}"
+               data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+               data-aspectratio="{{ block.settings.ring.aspect_ratio }}"
+               data-sizes="auto"
+               alt="{{ block.settings.gemstone | escape }} ring">
+        </div>
+      </div>
+      {% endunless %}
+      {% if block.settings.text_position == 'right' %}
+      {{ text_content }}
+      {% endif %}      
+      <a class="bsbanner_link" {% if block.settings.button_url != blank %}href="{{ block.settings.button_url }}" {% endif %}></a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+"name": "Birthstone Details",
+"class": "index-section",
+"settings": [
+{
+"type": "text",
+"id": "heading",
+"label": "Heading",
+"default": "Learn more about birthstones"
+}
+],
+"blocks": [
+{
+"type": "image_picker",
+"name": "Birthstone Banners",
+"settings": [
+{
+"type": "header",
+"content": "Links"
+},
+{
+"type": "text",
+"id": "month_link",
+"label": "Month"
+},
+{
+"type": "header",
+"content": "Banner"
+},
+{
+"type": "image_picker",
+"id": "pendent",
+"label": "Pendent"
+},
+{
+"type": "image_picker",
+"id": "ring",
+"label": "Ring"
+},
+{
+"type": "select",
+"id": "text_position",
+"label": "Text Position",
+"default": "right",
+"options": [
+{
+"value": "left",
+"label": "Left"
+},
+{
+"value":"right",
+"label":"Right"
+}
+]
+},
+{
+"type": "text",
+"id": "gemstone",
+"label": "Gemstone"
+},
+{
+"type": "text",
+"id": "birthstone_month",
+"label": "Birthstone Month"
+},
+{
+"type": "textarea",
+"id": "birthstone_detail",
+"label": "Birthstone Detail",
+"default": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren."
+},
+{
+"type": "text",
+"id": "button_name",
+"label": "Button Name",
+"default": "SHOP NOW"
+},
+{
+"type": "url",
+"id": "button_url",
+"label": "Link"
+}
+]
+}   
+]
+}
+{% endschema %}

@@ -1,0 +1,578 @@
+<div class="ri-template1">
+  <div id="reviews-importify-reviews" class="reviews-importify-reviews reviews-importify-reviews-{{ product.id }}" product-id="{{ product.id }}" product-handle="{{ product.handle }}" product-title="{{ product.title }}">
+    <div id="reviews_importify_reviews_section_{{ product.id }}"></div>
+    <div class="reviews-importify-overview">
+      <h3 class="reviews_overview_heading"><span class="total_reviews"></span>
+        {{ri_settings.reviews_overview_heading}}
+        
+        {% comment %}
+        {% if ri_settings.show_profile_link == "show" %}
+        <a class="ri_review_profile_link" ng-if="reviewsData.profile_link.length > 0" href="(% reviewsData.profile_link %)" target="_blank">(% reviewsData.profile_link_title %)</a>
+        {% endif %}
+        {% endcomment %}
+      </h3>      
+      <div class="review-overview-row">
+        {% if reviews_overview != null %}
+        
+        <div class="review-overview-row-col1">
+          <div class="reviews-importify-rating-stars">
+            <div class="stars-empty">
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <div class="stars-filled" style="width:{{ reviews_overview.rating_percentage }}%;">
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+              </div>
+            </div>
+          </div>
+          <b class="ri_total_reviews">{{ reviews_overview.average_rating }} / 5</b>
+          <p class="average_rating_text">
+            <span>
+              {% if ri_settings.overview_rating_count_text != null and ri_settings.overview_rating_count_text != "" %}
+              {{ri_settings.overview_rating_count_text | replace: "[reviews_count]", reviews_overview.total_reviews }}
+              {% else %}
+              Based on {{ reviews_overview.total_reviews }} reviews
+              {% endif %}
+            </span>
+          </p>
+        </div>
+        {% if ri_settings.reviews_overview_bar_status != "hide" %}
+        <div class="review-overview-row-col2">
+          <div class="review_rating_bars">
+
+            <div class="review_bar five_star_bar" ng-click="filterReviewsByRating('five_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_5_star_text != null and ri_settings.rating_bar_5_star_text != "" %}
+                {{ri_settings.rating_bar_5_star_text }}
+                {% else %}
+                5 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.five_star_percentage }}%;"></div></div>
+              </div>
+              <div class="bar_percentage">{{ reviews_overview.five_star_percentage }}% ({{ reviews_overview.five_star_count }})</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar four_star_bar" ng-click="filterReviewsByRating('four_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_4_star_text != null and ri_settings.rating_bar_4_star_text != "" %}
+                {{ri_settings.rating_bar_4_star_text }}
+                {% else %}
+                4 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.four_star_percentage }}%;"></div></div>
+              </div>
+              <div class="bar_percentage">{{ reviews_overview.four_star_percentage }}% ({{ reviews_overview.four_star_count }})</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar three_star_bar" ng-click="filterReviewsByRating('three_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_3_star_text != null and ri_settings.rating_bar_3_star_text != "" %}
+                {{ri_settings.rating_bar_3_star_text }}
+                {% else %}
+                3 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.three_star_percentage }}%;"></div></div>
+              </div>
+              <div class="bar_percentage">{{ reviews_overview.three_star_percentage }}% ({{ reviews_overview.three_star_count }})</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar two_star_bar" ng-click="filterReviewsByRating('two_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_2_star_text != null and ri_settings.rating_bar_2_star_text != "" %}
+                {{ri_settings.rating_bar_2_star_text }}
+                {% else %}
+                2 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.two_star_percentage }}%;"></div></div>
+              </div>
+              <div class="bar_percentage">{{ reviews_overview.two_star_percentage }}% ({{ reviews_overview.two_star_count }})</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar one_star_bar" ng-click="filterReviewsByRating('one_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_1_star_text != null and ri_settings.rating_bar_1_star_text != "" %}
+                {{ri_settings.rating_bar_1_star_text }}
+                {% else %}
+                1 Star
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.one_star_percentage }}%;"></div></div>
+              </div>
+              <div class="bar_percentage">{{ reviews_overview.one_star_percentage }}% ({{ reviews_overview.one_star_count }})</div>
+              <div class="clearfloat"></div>
+            </div>
+
+          </div>
+        </div>
+        {% endif %}
+
+        {% elsif ri_settings.no_reviews_count_msg != null and ri_settings.no_reviews_count_msg != "" %}
+        
+        <div class="review-overview-row-col1">
+          <p>{{ ri_settings.no_reviews_count_msg }}</p>
+        </div>
+        
+        {% else %}
+        
+        <div class="review-overview-row-col1">
+          <p>0 Review</p>
+        </div>
+        
+        {% endif %}
+        
+        {% if ri_settings.write_review_status != "disabled" %}
+        <div class="review-overview-row-col3">
+          <button type="button" ng-click="showWriteReviewForm()" id="importify-reviews-write-review" class="importify-reviews-btn">
+            {{ri_settings.write_review_btn_text}}
+          </button>
+        </div>
+        
+        
+        <div class="clearfloat height_10"></div>
+        <div class="reviews_importify_write_review_form_container">
+          
+          {% assign showRIReviewFrom = true %}
+          {% assign showRIReviewFromMsg = "" %}
+          
+          {% if ri_settings.write_review_condition == "users" %}
+            {% if customer %}
+            {% else %}
+              {% assign showRIReviewFrom = false %}
+              {% assign showRIReviewFromMsg = "you must be logged in to write review." %}
+              {% if ri_settings.review_must_be_logged_in_text != null and ri_settings.review_must_be_logged_in_text != "" %}
+                {% assign showRIReviewFromMsg = ri_settings.review_must_be_logged_in_text %}
+              {% endif %}
+          
+          
+            {% endif %}
+          {% elsif ri_settings.write_review_condition == "buyers" %}
+            {% assign item_found = false %}
+            {% if customer and customer.orders %}
+              {% for corder in customer.orders %}
+                {% for litem in corder.line_items %}
+                  {% if litem.product_id == product.id or litem.product.title == product.title or litem.product.handle == product.handle %}
+                    {% assign item_found = true %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% endif %}
+            {% if item_found %}
+            {% else %}
+              {% assign showRIReviewFrom = false %}
+              {% assign showRIReviewFromMsg = "you must purchase this product to write review." %}
+              {% if ri_settings.review_must_be_purchased_text != null and ri_settings.review_must_be_purchased_text != "" %}
+                {% assign showRIReviewFromMsg = ri_settings.review_must_be_purchased_text %}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          
+          
+          {% if showRIReviewFrom %}
+          <form id="reviews-importify-write-review-form" class="reviews-importify-write-review-form" action="" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="product_handle" value="{{ product.handle }}">
+            <input type="hidden" name="shop" value="{{ shop.permanent_domain }}">
+            
+            <fieldset>
+              <legend><h3>{{ ri_settings.write_review_heading }}</h3></legend>
+              
+              <p class="validateTips">{{ ri_settings.write_review_sub_heading }}</p>
+            
+              <p class="riWriteReviewSuccess" style="padding:5px;display:none;background:green;color:#FFF;"></p>
+              <p class="riWriteReviewErrors" style="padding:5px;display:none;background:red;color:#FFF;"></p>
+
+              
+              {% if ri_settings.write_review_variant_options_field == "enabled" and product.variants.size > 1 %}
+              <div class="ri-field-row">
+                <label for="">
+                  {% if ri_settings.select_variant_option_text != null and ri_settings.select_variant_option_text != "" %}
+                  {{ ri_settings.select_variant_option_text }}
+                  {% else %}
+                  Select Option for which you want to review
+                  {% endif %}
+                </label>
+                {% for product_option in product.options_with_values %}
+                <select name="option{{ forloop.index }}" class="ri_review_select_element ri_review_form_element">
+                  <option value="">Select {{ product_option.name }}</option>
+                  {% for value in product_option.values %}
+                  <option value="{{ value }}">{{ value }}</option>
+                  {% endfor %}
+                </select>
+                {% endfor %}                
+              </div>
+              {% endif %}
+
+              <div class="ri-field-row">
+                <label for="">
+                  {% if ri_settings.select_rating_text != null and ri_settings.select_rating_text != "" %}
+                  {{ ri_settings.select_rating_text }}
+                  {% else %}
+                  How would you rate this product?
+                  {% endif %}
+                </label>
+                <select name="rating" class="ri_review_select_element ri_review_form_element">
+                  <option value="5">
+                    {% if ri_settings.write_review_5_star_text != null and ri_settings.write_review_5_star_text != "" %}
+                    {{ri_settings.write_review_5_star_text }}
+                    {% else %}
+                    5 Stars
+                    {% endif %}
+                  </option>
+                  <option value="4">
+                    {% if ri_settings.write_review_4_star_text != null and ri_settings.write_review_4_star_text != "" %}
+                    {{ri_settings.write_review_4_star_text }}
+                    {% else %}
+                    4 Stars
+                    {% endif %}
+                  </option>
+                  <option value="3">
+                    {% if ri_settings.write_review_3_star_text != null and ri_settings.write_review_3_star_text != "" %}
+                    {{ri_settings.write_review_3_star_text }}
+                    {% else %}
+                    3 Stars
+                    {% endif %}
+                  </option>
+                  <option value="2">
+                    {% if ri_settings.write_review_2_star_text != null and ri_settings.write_review_2_star_text != "" %}
+                    {{ri_settings.write_review_2_star_text }}
+                    {% else %}
+                    2 Stars
+                    {% endif %}
+                  </option>
+                  <option value="1">
+                    {% if ri_settings.write_review_1_star_text != null and ri_settings.write_review_1_star_text != "" %}
+                    {{ri_settings.write_review_1_star_text }}
+                    {% else %}
+                    1 Star
+                    {% endif %}
+                  </option>
+                </select>
+              </div>
+
+              {% if customer %}
+              
+              <input type="hidden" name="author" id="ri_wreview_reviewer_name" value="{{ customer.name }}">
+              <input type="hidden" name="email" id="ri_wreview_reviewer_email" value="{{ customer.email }}">
+              <input type="hidden" name="customer_id" id="ri_review_customer_id" value="{{ customer.id }}">
+              
+              {% else %}
+              
+              <input type="hidden" name="customer_id" id="ri_review_customer_id" value="">
+              <div class="ri-field-row">
+                <label for="ri_review_reviewer_name">
+                  {% if ri_settings.your_name_text != null and ri_settings.your_name_text != "" %}
+                  {{ri_settings.your_name_text }}
+                  {% else %}
+                  Your Name
+                  {% endif %}
+                </label>
+                <input type="text" name="author" id="ri_wreview_reviewer_name" class="ri_review_form_element">
+              </div>
+              {% if ri_settings.write_review_email_field == "enabled" %}
+              <div class="ri-field-row">
+                <label for="ri_review_reviewer_email">
+                  {% if ri_settings.your_email_text != null and ri_settings.your_email_text != "" %}
+                  {{ri_settings.your_email_text }}
+                  {% else %}
+                  Your Email
+                  {% endif %}
+                </label>
+                <input type="text" name="email" id="ri_wreview_reviewer_email" class="ri_review_form_element">
+              </div>
+              {% endif %}
+              
+              {% endif %}
+
+              <div class="ri-field-row">
+                <label for="ri_review_title">
+                  {% if ri_settings.review_title_text != null and ri_settings.review_title_text != "" %}
+                  {{ri_settings.review_title_text }}
+                  {% else %}
+                  Review Title
+                  {% endif %}
+                </label>
+                <input type="text" name="title" id="ri_write_review_title" class="ri_review_form_element">
+              </div>
+
+              <div class="ri-field-row">
+                <label for="ri_review_body">
+                  {% if ri_settings.review_description_text != null and ri_settings.review_description_text != "" %}
+                  {{ri_settings.review_description_text }}
+                  {% else %}
+                  Provide some detail about your experience
+                  {% endif %}
+                </label>
+                <textarea name="description" id="ri_write_review_body" class="ri_review_form_element"></textarea>
+              </div>
+              
+              {% if ri_settings.write_review_images_field == "enabled" %}
+              <div class="ri-field-row">
+                <label for="ri_review_images_input">
+                  {% if ri_settings.upload_images_text != null and ri_settings.upload_images_text != "" %}
+                  {{ri_settings.upload_images_text }}
+                  {% else %}
+                  Upload Images
+                  {% endif %}
+                </label>
+                <input type="file" name="images[]" id="ri_review_images_input" class="ri_review_form_element" multiple>
+                <span class="help">
+                  {% if ri_settings.max_images_allowed_text != null and ri_settings.max_images_allowed_text != "" %}
+                  {{ri_settings.max_images_allowed_text }}
+                  {% else %}
+                  Max. 5 allowed
+                  {% endif %}
+                </span>
+              </div>
+              {% endif %}
+              
+              {% if ri_settings.write_review_videos_field == "enabled" %}
+              <div class="ri-field-row">
+                <label for="ri_review_videos_input">
+                  {% if ri_settings.upload_images_text != null and ri_settings.upload_images_text != "" %}
+                  {{ri_settings.upload_images_text }}
+                  {% else %}
+                  Upload Videos
+                  {% endif %}
+                </label>
+                <input type="file" name="videos[]" id="ri_review_videos_input" class="ri_review_form_element" multiple>
+                <span class="help">
+                  {% if ri_settings.max_video_allowed_text != null and ri_settings.max_video_allowed_text != "" %}
+                  {{ri_settings.max_video_allowed_text }}
+                  {% else %}
+                  Max. 1 allowed
+                  {% endif %}
+                </span>
+              </div>
+              {% endif %}
+              
+              <button type="button" class="importify-reviews-btn importify_reviews_write_btn" ng-click="submitWriteReviewForm();">{{ri_settings.write_review_submit_btn_text}}</button>
+              <span class="reviews-importify-loading"><i class="fa fa-spinner fa-spin"></i></span>
+            </fieldset>
+          </form>
+          {% else %}
+          <p class="ri_noticemsg">{{showRIReviewFromMsg}}</p>
+          {% endif %}
+        </div>
+        
+        {% endif %}
+        {% if reviews_overview.reviews_count > 0 %}
+        {% include 'ri-product-reviews-gallery' %}
+        {% endif %}
+      </div>
+    </div>
+    
+    
+    {% if reviews_overview.reviews_count > 0 %}
+    {% else %}
+    <div class="ri_line"></div>
+    {% comment %}
+    <p class="ri-text-center">
+      {% if ri_settings.no_reviews_msg != null and ri_settings.no_reviews_msg != "" %}
+      {{ ri_settings.no_reviews_msg }}
+      {% else %}
+      No Review Found.
+      {% endif %}
+    </p>
+    {% endcomment %}
+    {% endif %}
+    
+    
+    {% if ri_settings.reviews_section_status == "show" %}
+    
+    {% include 'ri-reviews-filter' %}
+    
+    <div class="ri-reviews" ng-if="reviewsData.reviews.total > 0">
+      <div class="ri-reviews-row" ng-repeat="review in reviewsData.reviews.data">
+        <div class="ri-review-row-col-1 ri-review-row-col">
+          <span class="review-user-image">
+            {% if ri_settings.reviews_section_user_icon_type == "user_icon_image" %}
+            <img ng-src="(% appPublicUrl + '/images/user-icon.png' %)">
+            {% elsif ri_settings.reviews_section_user_icon_type == "user_icon" %}
+            <span class="fa fa-user review-user-icon"></span>
+            {% elsif ri_settings.reviews_section_user_icon_type == "square_letter" %}
+            <span class="review-user-letter square">(% authorFirstLetter(review.author) %)</span>
+            {% else %}
+            <span class="review-user-letter circle">(% authorFirstLetter(review.author) %)</span>
+            {% endif %}
+          </span>
+          
+          <span class="review-user-name reviews-importify-tooltip">
+            (% review.author %) <sup ng-if="review.is_verified == 1 && riStoreData.settings.reviews_section_verified_tick_status == 'show'"><i class="fa fa-check"></i></sup>
+            <span class="reviews-importify-tooltiptext" ng-if="review.is_verified == 1 && riStoreData.settings.reviews_section_verified_tick_status == 'show'">
+              {% if ri_settings.verified_text != "" and ri_settings.verified_text != null %}
+              {{ri_settings.verified_text}}
+              {% else %}
+              verified
+              {% endif %}
+            </span>
+          </span>
+          
+        </div>
+        <div class="ri-review-row-col-2 ri-review-row-col">
+          <div class="review_title_rating_star">
+            <span class="rating_star">
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 1}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 2}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 3}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 4}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 5}"></span>
+            </span>
+            <span class="ri_review_title">(% review.title %)</span>
+          </div>
+          {% if ri_settings.reviews_section_variant_options_status == "show" %}
+          <div class="review_variant_options">
+            <span class="review_variant_option" ng-if="review.option1.name">
+              <span class="review_variant_option_name">(% review.option1.name %) :</span>
+              <span class="review_variant_option_value">(% review.option1.value %)</span>
+            </span>
+            <span class="review_variant_option" ng-if="review.option2.name">
+              <span class="review_variant_option_name">(% review.option2.name %) :</span>
+              <span class="review_variant_option_value">(% review.option2.value %)</span>
+            </span>
+            <span class="review_variant_option" ng-if="review.option3.name">
+              <span class="review_variant_option_name">(% review.option3.name %) :</span>
+              <span class="review_variant_option_value">(% review.option3.value %)</span>
+            </span>
+          </div>
+          {% endif %}
+          <div class="ri_review_description" ng-bind-html="review.description | unsafe"></div>
+          {% if ri_settings.reviews_section_images_status == "show" %}
+          <div class="ri_review_images" ng-if="review.images && review.images.length > 0">
+            <span class="ri_review_image reviews-importify-tooltip" ng-repeat="image in review.images track by $index">
+              <figure class="ri_review_images_figure">
+                <a data-fancybox="rimages-(% review.id %)" href="(% image.original_url %)">
+                  <img class="img-fluid ri_review_image-thumb" ng-src="(% image.thumbnail_url %)" alt="review_image_thumb" />
+                </a>
+              </figure>
+              <span class="reviews-importify-tooltiptext">
+                {% if ri_settings.click_to_zoom_text != "" and ri_settings.click_to_zoom_text != null %}
+                {{ri_settings.click_to_zoom_text }}
+                {% else %}
+                Click to Zoom
+                {% endif %}
+              </span>
+            </span>
+          </div>
+          {% endif %}
+          
+          {% if ri_settings.reviews_section_videos_status == "show" %}
+          <div class="ri_review_videos" ng-if="review.videos && review.videos.length > 0">
+            <span class="ri_review_video reviews-importify-tooltip" ng-repeat="video in review.videos track by $index">
+              <figure class="ri_review_videos_figure">
+                <a class="ri_video_thumb" data-fancybox="rvideos-(% review.id %)" href="(% video.original_url %)">
+                  <img class="img-fluid ri_review_image-thumb" ng-src="(% video.thumbnail_url %)" onError="this.src=riAppPublicUrl+'/images/video-play-icon.png'" alt="review_video_thumb">
+                </a>
+              </figure>
+              <span class="reviews-importify-tooltiptext">
+                {% if ri_settings.click_to_zoom_text != "" and ri_settings.click_to_zoom_text != null %}
+                {{ri_settings.click_to_zoom_text }}
+                {% else %}
+                Click to Zoom
+                {% endif %}
+              </span>
+            </span>
+          </div>
+          {% endif %}
+          
+          
+          <div class="rireview-date">
+            <span class="review_date_text">
+              <span class="fa fa-calendar review-date-icon"></span> (% review.date_time_str %)
+            </span>
+            <span class="verified_text" ng-if="review.is_verified == 1 && riStoreData.settings.reviews_section_verified_text_status != 'hide'">
+              <span>
+                {% if ri_settings.verified_purchase_text != "" and ri_settings.verified_purchase_text != null %}
+                {{ri_settings.verified_purchase_text }}
+                {% else %}
+                Verified Purchase
+                {% endif %}
+              </span>
+            </span>
+          </div>
+        </div>
+        <div class="ri-review-row-col-3 ri-review-row-col">
+          {% if ri_settings.review_thumbs_status == "enabled" %}
+          {% if ri_settings.review_thumbs_condition != "users" or customer %}
+          <div class="ri_reviews_thumbs">
+            <span class="ri_review_thumbs_up reviews-importify-tooltip">
+              <span ng-click="thumbsToggle(review.id,'{{ product.handle }}')" review-id = "(% review.id %)" class="fa fa-thumbs-up ri_review_thumbs_up_icon" id="ri_thumb_(% review.id %)"></span>
+              <span class="">(<span class="ri_review_thumbs_up_count">(% review.thumbs_count %)</span>)</span>
+              <span class="reviews-importify-tooltiptext">
+                {% if ri_settings.helpful_text != "" and ri_settings.helpful_text != null %}
+                {{ri_settings.helpful_text }}
+                {% else %}
+                Helpful
+                {% endif %}
+              </span>
+            </span>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+        <div class="clearfloat"></div>
+      </div>
+        
+      <p class="">
+        
+        {% if ri_settings.reviews_pagination_text != "" and ri_settings.reviews_pagination_text != null %}
+        {{ri_settings.reviews_pagination_text | replace: "[from_count]", "(% reviewsData.reviews.from %)" | replace: "[to_count]", "(% reviewsData.reviews.to %)" }}
+        {% else %}
+        showing reviews from (% reviewsData.reviews.from %) to (% reviewsData.reviews.to %)
+        {% endif %}
+        <span class="ri-pagination-buttons" ng-if="reviewsData.reviews.last_page > 1">
+          <span ng-click="loadPrevPage(reviewsData.reviews.current_page)" class="ri-pagination-button ri-pagination-button-left fa fa-caret-left reviews-importify-tooltip" ng-if="reviewsData.reviews.current_page > 1">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.previous_page_text != "" and ri_settings.previous_page_text != null %}
+              {{ri_settings.previous_page_text}}
+              {% else %}
+              Previous Page
+              {% endif %}
+            </span>
+          </span>
+          <span ng-click="loadNextPage(reviewsData.reviews.current_page)" class="ri-pagination-button ri-pagination-button-right fa fa-caret-right reviews-importify-tooltip" ng-if="reviewsData.reviews.last_page > reviewsData.reviews.current_page">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.next_page_text != "" and ri_settings.next_page_text != null %}
+              {{ri_settings.next_page_text}}
+              {% else %}
+              Next Page
+              {% endif %}
+            </span>
+          </span>
+        </span>
+        <span class="ri-filter-option ri-filter-reviews-loading">
+          <i class="fa fa-spinner fa-spin"></i>
+        </span>
+      </p>
+    </div>
+      
+    <div class="ri-reviews-no-result" ng-if="reviewsData.reviews.total == 0">
+      <p>
+        {% if ri_settings.no_reviews_msg != null and ri_settings.no_reviews_msg != "" %}
+        {{ ri_settings.no_reviews_msg }}
+        {% else %}
+        No Review Found.
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>

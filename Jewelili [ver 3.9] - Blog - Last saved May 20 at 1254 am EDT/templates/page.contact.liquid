@@ -1,0 +1,139 @@
+
+<div class="page-width">
+  <div class="section-header text-center">
+<!--     <h1>{{ page.title }}</h1> -->
+  </div>
+  <div class="flex_container direction_row form_container">
+    <div class="left-grid">
+      <div id="shopify-section-contact-info" class="shopify-section">
+<!--         <h2>You can reach out to us</h2> -->
+<!--         <h5>Do reach out to us</h5> -->
+
+      <div class="Contact_ContentSec">
+            <div class="Contact_ContentSec-lbl">
+           		<img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/LocationImg.png?v=1610692787" class="Contact_ContentSec-Img">
+            	<span class="Contact_ContentSec-txt">Our headquaters</span>
+            </div>
+        <div class="Contact_ContentSec-add">3 East 54<sup>th</sup>St Suite 603 New York, NY 10022</div>
+        </div>
+        
+        <div class="Contact_ContentSec">
+            <div class="Contact_ContentSec-lbl">
+           		<img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/PhoneImg.png?v=1610692804" class="Contact_ContentSec-Img">
+            	<span class="Contact_ContentSec-txt">Call us on</span>
+            </div>
+            <div class="Contact_ContentSec-add"><a href="mailto:585-632-5544" aria-describedby="a11y-external-message">585-632-5544</a></div>
+        </div>
+        
+        <div class="Contact_ContentSec">
+            <div class="Contact_ContentSec-lbl">
+           		<img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/MailImg.png?v=1610692794" class="Contact_ContentSec-Img">
+            	<span class="Contact_ContentSec-txt">Mail us on</span>
+            </div>
+            <div class="Contact_ContentSec-add emailtxt"> <a href="tel:customerservice@jewelili.com" aria-describedby="a11y-external-message">
+            customerservice@jewelili.com
+          </a></div>
+        </div>
+        
+        <div class="social_sect">
+          <div class="social_sect-txt">Let’s get social</div>
+          <div>
+            <img class="social-sect-img" src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/FBimg.png?v=1610692749" />
+          	<img class="social-sect-img" src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/InstaImg.png?v=1610692770" />
+          </div>
+        </div>
+      
+<!--         <br> -->
+<!--         <h5>via call</h5> -->
+<!--         <p><a href="mailto:585-632-5544" aria-describedby="a11y-external-message">585-632-5544</a></p> -->
+<!--         <br> -->
+<!--         <h5>via Email</h5> -->
+<!--         <p> -->
+<!--           <a href="tel:customerservice@jewelili.com" aria-describedby="a11y-external-message"> -->
+<!--             customerservice@jewelili.com -->
+<!--           </a> -->
+<!--         </p> -->
+<!--         <br> -->
+<!--         <h5>Timings</h5> -->
+<!--         <p>
+          <a href="tel:Mon-Fri 9 AM to 6 PM EST" aria-describedby="a11y-external-message">
+            Mon-Fri 9 AM to 6 PM EST
+          </a>
+        </p> -->
+        <style>
+          .main-content {
+            background-image: url('//cdn.shopify.com/s/files/1/0267/0523/1943/files/Blue_Wash_BG.png?v=1577524738');
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+        </style>
+      </div>
+    </div>
+    <div class="right-grid">
+      {% if page.content.size > 0 %}
+        <div class="rte">
+          {{ page.content }}
+        </div>
+      {% endif %}
+
+      <div class="contact-form form-vertical">
+        <div class="form-title">Write to us</div>
+        <div class="form-desc">Any query please send us a message</div>
+        {%- assign formId = 'ContactForm' -%}
+        {% form 'contact', id: formId %}
+          {% include 'form-status', form: form, form_id: formId %}
+
+          <div class="grid grid--half-gutters">
+            <div class="grid__item medium-up--one-half">
+              <label class="form-label" for="{{ formId }}-name">First Name</label>
+              <input placeholder="Enter your first name" type="text" id="{{ formId }}-name" name="contact[First Name]" value="{% if form[first_name] %}{{ form[first_name] }}{% elsif customer %}{{ customer.first_name }}{% endif %}">
+            </div>
+            <div class="grid__item medium-up--one-half">
+              <label class="form-label" for="{{ formId }}-name">Last Name</label>
+              <input placeholder="Enter your last name" type="text" id="{{ formId }}-name" name="contact[Last Name}]" value="{% if form[last_name] %}{{ form[last_name] }}{% elsif customer %}{{ customer.last_name }}{% endif %}">
+            </div>
+            <div class="grid__item medium-up--one-half">
+              <label class="form-label" for="{{ formId }}-email">{{ 'contact.form.email' | t }} <span aria-hidden="true">*</span></label>
+              <input
+                type="email"
+                id="{{ formId }}-email"
+                name="contact[email]"
+                placeholder="Enter your email address"
+                autocorrect="off"
+                autocapitalize="off"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                aria-required="true"
+                {%- if form.errors contains 'email' -%}
+                  class="input--error"
+                  aria-invalid="true"
+                  aria-describedby="{{ formId }}-email-error"
+                {%- endif -%}
+                >
+              {%- if form.errors contains 'email' -%}
+                <span id="{{ formId}}-email-error" class="input-error-message">
+                  <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+                  {% include 'icon-error' %}
+                  <span>{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
+                </span>
+              {%- endif -%}
+            </div>
+            <div class="grid__item medium-up--one-half">
+              <label class="form-label" for="{{ formId }}-phone">{{ 'contact.form.phone' | t }}</label>
+              <input placeholder="Enter your phone number" type="tel" id="{{ formId }}-phone" name="contact[{{ 'contact.form.phone' | t }}]" pattern="[0-9\-]*" value="{% if form[phone] %}{{ form[phone] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
+            </div>
+          </div>
+		
+          <label class="form-label" for="{{ formId }}-message">{{ 'contact.form.message' | t }}</label>
+          <textarea placeholder="Write here" rows="10" id="{{ formId }}-message" name="contact[{{ 'contact.form.message' | t }}]">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+<!--         <input type="submit" class="form-btn" value="{{ 'contact.form.submit' | t }}"> -->
+        <div class="form-btn-sec">
+        <input type="submit" class="form-btn">
+        <img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/arrowimg.png?v=1610703645" class="form-btn-arrowimg">
+        </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>

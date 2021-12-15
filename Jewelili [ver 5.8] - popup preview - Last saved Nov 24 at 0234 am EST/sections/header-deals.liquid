@@ -1,0 +1,64 @@
+{% if section.settings.jewelili_deals %}
+<div class="jewelili_header_deals" role="region">
+  <div class="page-width">
+    <div class="grid deals_slider">
+      {% for block in section.blocks %}
+      <div class="grid__item small--one-whole medium-up--one-third deal-text">
+        {%- unless block.settings.link == blank -%}
+        <a href="{{ block.settings.link }}" class="deals_link">
+          {%- endunless -%}
+          <p>{{ block.settings.text }}</p>
+          <p class="sub_txt">{{ block.settings.sub_txt }}<span><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 5.576 10.94">
+            <path id="Right_arrow" data-name="Right arrow" d="M.342,10.94A.342.342,0,0,1,.1,10.357L4.826,5.631a.229.229,0,0,0,0-.323L.1.584A.342.342,0,0,1,.584.1L5.309,4.826a.911.911,0,0,1,0,1.289L.584,10.84a.341.341,0,0,1-.242.1" fill="#000000"/>
+          </svg></span>
+        </p>
+        {%- unless block.settings.link == blank -%}
+      </a>
+      {%- endunless -%}
+    </div>  
+    {% endfor %}
+  </div>
+</div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Header Deals",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Header Deals Bar"
+  },
+  {
+    "type": "checkbox",
+    "id": "jewelili_deals",
+    "label": "Show Jewelili Deals",
+    "default": false
+  }
+  ],
+  "blocks": [
+  {
+    "type": "text_block",
+    "name": "Column",
+    "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "sub_txt",
+      "label": "Sub Text"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}

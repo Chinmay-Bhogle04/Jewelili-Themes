@@ -1,0 +1,104 @@
+<div class="page-width">
+  <div class="customer__login">
+    <div class="login__container">
+      
+      <div class="login__form" id="CustomerLoginForm">
+        {% form 'customer_login', novalidate: 'novalidate' %}
+          <h1 class="login__heading">Hey there!</h1>
+        
+          {%- if form.errors -%}
+        	<div class="form__errors">
+              {{ form.errors | default_errors }}
+        	</div>
+          {%- else -%}
+      	  	<div class="login__subheading">Please log in to your account to continue</div>
+          {%- endif -%}
+        
+          <div class="input__group">
+            <span class="input__icon"></span>
+            <input type="email" 
+                   name="customer[email]" 
+                   autocomplete="email" 
+                   autocorrect="off" 
+                   autocapitalize="off"
+                   placeholder="Enter your email"
+                   {%- if form.errors contains 'form' -%}
+                   class="input--error"
+                   {%- endif -%}>
+            <div data-form-error></div>            
+          </div>
+        
+          <div class="input__group">
+            <span class="input__icon"></span>
+            <input type="password"              
+                   name="customer[password]"
+                   value=""
+                   placeholder="Enter your password"
+                   {%- if form.errors contains 'form' -%}
+                   class="input--error"
+                   {%- endif -%}>
+            <div data-form-error></div>            
+          </div>
+        
+          <div class="form__actions">
+            <div class="action__item">
+              <input type="checkbox" name="remember" id="remember" />
+              <label for="remember">Remember me</label>
+            </div>
+            
+            <div class="action__item">
+              <a href="#recover" id="RecoverPassword">Forgot Password?</a>
+            </div>
+          </div>
+        
+          <div class="form__submission">
+            <button type="submit" class="btn btn--primary">LOGIN NOW</button>
+          </div>
+        
+          <div class="form__message">
+            <p>Don’t have an account? <a href="{{ routes.account_register_url  }}/">Signup now</a></p>
+          </div>
+        {% endform %}
+      </div>
+      
+      <div class="recover__password hide" id="RecoverPasswordForm">
+        {% form 'recover_customer_password' %}        	
+          <h2 class="recover__heading">{{ 'customer.recover_password.title' | t }}</h2>
+          
+          {%- if form.errors -%}
+        	<div class="form__errors">
+              {{ form.errors.messages['form'] }}
+        	</div>
+          {%- else -%}
+        	<p class="recover__subheading">{{ 'customer.recover_password.subtext' | t }}</p>
+          {%- endif -%}
+          
+          <div class="input__group">
+            <input type="email"
+                   value=""
+                   name="email"
+                   autocorrect="off"
+                   autocapitalize="off"
+                   placeholder="Enter your email"
+                   {%- if form.errors contains 'form' -%}
+                   class="input--error"
+                   {%- endif -%}>
+          </div>
+        
+          <div class="form__submission">
+            <button type="submit" class="btn btn--primary">
+              {{ 'customer.recover_password.submit' | t }}
+            </button> 
+          </div>
+        
+          <div class="form__message text-center">
+            <a href="#LoginHeading" id="HideRecoverPasswordLink">
+              {{ 'customer.recover_password.cancel' | t }}
+            </a>
+          </div>
+        {% endform %}
+      </div>
+      
+    </div>
+  </div>
+</div>

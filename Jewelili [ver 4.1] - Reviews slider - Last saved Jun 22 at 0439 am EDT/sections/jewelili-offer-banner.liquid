@@ -1,0 +1,60 @@
+<!-- jewelili-offer-banner.liquid -->
+<section data-section-id="{{ section.id }}" data-section-type="jewelili__offer-banner">
+  <div class="page-width">
+  	<a {% if section.settings.banner_url != blank %}href="{{ section.settings.banner_url }}"{% endif %}>
+      {% unless section.settings.banner_large == nil %}
+      	<img class="lazyload small--hide"
+             src="{{ section.settings.banner_large | img_url: 'master' }}"
+             data-src="{{ section.settings.banner_large | img_url: 'master' }}"
+             data-sizes="auto"
+             alt="" />
+      {% endunless %}
+      {% unless section.settings.banner_small == nil %}
+        <img class="lazyload medium-up--hide"
+             src="{{ section.settings.banner_small | img_url: 'master' }}"
+             data-src="{{ section.settings.banner_small | img_url: 'master' }}"
+             data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+             data-sizes="auto"
+             alt="" />
+        {% endunless %}
+    </a>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Jewelili Offer Banner",
+    "class": "index-section jewelili__offer-banner",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "banner_large",
+        "label": "Banner Image (Desktop)",
+        "info": "Recommended size 2298x700"
+      },
+      {
+        "type": "image_picker",
+        "id": "banner_small",
+        "label": "Banner Image (Mobile)",
+        "info": "Recommended size 774x1196"
+      },
+      {
+        "type": "url",
+        "id": "banner_url",
+      	"label": "Banner URL"
+      }
+	],
+    "presets": [
+      {
+        "name": "Jewelili Offer Banner",
+        "category": "Advanced layout"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

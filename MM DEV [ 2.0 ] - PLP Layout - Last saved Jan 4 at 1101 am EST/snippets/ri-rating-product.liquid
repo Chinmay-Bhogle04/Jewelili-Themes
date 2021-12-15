@@ -1,0 +1,153 @@
+{% assign reviews_overview = null %}
+{% assign questions_count = 0 %}
+{% if product.metafields.reviewsimportify %}
+  {% if product.metafields.reviewsimportify.reviews_overview and product.metafields.reviewsimportify.reviews_overview.reviews_count > 0 %}
+    {% assign reviews_overview = product.metafields.reviewsimportify.reviews_overview %}
+  {% endif %}
+  {% if product.metafields.reviewsimportify.questions_count > 0 %}
+    {% assign questions_count = product.metafields.reviewsimportify.questions_count %}
+  {% endif %}
+{% endif %}
+
+{% if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings %}
+{% assign ri_settings = shop.metafields.reviewsimportify.store_settings %}
+{% else %}
+{% assign ri_settings = null %}
+{% endif %}
+
+{% if ri_settings.app_status == "active" %}
+{% if reviews_overview != null or questions_count > 0 %}
+<div class="reviews-importify-element visible">
+  {% if reviews_overview != null and reviews_overview.reviews_count > 0 and ri_settings.product_reviews_status != 'disabled' %}
+  <div id="reviews-importify-reviews-ratings-{{ product.id }}" ng-click="gotoReviewsSection({{ product.id }})" class="reviews-importify-reviews-ratings">
+    <div class="reviews-importify-rating-stars" ng-mouseover="showReviewsOverview({{ product.id }})" ng-mouseleave="hideReviewsOverview({{ product.id }})" title="{{ reviews_overview.average_rating }} out of 5 stars">
+      <div class="stars-empty">
+        <span class="fa fa-star review-star-icon"></span>
+        <span class="fa fa-star review-star-icon"></span>
+        <span class="fa fa-star review-star-icon"></span>
+        <span class="fa fa-star review-star-icon"></span>
+        <span class="fa fa-star review-star-icon"></span>
+        <div class="stars-filled" style="width:{{ reviews_overview.rating_percentage }}%;">
+          <span class="fa fa-star review-star-icon review-star-checked"></span>
+          <span class="fa fa-star review-star-icon review-star-checked"></span>
+          <span class="fa fa-star review-star-icon review-star-checked"></span>
+          <span class="fa fa-star review-star-icon review-star-checked"></span>
+          <span class="fa fa-star review-star-icon review-star-checked"></span>
+        </div>
+      </div>
+    </div>
+    <span class="ri_review_count">
+      {{ reviews_overview.reviews_count }} 
+      {% if reviews_overview.reviews_count == 1 %}
+        {% if ri_settings.reviews_one_star_count_string != "" and ri_settings.reviews_one_star_count_string != null %}{{ri_settings.reviews_one_star_count_string}}{% else %}review{% endif %}
+      {% else %}
+        {% if ri_settings.reviews_stars_count_string != "" and ri_settings.reviews_stars_count_string != null %}{{ri_settings.reviews_stars_count_string}}{% else %}reviews{% endif %}
+      {% endif %}
+    </span>
+    
+    <div class="reviews-importify-reviews-ratings-overview" ng-mouseover="showReviewsOverview({{ product.id }})" ng-mouseleave="hideReviewsOverview({{ product.id }})">
+      <div class="review_star_ratings_bars">
+        <div class="review_bars">
+          <div class="review_bar five_star_bar">
+            <div class="bar_star">
+              {% if ri_settings.rating_bar_5_star_text != null and ri_settings.rating_bar_5_star_text != "" %}
+              {{ri_settings.rating_bar_5_star_text }}
+              {% else %}
+              5 Stars
+              {% endif %}
+            </div>
+            <div class="bar_line">
+              <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.five_star_percentage }}%;"></div></div>
+            </div>
+            <div class="bar_percentage">{{ reviews_overview.five_star_percentage }}% ({{ reviews_overview.five_star_count }})</div>
+            <div class="clearfloat"></div>
+          </div>
+          <div class="review_bar four_star_bar">
+            <div class="bar_star">
+              {% if ri_settings.rating_bar_4_star_text != null and ri_settings.rating_bar_4_star_text != "" %}
+              {{ri_settings.rating_bar_4_star_text }}
+              {% else %}
+              4 Stars
+              {% endif %}
+            </div>
+            <div class="bar_line">
+              <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.four_star_percentage }}%;"></div></div>
+            </div>
+            <div class="bar_percentage">{{ reviews_overview.four_star_percentage }}% ({{ reviews_overview.four_star_count }})</div>
+            <div class="clearfloat"></div>
+          </div>
+          <div class="review_bar three_star_bar">
+            <div class="bar_star">
+              {% if ri_settings.rating_bar_3_star_text != null and ri_settings.rating_bar_3_star_text != "" %}
+              {{ri_settings.rating_bar_3_star_text }}
+              {% else %}
+              3 Stars
+              {% endif %}
+            </div>
+            <div class="bar_line">
+              <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.three_star_percentage }}%;"></div></div>
+            </div>
+            <div class="bar_percentage">{{ reviews_overview.three_star_percentage }}% ({{ reviews_overview.three_star_count }})</div>
+            <div class="clearfloat"></div>
+          </div>
+          <div class="review_bar two_star_bar">
+            <div class="bar_star">
+              {% if ri_settings.rating_bar_2_star_text != null and ri_settings.rating_bar_2_star_text != "" %}
+              {{ri_settings.rating_bar_2_star_text }}
+              {% else %}
+              2 Stars
+              {% endif %}
+            </div>
+            <div class="bar_line">
+              <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.two_star_percentage }}%;"></div></div>
+            </div>
+            <div class="bar_percentage">{{ reviews_overview.two_star_percentage }}% ({{ reviews_overview.two_star_count }})</div>
+            <div class="clearfloat"></div>
+          </div> 
+          <div class="review_bar one_star_bar">
+            <div class="bar_star">
+              {% if ri_settings.rating_bar_1_star_text != null and ri_settings.rating_bar_1_star_text != "" %}
+              {{ri_settings.rating_bar_1_star_text }}
+              {% else %}
+              1 Star
+              {% endif %}
+            </div>
+            <div class="bar_line">
+              <div class="bar_line_container"><div class="bar_line_filled" style="width: {{ reviews_overview.one_star_percentage }}%;"></div></div>
+            </div>
+            <div class="bar_percentage">{{ reviews_overview.one_star_percentage }}% ({{ reviews_overview.one_star_count }})</div>
+            <div class="clearfloat"></div>
+          </div>
+        </div>
+        <p class="ri_see_all">
+          {% if ri_settings.rating_count_see_all_text != null and ri_settings.rating_count_see_all_text != "" %}
+          {{ ri_settings.rating_count_see_all_text | replace: "[reviews_count]", reviews_overview.reviews_count }}
+          {% else %}
+          see all {{ reviews_overview.reviews_count }} reviews
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  
+  {% if questions_count > 0 and ri_settings.questions_count_status != 'hide' %}
+
+  {% if reviews_overview != null and reviews_overview.reviews_count > 0 and ri_settings.product_reviews_status != 'disabled' %}
+  <span class="reviews_count_question_sep"> | </span>
+  {% endif %}
+
+  <div id="reviews-importify-questions-count-{{ product.id }}" ng-click="gotoQuestionsSection({{ product.id }})" class="reviews-importify-questions-count">
+    <span title="See all questions">
+      {{ questions_count }} 
+      {% if questions_count == 1 %}
+        {% if ri_settings.one_question_count_string != "" and ri_settings.one_question_count_string != null %}{{ri_settings.one_question_count_string}}{% else %}question{% endif %}
+      {% else %}
+        {% if ri_settings.questions_count_string != "" and ri_settings.questions_count_string != null %}{{ri_settings.questions_count_string}}{% else %}questions{% endif %}
+      {% endif %}
+    </span>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+{% endif %}

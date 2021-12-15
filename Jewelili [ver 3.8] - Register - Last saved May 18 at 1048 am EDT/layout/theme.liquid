@@ -1,0 +1,312 @@
+<!doctype html>
+<html class="no-js" lang="{{ shop.locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_button }}">
+  
+  
+  {%- if canonical_url != blank  -%}
+  <link rel="canonical" href="{{ canonical_url }}">
+  {%- endif -%}
+  
+  {%- if settings.favicon != blank -%}
+  <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+  {%- endif -%}
+  
+  {%- capture seo_title -%}
+  {%- if request.page_type == 'search' and search.performed == true -%}
+  {{ 'general.search.heading' | t: count: search.results_count }}: {{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+  {%- else -%}
+  {{ page_title }}
+  {%- endif -%}
+  {%- if current_tags -%}
+  {%- assign meta_tags = current_tags | join: ', ' -%} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+  {%- endif -%}
+  {%- if current_page != 1 -%}
+  &ndash; {{ 'general.meta.page' | t: page: current_page }}
+  {%- endif -%}
+  {%- assign escaped_page_title = page_title | escape -%}
+  {%- unless escaped_page_title contains shop.name -%}
+  &ndash; {{ shop.name }}
+  {%- endunless -%}
+  {%- endcapture -%}
+  <title>{{ seo_title | strip }}</title>
+  
+  {%- if page_description -%}
+  <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+  {% render 'microdata-schema' %}
+  
+  {{ 'theme.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'style.scss.css' | asset_url | stylesheet_tag }}
+  
+  {% include 'social-meta-tags' %}
+  
+  <script>
+    var theme = {
+      breakpoints: {
+        medium: 750,
+        large: 990,
+        widescreen: 1400
+      },
+      strings: {
+        addToCart: {{ 'products.product.add_to_cart' | t | json }},
+        soldOut: {{ 'products.product.sold_out' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        regularPrice: {{ 'products.product.regular_price' | t | json }},
+        salePrice: {{ 'products.product.sale_price' | t | json }},
+        sale: {{ 'products.product.on_sale' | t | json }},
+        fromLowestPrice: {{ 'products.product.from_lowest_price_html' | t: lowest_price: '[price]' | json }},
+        vendor: {{'products.product.vendor' | t | json }},
+        showMore: {{ 'general.filters.show_more' | t | json }},
+        showLess: {{ 'general.filters.show_less' | t | json }},
+        searchFor: {{ 'general.search.search_for' | t | json }},
+        addressError: {{ 'sections.map.address_error' | t | json }},
+        addressNoResults: {{ 'sections.map.address_no_results' | t | json }},
+        addressQueryLimit: {{ 'sections.map.address_query_limit_html' | t | json }},
+        authError: {{ 'sections.map.auth_error_html' | t | json }},
+        newWindow: {{ 'general.accessibility.link_messages.new_window' | t | json }},
+        external: {{ 'general.accessibility.link_messages.external' | t | json }},
+        newWindowExternal: {{ 'general.accessibility.link_messages.new_window_and_external' | t | json }},
+        removeLabel: {{ 'cart.label.remove' | t: product: '[product]' | json }},
+        update: {{ 'cart.label.update' | t | json }},
+        quantity: {{ 'cart.label.quantity' | t | json }},
+        discountedTotal: {{ 'cart.label.discounted_total' | t | json }},
+        regularTotal: {{ 'cart.label.regular_total' | t | json }},
+        priceColumn: {{ 'cart.label.price_column' | t | json }},
+        quantityMinimumMessage: {{ 'products.product.quantity_minimum_message' | t | json }},
+        cartError: {{ 'cart.general.cart_error' | t | json }},
+        removedItemMessage: {{ 'cart.general.removed_item_html' | t: quantity: '[quantity]', link: '[link]' | json }},
+        unitPrice: {{ 'products.product.unit_price_label' | t | json }},
+        unitPriceSeparator: {{ 'general.accessibility.unit_price_separator' | t | json }},
+        oneCartCount: {{ 'cart.popup.cart_count' | t: count: 1 | json }},
+        otherCartCount: {{ 'cart.popup.cart_count' | t: count: '[count]' | json }},
+        quantityLabel: {{ 'cart.popup.quantity_label' | t: quantity_count: '[count]' | json }},
+        products: {{ 'general.search.products' | t | json }},
+        loading: {{ 'general.search.loading' | t | json }},
+        number_of_results: {{ 'general.search.number_of_results' | t: result_number: '[result_number]', results_count: '[results_count]' | json }},
+        number_of_results_found: {{ 'general.search.number_of_results_found' | t: results_count: '[results_count]' | json }},
+        one_result_found: {{ 'general.search.one_result_found' | t | json }}
+      },
+      moneyFormat: {{ shop.money_format | json }},
+      moneyFormatWithCurrency: {{ shop.money_with_currency_format | json }},
+      settings: {
+        predictiveSearchEnabled: {{ settings.predictive_search_enabled | json }},
+        predictiveSearchShowPrice: {{ settings.predictive_search_show_price | json }},
+        predictiveSearchShowVendor: {{ settings.predictive_search_show_vendor | json }}
+      }
+    }
+    
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+  </script>
+  
+  {%- if request.page_type contains 'customers/' -%}
+  <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>
+  {%- endif -%}
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $.ajax({
+      dataType: "json",
+      url: "https://pro.ip-api.com/json/?fields&key=2FTD9IOnsjTmqWA",
+      success: function(data){
+        console.log(data);
+        var countryCode = data.countryCode; 
+        var country = data.country;
+        console.log(countryCode,country);
+        if(countryCode == "DO" || country == "Dominican Republic"){
+          window.location.href = "https://www.google.com/"
+        }
+      }
+    });
+  </script>
+  <script src="{{ 'lazysizes.js' | asset_url }}" async="async"></script>
+  <script src="{{ 'vendor.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  
+  <!-- starapps_scripts_start -->
+  <!-- This code is automatically managed by StarApps Studio -->
+  <!-- Please contact support@starapps.studio for any help -->
+  {% include "starapps-language-meta" %}
+  <script type="text/javascript" src="https://bcdn.starapps.studio/apps/vsk/disney-jewellery/script-1613723951.js?shop={{shop.permanent_domain}}" async></script>
+  {% render "starapps-product-json", product: product, starapps_app: "VIA", starapps_attribute: "sa-product-json" %}
+  <!-- starapps_scripts_end -->
+  
+  {{ content_for_header }}
+  
+  {% if template contains 'collection' %}
+  {{ 'mm-filter-v2.scss.css' | asset_url | stylesheet_tag }}
+  {% endif %}
+  
+  <!-- RYVIU APP :: Settings global -->	
+  <script>
+    var ryviu_global_settings = {{shop.metafields.ryviu.user_settings }};
+  </script>
+  <!-- RYVIU APP -->
+  <meta name="google-site-verification" content="x4u6BgDBTa1lV_5ZD9vNqRK9Y9LjVFnx_HpL85mJEX8" />
+  
+  <meta name="facebook-domain-verification" content="dx3bvi9soww9xils23u88xecg8dvln" />
+  
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W8PV6ZJ');</script>
+  <!-- End Google Tag Manager -->
+  
+  <script src="https://www.dwin1.com/19038.js" type="text/javascript" defer="defer"></script>
+  
+  <meta name="p:domain_verify" content="6b9fe65aac38aefd80acc7b8006976b3"/>
+  
+  {% include 'wiser' %}{% include 'wiser_popup' %}
+  
+  
+</head>
+
+<body class="template-{{ request.page_type | handle }}" ng-app="ReviewsImportify" ng-controller="RIController">
+  
+  <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+  
+  {%- if settings.enable_ajax -%}
+  {% include 'cart-popup' %}
+  {%- endif -%}
+  
+  {% section 'announcement-bar' %}
+  {% section 'header' %}
+  
+  {% comment %}
+  {% section 'megamenu-collections' %}
+  {% section 'megamenu-brands' %}
+  {% endcomment %}
+  
+  <div class="page-container drawer-page-content" id="PageContainer">
+    
+    <main class="main-content js-focus-hidden" id="MainContent" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+    
+    {% section 'footer' %}
+    
+    <div id="slideshow-info" class="visually-hidden" aria-hidden="true">
+      {{- 'sections.slideshow.navigation_instructions' | t -}}
+    </div>
+    
+  </div>
+  
+  {% include 'promotion-popup' %}
+  
+  <ul hidden>
+    <li id="a11y-refresh-page-message">{{ 'general.accessibility.refresh_page' | t }}</li>
+    <li id="a11y-selection-message">{{ 'general.accessibility.selection_help' | t }}</li>
+  </ul>
+  
+  {% if template contains 'product' %}
+  {% include 'modal2' %}
+  {% endif %}
+  
+  <!--=========================================Header=========================================-->
+  <!-- Global Site Tag (gtag.js) - Google AdWords: 709903295 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-709903295"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-709903295', {'send_page_view': false});
+  </script>
+  
+  
+  <!--=========================================Footer=========================================-->
+  <!-- google dynamic remarketing tag for theme.liquid -->
+  {% if template contains 'product' %}
+  <script type="text/javascript">
+    var json_product = {{ product | json }};
+  </script>
+  <script>
+    var ecomm_prodid=[];
+    for(var i=0;i<json_product.variants.length;i++)
+    ecomm_prodid.push('shopify_US_{{product.id}}_'+json_product.variants[i].id);
+  </script>
+  <script type="text/javascript">
+    var google_tag_params = {
+      ecomm_prodid: ecomm_prodid,
+      ecomm_pagetype: 'product',
+      ecomm_totalvalue: parseFloat('{{ product.price | money_without_currency | remove: ","}}')
+    };
+  </script>
+  {% elsif template contains 'collection' %}
+  <script type="text/javascript">
+    var google_tag_params = {
+      ecomm_pagetype: 'category'
+    };
+  </script>
+  {% elsif template contains 'cart' %}
+  <script type="text/javascript">
+    var id = new Array();
+    {% for item in cart.items %}
+    id.push('shopify_US_{{item.product.id}}_{{item.variant.id}}');
+    {% endfor %}
+    
+    var google_tag_params = {
+      ecomm_prodid: id,
+      ecomm_pagetype: 'cart',
+      ecomm_totalvalue: parseFloat('{{ cart.total_price | money_without_currency | remove: ","}}')
+    };
+  </script>
+  {% elsif template contains 'search' %}
+  <script type="text/javascript">
+    var google_tag_params = {
+      ecomm_pagetype: 'searchresults'
+    };
+  </script>
+  {% elsif template contains 'index' %}
+  <script type="text/javascript">
+    var google_tag_params = {
+      ecomm_pagetype: 'home'
+    };
+  </script>
+  {% else %}
+  <script type="text/javascript">
+    var google_tag_params = {
+      ecomm_pagetype: 'other'
+    };
+  </script>
+  {% endif %}
+  <script>
+    gtag('event', 'page_view', {'send_to': 'AW-709903295',
+    'ecomm_prodid':window.google_tag_params.ecomm_prodid,
+    'ecomm_pagetype': window.google_tag_params.ecomm_pagetype,
+    'ecomm_totalvalue':window.google_tag_params.ecomm_totalvalue
+  });
+</script>
+
+
+
+<!--=================================Thank You=================================================-->
+
+
+<!-- CRITEO START -->
+{% include 'criteo-tracking' %}
+<!-- CRITEO END -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8PV6ZJ"height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+{% if template contains 'collection' %}
+{% include 'ri-assets' %}
+{% include 'ri-scripts' %}
+{% endif %}
+
+{% if template contains 'product' %}
+{% if product.title contains 'Bespoke' or product.title contains 'bespoke'  %}
+{% else %}
+{% include 'ri-assets' %}
+{% include 'ri-scripts' %}
+{% endif %}
+{% endif %}
+
+</body>
+</html>

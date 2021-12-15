@@ -1,0 +1,204 @@
+<div class="page-width three-block-banner">
+  {% if section.settings.title != blank %}
+  <div class="section-header text-center">
+    <h2>{{ section.settings.title | escape }}</h2>
+  </div>
+  {% endif %}
+
+  <div class="grid display-flex {% unless section.sections.size == 5 %}grid--uniform{% endunless %} grid--flush-bottom">
+    {%- assign grid_item_width = 'medium-up--one-half' -%}
+    {%- assign max_height = 345 -%}
+    <div class="grid__item {{ grid_item_width }} text-{{ section.settings.align_text }}" {{ section.shopify_attributes }}>
+      {% if section.settings.enable_image %}
+      {% if section.settings.image != blank %}
+      {% capture img_id %}TextColumnImage-{{ section.id }}{% endcapture %}
+      {% capture wrapper_id %}TextColumnImageWrapper-{{ section.id }}{% endcapture %}
+      {%- assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      {%- assign mobile_img_url = section.settings.mobile_image1 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      <div id="{{ wrapper_id }}" class="feature-row__image-wrapper js">
+        <a href="{{ section.settings.button_link }}">
+          <img id="{{ img_id }}"
+               class=" lazyload small--hide"
+               src="{{ section.settings.image | img_url: '300x300' }}"
+               data-src="{{ img_url }}"
+               data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+               data-aspectratio="{{ section.settings.image.aspect_ratio }}"
+               data-sizes="auto"
+               alt="{{ section.settings.image.alt | escape }}">
+          <img id="{{ img_id }}"
+               class=" lazyload medium-up--hide"
+               src="{{ section.settings.mobile_img_url | img_url: '300x300' }}"
+               data-src="{{ mobile_img_url }}"
+               data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+               data-aspectratio="{{ section.settings.mobile_img_url.aspect_ratio }}"
+               data-sizes="auto"
+               alt="{{ section.settings.mobile_img_url.alt | escape }}">
+        </a>
+      </div>
+      <noscript>
+        <p>
+          {{ section.settings.image | img_url: '480x480', scale: 2 | img_tag: section.settings.image.alt, 'feature-row__image' }}
+        </p>
+      </noscript>
+      {% else %}
+      <p>
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </p>
+      {% endif %}
+      {% endif %}
+    </div>
+    <div class="grid__item two-image-grid {{ grid_item_width }} text-{{ section.settings.align_text }}" {{ section.shopify_attributes }}>
+      {% if section.settings.enable_image %}
+      {% if section.settings.image2 != blank %}
+      {% capture img_id %}TextColumnImage-{{ section.id }}{% endcapture %}
+      {% capture wrapper_id %}TextColumnImageWrapper-{{ section.id }}{% endcapture %}
+      {%- assign img_url = section.settings.image2 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      {%- assign mobile_img_url = section.settings.mobile_image2 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      
+      {% comment %}{% include 'image-style', image: section.settings.image2, height: max_height, wrapper_id: wrapper_id, img_id: img_id %}{% endcomment %}
+      <div id="{{ wrapper_id }}" class="feature-row__image-wrapper first-image-row js">
+        
+          <a href="{{ section.settings.button_link2 }}">
+            <img id="{{ img_id }}"
+                 class=" lazyload small--hide"
+                 src="{{ section.settings.image2 | img_url: '300x300' }}"
+                 data-src="{{ img_url }}"
+                 data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                 data-aspectratio="{{ section.settings.image2.aspect_ratio }}"
+                 data-sizes="auto"
+                 alt="{{ section.settings.image2.alt | escape }}">
+            <img id="{{ img_id }}"
+                 class=" lazyload medium-up--hide"
+                 src="{{ section.settings.mobile_image2 | img_url: 'master' }}"
+                 data-src="{{ mobile_img_url }}"
+                 data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                 data-aspectratio="{{ section.settings.mobile_img_url.aspect_ratio }}"
+                 data-sizes="auto"
+                 alt="{{ section.settings.mobile_img_url.alt | escape }}">
+          </a>
+      </div>
+      <noscript>
+        <p>
+          {{ section.settings.image2 | img_url: '480x480', scale: 2 | img_tag: section.settings.image2.alt, 'feature-row__image' }}
+        </p>
+      </noscript>
+      {% else %}
+      <p>
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </p>
+      {% endif %}
+      {% endif %}
+      {% if section.settings.image3 != blank %}
+      {% capture img_id %}TextColumnImage-{{ section.id }}{% endcapture %}
+      {% capture wrapper_id %}TextColumnImageWrapper-{{ section.id }}{% endcapture %}
+      {%- assign img_url = section.settings.image3 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      {%- assign mobile_img_url = section.settings.mobile_image3 | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+      
+      <div id="{{ wrapper_id }}" class="feature-row__image-wrapper js">
+        <a href="{{ section.settings.button_link3 }}">
+          <img id="{{ img_id }}"
+               class=" lazyload small--hide"
+               src="{{ section.settings.image3 | img_url: 'master' }}"
+               data-src="{{ img_url }}"
+               data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+               data-aspectratio="{{ section.settings.image3.aspect_ratio }}"
+               data-sizes="auto"
+               alt="{{ section.settings.image3.alt | escape }}">
+          <img id="{{ img_id }}"
+               class=" lazyload medium-up--hide"
+               src="{{ section.settings.mobile_image3 | img_url: 'master' }}"
+               data-src="{{ mobile_img_url }}"
+               data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+               data-aspectratio="{{ section.settings.mobile_img_url.aspect_ratio }}"
+               data-sizes="auto"
+               alt="{{ section.settings.mobile_img_url.alt | escape }}">
+        </a>
+      </div>
+      <noscript>
+        <p>
+          {{ section.settings.image3 | img_url: '480x480', scale: 2 | img_tag: section.settings.image3.alt, 'feature-row__image' }}
+        </p>
+      </noscript>
+      {% else %}
+      <p>
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+
+
+
+{% schema %}
+{
+  "name": "Three banner",
+  "class": "index-section",
+  "settings": [
+	  {
+          "type": "text",
+          "id": "title",
+          "label": "Section title"
+        },
+     {
+          "type": "checkbox",
+          "id": "enable_image",
+          "label": "Show image",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+		{
+          "type": "image_picker",
+          "id": "mobile_image1",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Banner link"
+        },
+        {
+          "type": "image_picker",
+          "id": "image2",
+          "label": "Image"
+        },
+		{
+          "type": "image_picker",
+          "id": "mobile_image2",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "button_link2",
+          "label": "Banner link"
+        },
+        {
+          "type": "image_picker",
+          "id": "image3",
+          "label": "Image"
+        },
+		{
+          "type": "image_picker",
+          "id": "mobile_image3",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "button_link3",
+          "label": "Banner link"
+        }
+  ],
+  "presets": [
+    {
+      "name": "Three block images",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

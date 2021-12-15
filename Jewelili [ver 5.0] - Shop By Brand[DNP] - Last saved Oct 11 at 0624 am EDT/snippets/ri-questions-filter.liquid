@@ -1,0 +1,105 @@
+{% if ri_settings.question_filter_bar_status == "hide" %}
+<div class="ri_line"></div>
+{% elsif ri_settings.product_questions_status == "enabled" %}
+<div class="reviews-importify-filter-bar reviews-importify-question-filter-bar">
+  <form id="reviews-importify-qfilter-form" action="" method="get">
+    <span class="ri-filter-option ri-filter-heading">
+      {% if ri_settings.filter_bar_filter_text != null and ri_settings.filter_bar_filter_text != "" %}
+      {{ ri_settings.filter_bar_filter_text }}
+      {% else %}
+      Filter
+      {% endif %}
+    </span>
+    {% if ri_settings.questions_filter_bar_sorting == "enabled" %}
+    <span class="ri-filter-sep">|</span>
+    <span class="ri-filter-option">
+      <select ng-init="riStoreData.settings.questions_default_sorting ? ri_filter_sort_by = riStoreData.settings.questions_default_sorting : ri_filter_sort_by = 'recent'" ng-model="ri_filter_sort_by" ng-change="filterQuestions()" class="ri-filter-select-option ri_review_select_element" name="ri_qfilter_sort_by" id="ri_qfilter_sort_by">
+        <option value="recent">
+          {% if ri_settings.sort_by_recent_text != null and ri_settings.sort_by_recent_text != "" %}{{ ri_settings.sort_by_recent_text }}{% else %}Sort By : Recent{% endif %}
+        </option>
+        <option value="question">
+          {% if ri_settings.sort_by_question_text != null and ri_settings.sort_by_question_text != "" %}{{ ri_settings.sort_by_question_text }}{% else %}Sort By : Question{% endif %}
+        </option>
+      </select>
+    </span>
+    {% endif %}
+    {% if ri_settings.questions_filter_bar_search == "enabled" %}
+    <span class="ri-filter-sep">|</span>
+    <span class="ri-filter-option">
+      <input type="text" placeholder="{% if ri_settings.enter_search_query_text != null and ri_settings.enter_search_query_text != "" %}{{ ri_settings.enter_search_query_text }}{% else %}Enter search query{% endif %}" ng-model="ri_qfilter_squery" ng-change="filterQuestions()" class="ri-filter-select-option ri_review_input_element" name="ri_qfilter_squery" id="ri_qfilter_squery" />
+    </span>
+    {% endif %}
+    {% if ri_settings.questions_filter_bar_variants == "enabled" %}
+    <span class="ri-filter-sep">|</span>
+    <span class="ri-filter-option">
+      <select ng-model="ri_filter_variant" ng-change="filterQuestions()" class="ri-filter-select-option ri_review_select_element" name="ri_qfilter_variant" id="ri_qfilter_variant">
+        <option value="0">
+          {% if ri_settings.filter_bar_all_variants_text != null and ri_settings.filter_bar_all_variants_text != "" %}{{ ri_settings.filter_bar_all_variants_text }}{% else %}All Variants{% endif %}
+        </option>
+        {% for pvar in product.variants %}
+        <option value="{{ pvar.id }}">{{ pvar.title }}</option>
+        {% endfor %}
+      </select>
+    </span>
+    {% endif %}
+    {% if ri_settings.questions_filter_bar_picture == "enabled" %}
+    <span class="ri-filter-sep">|</span>
+    <span class="ri-filter-option">
+      <input ng-model="ri_filter_media" ng-change="filterQuestions()" class="ri-filter-checkbox-option" type="checkbox" value="1" name="ri_qfilter_media" id="ri_qfilter_media">
+      <label class="ri-filter-label" for="ri_qfilter_media">
+        {% if ri_settings.filter_bar_with_media_text != null and ri_settings.filter_bar_with_media_text != "" %}
+        {{ ri_settings.filter_bar_with_media_text }}
+        {% else %}
+        With Media
+        {% endif %}
+      </label>
+    </span>
+    {% endif %}
+    {% if ri_settings.question_filter_bar_translation == "enabled" %}
+    <span class="ri-filter-sep">|</span>
+    <span class="ri-filter-option">
+      <input ng-model="ri_filter_translate" ng-change="filterQuestions()" class="ri-filter-checkbox-option" type="checkbox" value="english" name="ri_qfilter_translate" id="ri_qfilter_translate">
+      <label class="ri-filter-label" for="ri_qfilter_translate">
+        {% if ri_settings.translate_to_english_text != null and ri_settings.translate_to_english_text != "" %}
+        {{ ri_settings.translate_to_english_text }}
+        {% else %}
+        Translate to English
+        {% endif %}
+      </label>
+    </span>
+    {% endif %}
+    <span class="ri-filter-sep">|</span>
+    <span class="ri-filter-option">
+      <span class="ri-pagination-option">
+        <input type="hidden" ng-model="ri_filter_page" ng-change="filterQuestions()" value=1 name="ri_qfilter_page" id="ri_qfilter_page">
+        <span class="ri-pagination-buttons" ng-if="questionsData.questions.last_page > 1">
+          <span ng-click="loadPrevPage(questionsData.questions.current_page)" class="ri-pagination-button ri-pagination-button-left fa fa-caret-left reviews-importify-tooltip" ng-if="questionsData.questions.current_page > 1">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.previous_page_text != "" and ri_settings.previous_page_text != null %}
+              {{ri_settings.previous_page_text}}
+              {% else %}
+              Previous Page
+              {% endif %}
+            </span>
+          </span>
+          <span ng-click="loadNextPage(questionsData.questions.current_page)" class="ri-pagination-button ri-pagination-button-right fa fa-caret-right reviews-importify-tooltip" ng-if="questionsData.questions.last_page > questionsData.questions.current_page">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.next_page_text != "" and ri_settings.next_page_text != null %}
+              {{ri_settings.next_page_text}}
+              {% else %}
+              Next Page
+              {% endif %}
+            </span>
+          </span>
+        </span>
+        <span class="ri-pagination-pages">
+          (% questionsData.questions.current_page %)/(% questionsData.questions.last_page %)
+        </span>
+      </span>
+    </span>
+    <span class="ri-filter-option ri-filter-questions-loading">
+      <i class="fa fa-spinner fa-spin"></i>
+    </span>
+  </form>
+</div>
+{% endif %}

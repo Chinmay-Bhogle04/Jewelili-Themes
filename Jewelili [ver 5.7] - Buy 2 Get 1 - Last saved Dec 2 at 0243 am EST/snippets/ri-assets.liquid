@@ -1,0 +1,376 @@
+{% assign riAppBaseUrl = "//www.reviewsimportify.com/" %}
+{% assign riAppApiUrl = riAppBaseUrl | append : "api/shopify" %}
+{% assign riAppPublicUrl = riAppBaseUrl | append : "public/shopify" %}
+
+{% if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings %}
+{% assign ri_settings = shop.metafields.reviewsimportify.store_settings %}
+{% else %}
+{% assign ri_settings = null %}
+{% endif %}
+
+{% if ri_settings.app_status == "active" %}
+<script type="text/javascript">
+  var riAppBaseUrl = "{{ riAppBaseUrl }}";
+  var riAppApiUrl = "{{riAppApiUrl}}";
+  var riAppPublicUrl = "{{riAppPublicUrl}}";
+  
+  var ri_store_url = "{{shop.permanent_domain}}";
+  
+  var ri_settings = {};
+  {% if ri_settings %}ri_settings = {{ ri_settings | json }};{% endif %}
+</script>
+{% comment %}
+{{ '//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js' | script_tag }}
+{% endcomment %}
+{{ '//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' | stylesheet_tag }}
+{{ riAppBaseUrl | append:'/public/shopify/css/app-styles.css' | stylesheet_tag }}
+{{ riAppBaseUrl | append:'/public/shopify/js/jquery.shorten.min.js' | script_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css' | stylesheet_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css' | stylesheet_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js' | script_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js' | script_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css' | stylesheet_tag }}
+{{ '//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.6/angular.min.js' | script_tag }}
+<script type="text/javascript">
+  if(!window.jQuery){
+    console.log("jQuery is not loaded");
+  }
+  var jQueryObj = jQuery;
+
+  {% if ri_settings.show_full_text != "" and ri_settings.show_full_text != null %}
+  var show_full_str = "{{ri_settings.show_full_text}}";
+  {% endif %}
+  
+  {% if ri_settings.show_less_text != "" and ri_settings.show_less_text != null %}
+  var show_less_str = "{{ri_settings.show_less_text}}";
+  {% endif %}
+  
+  {% if ri_settings.question_submit_error_text != "" and ri_settings.question_submit_error_text != null %}
+  var question_submit_error_text = "{{ri_settings.question_submit_error_text}}";
+  {% endif %}
+  
+  {% if ri_settings.question_submit_success_text != "" and ri_settings.question_submit_success_text != null %}
+  var question_submit_success_text = "{{ri_settings.question_submit_success_text}}";
+  {% endif %}
+  
+  {% if ri_settings.review_submit_error_text != "" and ri_settings.review_submit_error_text != null %}
+  var review_submit_error_text = "{{ri_settings.review_submit_error_text}}";
+  {% endif %}
+  
+  {% if ri_settings.review_submit_success_text != "" and ri_settings.review_submit_success_text != null %}
+  var review_submit_success_text = "{{ri_settings.review_submit_success_text}}";
+  {% endif %}
+  
+  {% if ri_settings.question_required_text != "" and ri_settings.question_required_text != null %}
+  var question_required_text = "{{ri_settings.question_required_text}}";
+  {% endif %}
+  
+  {% if ri_settings.review_title_required_text != "" and ri_settings.review_title_required_text != null %}
+  var review_title_required_text = "{{ri_settings.review_title_required_text}}";
+  {% endif %}
+  
+  {% if ri_settings.review_body_required_text != "" and ri_settings.review_body_required_text != null %}
+  var review_body_required_text = "{{ri_settings.review_body_required_text}}";
+  {% endif %}
+  
+  {% if ri_settings.email_required_text != "" and ri_settings.email_required_text != null %}
+  var email_required_text = "{{ri_settings.email_required_text}}";
+  {% endif %}
+  
+  {% if ri_settings.invalid_email_text != "" and ri_settings.invalid_email_text != null %}
+  var invalid_email_text = "{{ri_settings.invalid_email_text}}";
+  {% endif %}
+  
+  {% if ri_settings.name_required_text != "" and ri_settings.name_required_text != null %}
+  var name_required_text = "{{ri_settings.name_required_text}}";
+  {% endif %}
+  
+  {% if ri_settings.invalid_name_length_text != "" and ri_settings.invalid_name_length_text != null %}
+  var invalid_name_length_text = "{{ri_settings.invalid_name_length_text}}";
+  {% endif %}
+
+</script>
+{% endif %}
+<style type="text/css">
+  .ri_noticemsg{
+    color:red;
+  }
+  
+  {% if ri_settings.reviews_overview_top_margin and ri_settings.reviews_overview_top_margin != "" %}
+  #reviews-importify-reviews .reviews-importify-overview{
+    margin-top:{{ri_settings.reviews_overview_top_margin}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_overview_bottom_margin and ri_settings.reviews_overview_bottom_margin != "" %}
+  #reviews-importify-reviews .reviews-importify-overview{
+    margin-bottom:{{ri_settings.reviews_overview_bottom_margin}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_overview_heading_color and ri_settings.reviews_overview_heading_color != "" %}
+  #reviews-importify-reviews .reviews_overview_heading{
+    color:{{ri_settings.reviews_overview_heading_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_overview_text_color and ri_settings.reviews_overview_text_color != "" %}
+  #reviews-importify-reviews .reviews-importify-overview{
+    color:{{ri_settings.reviews_overview_text_color}};
+  }
+  #reviews-importify-reviews .reviews-importify-overview p{
+    color:{{ri_settings.reviews_overview_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_overview_text_size and ri_settings.reviews_overview_text_size != "" %}
+  #reviews-importify-reviews .reviews-importify-overview{
+    font-size:{{ri_settings.reviews_overview_text_size}}px;
+  }
+  #reviews-importify-reviews .reviews-importify-overview p{
+    font-size:{{ri_settings.reviews_overview_text_size}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_section_user_icon_type and ri_settings.reviews_section_user_icon_type == "none" %}
+  #reviews-importify-reviews .review-user-image{
+    display:none;
+  }
+  {% endif %}
+  
+  {% if ri_settings.author_letter_bgcolor and ri_settings.author_letter_bgcolor != "" %}
+  #reviews-importify-reviews .review-user-letter{
+    background-color:{{ri_settings.author_letter_bgcolor}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.author_letter_text_color and ri_settings.author_letter_text_color != "" %}
+  #reviews-importify-reviews .review-user-letter{
+    color:{{ri_settings.author_letter_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_slider_author_letter_bgcolor and ri_settings.reviews_slider_author_letter_bgcolor != "" %}
+  #reviews-importify-reviews-slider .review-user-letter{
+    background-color:{{ri_settings.reviews_slider_author_letter_bgcolor}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_slider_author_letter_text_color and ri_settings.reviews_slider_author_letter_text_color != "" %}
+  #reviews-importify-reviews-slider .review-user-letter{
+    color:{{ri_settings.reviews_slider_author_letter_text_color}};
+  }
+  {% endif %}
+  
+  
+  {% if ri_settings.reviews_slider_background and ri_settings.reviews_slider_background != "" %}
+  #reviews-importify-reviews-slider{
+    {% if ri_settings.reviews_slider_background contains "http" %}
+    background:url({{ri_settings.reviews_slider_background}});
+    {% else %}
+    background:{{ri_settings.reviews_slider_background}};
+    {% endif %}
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_slider_heading_color and ri_settings.reviews_slider_heading_color != "" %}
+  #reviews-importify-reviews-slider .ri-reviews-slider-heading{
+    color:{{ri_settings.reviews_slider_heading_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_slider_font_color and ri_settings.reviews_slider_font_color != "" %}
+  #reviews-importify-reviews-slider .ri_review_description,
+  #reviews-importify-reviews-slider .ri_review_title,
+  #reviews-importify-reviews-slider .review_date_text,
+  #reviews-importify-reviews-slider .verified_text,
+  #reviews-importify-reviews-slider .review-user-name{
+    color:{{ri_settings.reviews_slider_font_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_overview_bar_color and ri_settings.reviews_overview_bar_color != "" %}
+  #reviews-importify-reviews .bar_line_container .bar_line_filled{
+    background-color:{{ri_settings.reviews_overview_bar_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_overview_bar_height and ri_settings.reviews_overview_bar_height != "" %}
+  #reviews-importify-reviews .bar_line_container .bar_line_filled,
+  #reviews-importify-reviews .review_bar,
+  #reviews-importify-reviews .review_bar .bar_star,
+  #reviews-importify-reviews .review_bar .bar_percentage{
+    height:{{ri_settings.reviews_overview_bar_height}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.filter_bar_bg_color and ri_settings.filter_bar_bg_color != "" %}
+  #reviews-importify-reviews .reviews-importify-filter-bar,
+  #reviews-importify-reviews .reviews-importify-filter-bar select{
+    background:{{ri_settings.filter_bar_bg_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.filter_bar_text_color and ri_settings.filter_bar_text_color != "" %}
+  #reviews-importify-reviews .reviews-importify-filter-bar,
+  #reviews-importify-reviews .reviews-importify-filter-bar select{
+    color:{{ri_settings.filter_bar_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.filter_bar_pagination_btn_color and ri_settings.filter_bar_pagination_btn_color != "" %}
+  #reviews-importify-reviews .ri-pagination-button{
+    background:{{ri_settings.filter_bar_pagination_btn_color}};
+    border-color:{{ri_settings.filter_bar_pagination_btn_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.filter_bar_pagination_text_color and ri_settings.filter_bar_pagination_text_color != "" %}
+  #reviews-importify-reviews .ri-pagination-button{
+    color:{{ri_settings.filter_bar_pagination_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.filter_bar_text_size and ri_settings.filter_bar_text_size != "" %}
+  #reviews-importify-reviews .reviews-importify-filter-bar,
+  #reviews-importify-reviews .reviews-importify-filter-bar label,
+  #reviews-importify-reviews .reviews-importify-filter-bar select{
+    font-size:{{ri_settings.filter_bar_text_size}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.write_review_btn_color and ri_settings.write_review_btn_color != "" %}
+  #reviews-importify-reviews #importify-reviews-write-review{
+    background-color:{{ri_settings.write_review_btn_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.write_review_btn_text_color and ri_settings.write_review_btn_text_color != "" %}
+  #reviews-importify-reviews #importify-reviews-write-review{
+    color:{{ri_settings.write_review_btn_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.write_review_submit_btn_color and ri_settings.write_review_submit_btn_color != "" %}
+  #reviews-importify-write-review-form .importify_reviews_write_btn{
+    background-color:{{ri_settings.write_review_submit_btn_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.write_review_btn_text_color and ri_settings.write_review_btn_text_color != "" %}
+  #reviews-importify-write-review-form .importify_reviews_write_btn{
+    color:{{ri_settings.write_review_btn_text_color}};
+  }
+  {% endif %}
+  
+  
+  {% if ri_settings.reviews_stars_empty_color and ri_settings.reviews_stars_empty_color != "" %}
+  .reviews-importify-element .reviews-importify-rating-stars .stars-empty .fa,
+  .reviews-importify-element .rating_star .ipreview-star-icon{
+    color:{{ri_settings.reviews_stars_empty_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_stars_filled_color and ri_settings.reviews_stars_filled_color != "" %}
+  .reviews-importify-element .reviews-importify-rating-stars .stars-filled span.review-star-checked,
+  .reviews-importify-element .rating_star .review-star-checked{
+    color:{{ri_settings.reviews_stars_filled_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.reviews_stars_size and ri_settings.reviews_stars_size != "" %}
+  .reviews-importify-element .rating_star{
+    font-size:{{ri_settings.reviews_stars_size}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.questions_filter_bar_bg_color and ri_settings.questions_filter_bar_bg_color != "" %}
+  .reviews-importify-question-filter-bar,
+  .reviews-importify-question-filter-bar select{
+    background:{{ri_settings.questions_filter_bar_bg_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.questions_filter_bar_text_color and ri_settings.questions_filter_bar_text_color != "" %}
+  .reviews-importify-question-filter-bar,
+  .reviews-importify-question-filter-bar select{
+    color:{{ri_settings.questions_filter_bar_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.questions_filter_bar_pagination_btn_color and ri_settings.questions_filter_bar_pagination_btn_color != "" %}
+  #reviews-importify-questions .ri-pagination-button{
+    background:{{ri_settings.questions_filter_bar_pagination_btn_color}};
+    border-color:{{ri_settings.questions_filter_bar_pagination_btn_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.questions_filter_bar_pagination_text_color and ri_settings.questions_filter_bar_pagination_text_color != "" %}
+  #reviews-importify-questions .ri-pagination-button{
+    color:{{ri_settings.questions_filter_bar_pagination_text_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.questions_filter_bar_text_size and ri_settings.questions_filter_bar_text_size != "" %}
+  .reviews-importify-question-filter-bar,
+  .reviews-importify-question-filter-bar label,
+  .reviews-importify-question-filter-bar select{
+    font-size:{{ri_settings.questions_filter_bar_text_size}}px;
+  }
+  {% endif %}
+  
+  {% if ri_settings.ask_question_btn_color and ri_settings.ask_question_btn_color != "" %}
+  #importify-reviews-ask-question{
+    background-color:{{ri_settings.ask_question_btn_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.ask_question_btn_text_color and ri_settings.ask_question_btn_text_color != "" %}
+  #importify-reviews-ask-question{
+    color:{{ri_settings.ask_question_btn_text_color}};
+  }
+  {% endif %}
+  
+  
+  {% if ri_settings.ask_question_submit_btn_color and ri_settings.ask_question_submit_btn_color != "" %}
+  #reviews-importify-ask-question-form .importify_reviews_ask_question_btn{
+    background-color:{{ri_settings.ask_question_submit_btn_color}};
+  }
+  {% endif %}
+  
+  {% if ri_settings.ask_question_submit_btn_text_color and ri_settings.ask_question_submit_btn_text_color != "" %}
+  #reviews-importify-ask-question-form .importify_reviews_ask_question_btn{
+    color:{{ri_settings.ask_question_submit_btn_text_color}};
+  }
+  {% endif %}
+
+
+  {% if ri_settings.reviews_section_border == "hide" %}
+  #reviews-importify-reviews{
+    border:none;
+  }
+  {% endif %}
+  
+  
+  {% if ri_settings.reviews_section_border_color and ri_settings.reviews_section_border_color != "" %}
+  #reviews-importify-reviews{
+    border-color:{{ri_settings.reviews_section_border_color}};
+  }
+  {% endif %}
+  
+  
+  {% if ri_settings.review_bottom_line_color and ri_settings.review_bottom_line_color != "" %}
+  #reviews-importify-reviews .ri-reviews .ri-reviews-row{
+    border-bottom-color:{{ri_settings.review_bottom_line_color}};
+  }
+  {% endif %}
+  
+  
+  {% if ri_settings.review_show_full_color and ri_settings.review_show_full_color != "" %}
+  .reviews-importify-reviews .morelink{
+    color:{{ri_settings.review_show_full_color}};
+  }
+  {% endif %}
+  
+  
+</style>

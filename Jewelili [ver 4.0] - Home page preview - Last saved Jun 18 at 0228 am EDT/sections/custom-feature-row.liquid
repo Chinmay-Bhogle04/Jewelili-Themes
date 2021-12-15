@@ -1,0 +1,163 @@
+{% for block in section.blocks %}
+  <section id="feature-row-{{ forloop.index }}" class="feature__row-inner">
+    
+    <div class="page-width row_content {% if block.settings.image_align == 'right' %}row_reverse{% endif %}">
+      {% if block.settings.full_width_image != blank %}
+      <a href="{{ block.settings.link }}">
+        <img class="lazyload"
+             src="{{ block.settings.full_width_image | img_url: 'master' }}"
+             data-src="{{ block.settings.full_width_image | img_url: 'master' }}"
+             data-sizes="auto"
+             alt="" />
+      </a>
+      {% else %}
+      <div class="feature__row-image">
+        {% unless block.settings.column_image == nil %}
+          <img class="lazyload"
+               src="{{ block.settings.column_image | img_url: 'master' }}"
+               data-src="{{ block.settings.column_image | img_url: 'master' }}"
+               data-sizes="auto"
+               alt="" />
+          {% endunless %}
+      </div>
+      <div class="feature__row-content">
+        {% unless block.settings.content_image == nil %}
+          <img class="lazyload"
+               src="{{ block.settings.content_image | img_url: 'master' }}"
+               data-src="{{ block.settings.content_image | img_url: 'master' }}"
+               data-sizes="auto"
+               alt="" />
+        {% endunless %}
+        {% unless block.settings.title == blank %}
+          <h2>{{ block.settings.title }}</h2>
+        {% endunless %}
+        {% unless block.settings.paragraph == blank %}
+          <p>{{ block.settings.paragraph }}</p>
+        {% endunless %}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+{% endfor %}
+
+<style>
+  {% for block in section.blocks %}
+  #feature-row-{{ forloop.index }} {
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ffffff+0,ede2f5+100 */
+    background: {{ block.settings.left_gradient_color }}; /* Old browsers */
+    background: -moz-linear-gradient(left,  {{ block.settings.left_gradient_color }} 0%, {{ block.settings.right_gradient_color }} 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  {{ block.settings.left_gradient_color }} 0%,{{ block.settings.right_gradient_color }} 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  {{ block.settings.left_gradient_color }} 0%,{{ block.settings.right_gradient_color }} 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='{{ block.settings.left_gradient_color }}', endColorstr='{{ block.settings.right_gradient_color }}',GradientType=1 ); /* IE6-9 */
+  }
+  @media only screen and (max-width: 768px) {
+    #feature-row-{{ forloop.index }} {
+      /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ffffff+0,ede2f5+100 */
+      background: {{ block.settings.top_gradient_color }}; /* Old browsers */
+      background: -moz-linear-gradient(top,  {{ block.settings.top_gradient_color }} 0%, {{ block.settings.bottom_gradient_color }} 100%); /* FF3.6-15 */
+      background: -webkit-linear-gradient(top,  {{ block.settings.top_gradient_color }} 0%,{{ block.settings.bottom_gradient_color }} 100%); /* Chrome10-25,Safari5.1-6 */
+      background: linear-gradient(to bottom,  {{ block.settings.top_gradient_color }} 0%,{{ block.settings.bottom_gradient_color }} 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='{{ block.settings.top_gradient_color }}', endColorstr='{{ block.settings.bottom_gradient_color }}',GradientType=0 ); /* IE6-9 */
+    }
+  }
+  {% endfor %}
+</style>
+
+{% schema %}
+  {
+    "name": "Image with text",
+	"class": "index-section feature-row-section",
+	"max_blocks": 6,
+    "settings": [],
+	"blocks": [
+      {
+        "type": "row-content",
+        "name": "Row Content",
+        "settings": [
+          {
+             "type": "color",
+             "id": "left_gradient_color",
+             "label": "Left gradient color"
+          },
+          {
+             "type": "color",
+             "id": "right_gradient_color",
+             "label": "Right gradient color"
+          },
+		  {
+             "type": "color",
+             "id": "top_gradient_color",
+             "label": "Top gradient color (For Mobile)"
+          },
+          {
+             "type": "color",
+             "id": "bottom_gradient_color",
+             "label": "Bottom gradient color (For Mobile)"
+          },
+          {
+            "type": "image_picker",
+            "id": "column_image",
+            "label": "Column Image",
+            "info": "Recommended size 600x400"
+          },
+		  {
+             "type": "select",
+             "id": "image_align",
+             "label": "Image Alignment",
+             "options": [
+               {
+                 "value": "left",
+                 "label": "Left"
+               },
+               {
+                 "value": "right",
+                 "label": "Right"
+               }
+             ],
+             "default": "left"
+          },
+		  {
+            "type": "image_picker",
+            "id": "content_image",
+            "label": "Content Image",
+            "info": "Recommended size 600x400"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Title"
+          },
+          {
+            "type": "textarea",
+            "id": "paragraph",
+            "label": "Paragraph"
+          },
+		  {
+            "type": "image_picker",
+            "id": "full_width_image",
+            "label": "Full width banner",
+            "info": "Recommended size 600x400"
+          },
+		  {
+            "type": "url",
+            "id": "link",
+            "label": "Banner link"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Image with text",
+        "category": "Advanced layout"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

@@ -1,0 +1,160 @@
+<!-- featured-four-banner.liquid -->
+<div class="page-width four-block-banner">
+  {% if section.settings.seasonal-heading != blank or section.settings.seasonal-subheading != blank %}
+  <header class="header-title-wrapper">
+    {% if section.settings.seasonal-heading != blank %}
+    <h3 class="header--sub-heading">{{ section.settings.seasonal-heading }}</h3>
+    {% endif %}
+    {% if section.settings.seasonal-subheading != blank %}
+    <h6 class="header--main-heading">{{ section.settings.seasonal-subheading }}</h6>
+    {% endif %}
+  </header>
+  {% endif %}
+  <div class="grid {% if section.settings.mobile_slider %}display-flex{% endif %} {% unless block.blocks.size == 5 %}grid--uniform{% endunless %} grid--flush-bottom">
+    {% for block in section.blocks %}
+    {% case section.blocks.size %}
+    {% when 2 %}
+    {%- assign grid_item_width = 'medium-up--one-half' -%}
+    {% when 3 %}
+    {%- assign grid_item_width = 'medium-up--one-third' -%}
+    {% when 4 %}
+    {%- assign grid_item_width = 'medium-up--one-quarter' -%}
+    {% when 5 %}
+    {%- assign grid_item_width = 'medium-up--one-fifth' -%}
+    {% endcase %}
+    {%- assign max_height = 345 -%}
+    <div class="grid__item {% if section.settings.half_width %}small--one-half {% else %}small--one-whole {% endif %}{{ grid_item_width }} text-{{ block.settings.align_text }}" {{ block.shopify_attributes }}>
+      {% if block.settings.enable_image %}
+        {% if block.settings.image != blank %}
+        {% capture wrapper_id %}TextColumnImageWrapper-{{ block.id }}{% endcapture %}
+        {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        {%- assign img_url_mob  = block.settings.image_mob | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <div id="{{ wrapper_id }}" class="feature-row__image-wrapper js hover_image">
+          <a class="custom__image__wrapper {% if block.settings.image_mob != blank %}small--hide{% endif %}" {% if block.settings.button_link != blank %}href="{{ block.settings.button_link }}"{% endif %} style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%;">
+            <img class="custom__image lazyload {% if section.settings.img_hover %}image_scale{% endif %}" 
+                 data-src="{{ img_url }}" 
+                 data-widths="[180, 360]"
+                 data-aspectratio="{{ block.settings.image.aspect_ratio }}" 
+                 data-sizes="auto" 
+                 alt="{{ block.settings.image.alt | escape }}">
+
+          </a>
+          {% if block.settings.image_mob != blank %}
+          <a class="custom__image__wrapper medium-up--hide" {% if block.settings.button_link != blank %}href="{{ block.settings.button_link }}"{% endif %} style="padding-top:{{ 1 | divided_by: block.settings.image_mob.aspect_ratio | times: 100}}%;">
+            <img class="custom__image lazyload " 
+                 data-src="{{ img_url_mob }}" 
+                 data-widths="[180, 360, 540]"
+                 data-aspectratio="{{ block.settings.image_mob.aspect_ratio }}"
+                 data-sizes="auto" 
+                 alt="{{ block.settings.image_mob.alt | escape }}">
+          </a>
+          {% endif %}
+        </div>
+        <noscript>
+          <p>
+            {{ block.settings.image | img_url: '480x480', scale: 2 | img_tag: block.settings.image.alt, 'feature-row__image' }}
+          </p>
+        </noscript>
+        {% endif %}
+      {% endif %}
+      {% if block.settings.title != blank %}
+      <p class="four-grid-title">{{ block.settings.title }}</p>
+      {% endif %}
+      {% if section.settings.show_shop_btn %}
+      <div class="shop_div">
+        <a class="shop_nowbtn" href="{{ block.settings.button_link }}">
+          Shop Now
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><defs><style>.black_arrow_a{fill:#fff;opacity:0;}.black_arrow_c{fill:#292D36;}</style></defs><g transform="translate(-395 -1235)"><rect class="black_arrow_a" width="28" height="28" transform="translate(395 1235)"/><g class="black_arrow_b" transform="translate(396.512 1237)"><path class="black_arrow_c" d="M21.24-60.059a12.585,12.585,0,0,0,12.5-12.5,12.6,12.6,0,0,0-12.512-12.5A12.59,12.59,0,0,0,8.74-72.559,12.593,12.593,0,0,0,21.24-60.059ZM28.4-72.571a1.144,1.144,0,0,1-.38.833l-4.694,4.681a1.1,1.1,0,0,1-.735.294,1.01,1.01,0,0,1-1.029-1.017,1.053,1.053,0,0,1,.319-.748l1.728-1.691,1.667-1.409-2.953.11H15.137A1,1,0,0,1,14.1-72.571a1.007,1.007,0,0,1,1.042-1.054h7.181l2.953.123-1.667-1.4-1.728-1.716a1.075,1.075,0,0,1-.319-.735,1.01,1.01,0,0,1,1.029-1.017,1.038,1.038,0,0,1,.735.282l4.694,4.694A1.087,1.087,0,0,1,28.4-72.571Z" transform="translate(-8.74 85.059)"/></g></g></svg>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+    
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Three banner",
+  "class": "index-section featured-four-banner",
+  "settings": [
+  {
+    "type": "text",
+    "id": "seasonal-heading",
+    "label": "Heading",
+    "default": "Jewelili seasonal deals"
+  },
+  {
+    "type": "text",
+    "id": "seasonal-subheading",
+    "label": "Sub Heading",
+    "default": "Select styles at a great value"
+  },
+  {
+    "type": "checkbox",
+    "id": "half_width",
+    "label": "Show 2 items on mobile",
+    "default": false
+  },
+  {
+    "type": "checkbox",
+    "id": "show_shop_btn",
+    "label": "Show shop now button",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "mobile_slider",
+    "label": "Show slider for mobile",
+    "default": false
+  },
+  {
+    "type": "checkbox",
+    "id": "img_hover",
+    "label": "Zoom on hover",
+    "default": true
+  }
+  ],
+  "blocks": [
+  {
+    "type": "text_block",
+    "name": "Image",
+    "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_image",
+      "label": "Show image",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mob",
+      "label": "Mobile Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Block title"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Banner link"
+    }
+    ]
+  }
+  ],
+  "presets": [
+  {
+    "name": "four block images",
+    "category": "Image"
+  }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,183 @@
+<div class="page-width" id="about">
+  <div class="breadcrumba">{% render 'breadcrumbs' %}</div> 
+  <div class="banner-section banner-section-first overlay">
+    <div class="image_wrapper">
+      <img src="{{section.settings.banner_image | img_url:'master'}}" alt="" />
+    </div>
+    <div class="overlay-content left-aligned-txt">
+      <h1 class="title">{{section.settings.overlay_heading}}</h1>
+      <p class="subtext">{{section.settings.overlay_subtext}}</p>
+    </div>
+  </div>
+  <div class="box_wrapper">
+    {% for block in section.blocks %}
+    <div class="box overlay overlay-{{block.id}}" {% if block.settings.bg_color != blank %} id="content-box" style="background:{{ block.settings.bg_color }};" {% endif %}>
+      {% if block.settings.block_image %}
+      <div class="image_wrapper">
+        <img src="{{block.settings.block_image | img_url: 'master'}}" alt="" />
+      </div>
+      {% endif%}
+      <div class="overlay-content {% if block.settings.align_block_text == 'left' %}left-aligned-txt{% elsif block.settings.align_block_text == 'right' %}right-aligned-txt{% else %}center-aligned-txt{% endif %}">
+        <h1 class="title">{{block.settings.overlay_heading_block}}</h1>
+        <p class="subtext">{{block.settings.overlay_text}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="banner-section banner-section-second overlay">
+    <div class="image_wrapper">
+      <img src="{{section.settings.banner_image1 | img_url:'master'}}" alt="" />
+    </div>
+    <div class="overlay-content right-aligned-txt">
+      <h1 class="title">{{section.settings.overlay_heading1}}</h1>
+      <p class="subtext">{{section.settings.overlay_subtext1}}</p>
+    </div>
+  </div>
+</div>
+<style>
+  {% for block in section.blocks %}
+  .overlay-{{block.id}} .subtext{
+    color: {{block.settings.overlay_color}};
+  }
+  .overlay-{{block.id}} .title{
+    color: {{block.settings.heading_color}};
+  }
+  {%endfor%}
+  .banner-section-first .subtext,.banner-section-first .title{
+    color:{{section.settings.text_color}};
+  }
+  .banner-section-second .subtext,.banner-section-second .title{
+    color:{{section.settings.text_color1}};
+  }
+</style>
+{% schema %}
+{
+  "name": "About Us settings",
+  "settings": [
+  {
+    "type" :"header",
+    "content" : "Banner sections"
+  },
+  {
+    "type" : "image_picker",
+    "id" : "banner_image",
+    "label" :"Select Banner Image",
+    "info" : "1200 x 400 .jpg recommends"
+  },
+  {
+    "type" :"text",
+    "id" : "overlay_heading",
+    "label" :"Enter Overlay Title",
+    "default" :"About Us"
+  },
+  {
+    "type" :"text",
+    "id" : "overlay_subtext",
+    "label" :"Enter Overlay Text",
+    "default" :"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"
+  },
+  {
+    "type" :"color",
+    "id" : "text_color",
+    "label" :"Select Text color",
+    "default" :"#3D404B"
+  },
+  {
+    "type" :"header",
+    "content" : "Second Banner sections "
+  },
+  {
+    "type" : "image_picker",
+    "id" : "banner_image1",
+    "label" :"Select Banner Image",
+    "info" : "1200 x 400 .jpg recommends"
+  },
+  {
+    "type" :"text",
+    "id" : "overlay_heading1",
+    "label" :"Enter Overlay Title",
+    "default" :"About Us"
+  },
+  {
+    "type" :"text",
+    "id" : "overlay_subtext1",
+    "label" :"Enter Overlay Text",
+    "default" :"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"
+  },
+  {
+    "type" :"color",
+    "id" : "text_color1",
+    "label" :"Select Text color",
+    "default" :"#3D404B"
+  }
+  ],
+  
+  "blocks": [
+  {
+    "type": "Half-block",
+    "name": "Image Block",
+    "settings" : [
+    {
+      "type" :"header",
+      "content" : "Block Content"
+    },
+    {
+      "type" : "image_picker",
+      "id" : "block_image",
+      "label" :"Select background Image",
+      "info": "612 x 512px .jpg recommended"
+    },
+    {
+      "type" :"color",
+      "id" : "bg_color",
+      "label" :"Select Background color",
+      "default" :"#3D404B"
+    },  
+    {
+      "type" :"text",
+      "id" : "overlay_heading_block",
+      "label" :"Enter Overlay Title",
+      "default" :"About Us"
+    },
+    {
+      "type" :"color",
+      "id" : "heading_color",
+      "label" :"Select heading color",
+      "default" :"#FFF2FF"
+    },
+    {
+      "type" :"text",
+      "id" : "overlay_text",
+      "label" :"Enter Overlay Text"
+    },
+    {
+      "type" :"color",
+      "id" : "overlay_color",
+      "label" :"Select overlay color",
+      "default" :"#FFF2FF"
+    },
+    {
+      "type": "select",
+      "id": "align_block_text",
+      "label": "Text Alignment",
+      "options": [
+      {
+        "value": "left",
+        "label": "Left"
+      },
+      {
+        "value": "center",
+        "label": "Center"
+      },
+      {
+        "value": "right",
+        "label": "Right"
+      }
+      ]
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}
+

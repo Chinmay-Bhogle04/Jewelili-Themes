@@ -1,0 +1,299 @@
+{% assign reviews_overview = null %}
+{% if product.metafields.reviewsimportify and product.metafields.reviewsimportify.reviews_overview %}
+{% assign reviews_overview = product.metafields.reviewsimportify.reviews_overview %}
+{% endif %}
+
+{% if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings %}
+{% assign ri_settings = shop.metafields.reviewsimportify.store_settings %}
+{% else %}
+{% assign ri_settings = null %}
+{% endif %}
+
+{% if ri_settings.product_reviews_status == "enabled" and ri_settings.app_status == "active" %}
+<div class="reviews-importify-element" ng-controller="RIAllReviewsController" ng-init="loadReviews()">
+  <div id="reviews-importify-all-reviews" class="reviews-importify-reviews reviews-importify-all-reviews">
+    <div id="reviews_importify_reviews_section"></div>
+    <div class="reviews-importify-overview">
+      <h3 class="reviews_overview_heading"><span class="total_reviews"></span>{{ri_settings.reviews_overview_heading}}</h3>
+      <div class="review-overview-row">
+        <div class="review-overview-row-col1">
+          <div class="reviews-importify-rating-stars">
+            <div class="stars-empty">
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <span class="fa fa-star review-star-icon"></span>
+              <div class="stars-filled" style="width:(% reviewsData.rating_percentage %)%;">
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+                <span class="fa fa-star review-star-icon review-star-checked"></span>
+              </div>
+            </div>
+          </div>
+          <b class="ri_total_reviews">(% reviewsData.average_rating %) / 5</b>
+          <p class="average_rating_text">
+            <span>
+              {% if ri_settings.overview_rating_count_text != null and ri_settings.overview_rating_count_text != "" %}
+              {{ri_settings.overview_rating_count_text | replace: "[reviews_count]", "(% reviewsData.total_reviews %)" }}
+              {% else %}
+              Based on (% reviewsData.total_reviews %) reviews
+              {% endif %}
+            </span>
+          </p>
+          
+        </div>
+        {% if ri_settings.reviews_overview_bar_status != "hide" %}
+        <div class="review-overview-row-col2">
+          <div class="review_rating_bars">
+
+            <div class="review_bar five_star_bar" ng-click="filterReviewsByRating('five_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_5_star_text != null and ri_settings.rating_bar_5_star_text != "" %}
+                {{ri_settings.rating_bar_5_star_text }}
+                {% else %}
+                5 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: (% reviewsData.five_star_percentage %)%;"></div></div>
+              </div>
+              <div class="bar_percentage">(% reviewsData.five_star_percentage %)% ((% reviewsData.five_star_count %))</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar four_star_bar" ng-click="filterReviewsByRating('four_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_4_star_text != null and ri_settings.rating_bar_4_star_text != "" %}
+                {{ri_settings.rating_bar_4_star_text }}
+                {% else %}
+                4 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: (% reviewsData.four_star_percentage %)%;"></div></div>
+              </div>
+              <div class="bar_percentage">(% reviewsData.four_star_percentage %)% ((% reviewsData.four_star_count %))</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar three_star_bar" ng-click="filterReviewsByRating('three_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_3_star_text != null and ri_settings.rating_bar_3_star_text != "" %}
+                {{ri_settings.rating_bar_3_star_text }}
+                {% else %}
+                3 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: (% reviewsData.three_star_percentage %)%;"></div></div>
+              </div>
+              <div class="bar_percentage">(% reviewsData.three_star_percentage %)% ((% reviewsData.three_star_count %))</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar two_star_bar" ng-click="filterReviewsByRating('two_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_2_star_text != null and ri_settings.rating_bar_2_star_text != "" %}
+                {{ri_settings.rating_bar_2_star_text }}
+                {% else %}
+                2 Stars
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: (% reviewsData.two_star_percentage %)%;"></div></div>
+              </div>
+              <div class="bar_percentage">(% reviewsData.two_star_percentage %)% ((% reviewsData.two_star_count %))</div>
+              <div class="clearfloat"></div>
+            </div>
+
+            <div class="review_bar one_star_bar" ng-click="filterReviewsByRating('one_star')">
+              <div class="bar_star">
+                {% if ri_settings.rating_bar_1_star_text != null and ri_settings.rating_bar_1_star_text != "" %}
+                {{ri_settings.rating_bar_1_star_text }}
+                {% else %}
+                1 Star
+                {% endif %}
+              </div>
+              <div class="bar_line">
+                <div class="bar_line_container"><div class="bar_line_filled" style="width: (% reviewsData.one_star_percentage %)%;"></div></div>
+              </div>
+              <div class="bar_percentage">(% reviewsData.one_star_percentage %)% ((% reviewsData.one_star_count %))</div>
+              <div class="clearfloat"></div>
+            </div>
+
+          </div>
+        </div>
+        {% endif %}
+        <div class="clearfloat height_10"></div>
+        {% include 'ri-product-reviews-gallery' %}
+      </div>
+    </div>
+    
+    {% if ri_settings.reviews_section_status == "show" %}
+    
+    {% include 'ri-reviews-filter' %}
+    
+    <div class="ri-reviews" ng-if="reviewsData.reviews.total > 0">
+      <div class="ri-reviews-row" ng-repeat="review in reviewsData.reviews.data">
+        <div class="ri-review-row-col-1 ri-review-row-col">
+          <span class="review-user-image">
+            {% if ri_settings.reviews_section_user_icon_type == "user_icon_image" %}
+            <img ng-src="(% appPublicUrl + '/images/user-icon.png' %)">
+            {% elsif ri_settings.reviews_section_user_icon_type == "user_icon" %}
+            <span class="fa fa-user review-user-icon"></span>
+            {% elsif ri_settings.reviews_section_user_icon_type == "square_letter" %}
+            <span class="review-user-letter square">(% authorFirstLetter(review.author) %)</span>
+            {% else %}
+            <span class="review-user-letter circle">(% authorFirstLetter(review.author) %)</span>
+            {% endif %}
+          </span>
+          
+          <span class="review-user-name reviews-importify-tooltip">
+            (% review.author %) <sup ng-if="review.is_verified == 1 && riStoreData.settings.reviews_section_verified_tick_status == 'show'"><i class="fa fa-check"></i></sup>
+            <span class="reviews-importify-tooltiptext" ng-if="review.is_verified == 1 && riStoreData.settings.reviews_section_verified_tick_status == 'show'">
+              {% if ri_settings.verified_text != "" and ri_settings.verified_text != null %}
+              {{ri_settings.verified_text}}
+              {% else %}
+              verified
+              {% endif %}
+            </span>
+          </span>
+          
+        </div>
+        <div class="ri-review-row-col-2 ri-review-row-col">
+          <div class="review_title_rating_star">
+            <span class="rating_star">
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 1}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 2}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 3}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 4}"></span>
+              <span ng-class="{'fa fa-star ipreview-star-icon': review.rating > 0,'review-star-checked': review.rating >= 5}"></span>
+            </span>
+            <span class="ri_review_title">(% review.title %)</span>
+          </div>
+          {% if ri_settings.reviews_section_variant_options_status == "show" %}
+          <div class="review_variant_options">
+            <span class="review_variant_option" ng-if="review.option1.name">
+              <span class="review_variant_option_name">(% review.option1.name %) :</span>
+              <span class="review_variant_option_value">(% review.option1.value %)</span>
+            </span>
+            <span class="review_variant_option" ng-if="review.option2.name">
+              <span class="review_variant_option_name">(% review.option2.name %) :</span>
+              <span class="review_variant_option_value">(% review.option2.value %)</span>
+            </span>
+            <span class="review_variant_option" ng-if="review.option3.name">
+              <span class="review_variant_option_name">(% review.option3.name %) :</span>
+              <span class="review_variant_option_value">(% review.option3.value %)</span>
+            </span>
+          </div>
+          {% endif %}
+          <div class="ri_review_description" ng-bind-html="review.description | unsafe"></div>
+          {% if ri_settings.reviews_section_images_status == "show" %}
+          <div class="ri_review_images" ng-if="review.images">
+            <span class="ri_review_image reviews-importify-tooltip" ng-repeat="image in review.images track by $index">
+              <figure class="ri_review_images_figure">
+                <a data-fancybox="rimages-(% review.id %)" href="(% image.original_url %)">
+                  <img class="img-fluid ri_review_image-thumb" ng-src="(% image.thumbnail_url %)" />
+                </a>
+              </figure>
+              <span class="reviews-importify-tooltiptext">
+                {% if ri_settings.click_to_zoom_text != "" and ri_settings.click_to_zoom_text != null %}
+                {{ri_settings.click_to_zoom_text }}
+                {% else %}
+                Click to Zoom
+                {% endif %}
+              </span>
+            </span>
+          </div>
+          {% endif %}
+          
+          {% if ri_settings.reviews_section_videos_status == "show" %}
+          <div class="ri_review_videos" ng-if="review.videos">
+            <span class="ri_review_video reviews-importify-tooltip" ng-repeat="video in review.videos track by $index">
+              <figure class="ri_review_videos_figure">
+                <a class="ri_video_thumb" data-fancybox="rvideos-(% review.id %)" href="(% video.original_url %)">
+                  <img class="img-fluid ri_review_image-thumb" ng-src="(% video.thumbnail_url %)" onError="this.src=riAppPublicUrl+'/images/video-play-icon.png'" alt="review_video_thumb">
+                </a>
+              </figure>
+              <span class="reviews-importify-tooltiptext">
+                {% if ri_settings.click_to_zoom_text != "" and ri_settings.click_to_zoom_text != null %}
+                {{ri_settings.click_to_zoom_text }}
+                {% else %}
+                Click to Zoom
+                {% endif %}
+              </span>
+            </span>
+          </div>
+          {% endif %}
+          
+          <div class="rireview-date">
+            <span class="review_date_text">
+              <span class="fa fa-calendar review-date-icon"></span> (% review.date_time_str %)
+            </span>
+            <span class="verified_text" ng-if="review.is_verified == 1 && riStoreData.settings.reviews_section_verified_text_status != 'hide'">
+              <span>
+                {% if ri_settings.verified_purchase_text != "" and ri_settings.verified_purchase_text != null %}
+                {{ri_settings.verified_purchase_text }}
+                {% else %}
+                Verified Purchase
+                {% endif %}
+              </span>
+            </span>
+          </div>
+        </div>
+        <div class="clearfloat"></div>
+      </div>
+        
+      <p class="">
+        {% if ri_settings.reviews_pagination_text != "" and ri_settings.reviews_pagination_text != null %}
+        {{ri_settings.reviews_pagination_text | replace: "[from_count]", "(% reviewsData.reviews.from %)" | replace: "[to_count]", "(% reviewsData.reviews.to %)" }}
+        {% else %}
+        showing reviews from (% reviewsData.reviews.from %) to (% reviewsData.reviews.to %)
+        {% endif %}
+        
+        <span class="ri-pagination-buttons" ng-if="reviewsData.reviews.last_page > 1">
+          <span ng-click="loadPrevPage(reviewsData.reviews.current_page)" class="ri-pagination-button ri-pagination-button-left fa fa-caret-left reviews-importify-tooltip" ng-if="reviewsData.reviews.current_page > 1">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.previous_page_text != "" and ri_settings.previous_page_text != null %}
+              {{ri_settings.previous_page_text}}
+              {% else %}
+              Previous Page
+              {% endif %}
+            </span>
+          </span>
+          <span ng-click="loadNextPage(reviewsData.reviews.current_page)" class="ri-pagination-button ri-pagination-button-right fa fa-caret-right reviews-importify-tooltip" ng-if="reviewsData.reviews.last_page > reviewsData.reviews.current_page">
+            <span class="reviews-importify-tooltiptext">
+              {% if ri_settings.next_page_text != "" and ri_settings.next_page_text != null %}
+              {{ri_settings.next_page_text}}
+              {% else %}
+              Next Page
+              {% endif %}
+            </span>
+          </span>
+        </span>
+        
+        <span class="ri-filter-option ri-filter-reviews-loading">
+          <i class="fa fa-spinner fa-spin"></i>
+        </span>
+        
+      </p>
+    </div>
+      
+    <div class="ri-reviews-no-result" ng-if="reviewsData.reviews.total == 0">
+      <p>
+        {% if ri_settings.no_reviews_msg != null and ri_settings.no_reviews_msg != "" %}
+        {{ ri_settings.no_reviews_msg }}
+        {% else %}
+        No Review Found.
+        {% endif %}
+      </p>
+    </div>
+    
+    {% endif %}
+
+  </div>
+</div>
+{% endif %}

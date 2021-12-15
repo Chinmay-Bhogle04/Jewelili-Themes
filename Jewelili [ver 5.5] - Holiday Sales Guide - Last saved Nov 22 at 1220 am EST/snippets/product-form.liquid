@@ -1,0 +1,1049 @@
+{% capture "form_classes" -%}
+product-form product-form-{{ section.id }}
+{%- unless section.settings.show_variant_labels %} product-form--hide-variant-labels {% endunless %}
+{%- if section.settings.enable_payment_button and product.has_only_default_variant %} product-form--payment-button-no-variants {%- endif -%}
+{%- if current_variant.available == false %} product-form--variant-sold-out {%- endif -%}
+{%- endcapture %}
+
+{% form 'product', product, class:form_classes, novalidate: 'novalidate', data-product-form: '' %}
+
+{% if custom_tag and NoEngraving %}
+<div class="stone_chart">
+  <a class="open_stoneChart" href="#popup_img_sec">Stone Chart<span><img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/info.png?v=1612352170" data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-sizes="auto" data-image></span></a>
+  <div class="Stone_chart_popup" id="popup_img_sec">
+    <div class="popup_body">
+      <div class="popup_contain">
+        <div class="close_stoneChart">{% include 'icon-close' %}</div>
+        <img src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/WhatsApp_Image_2021-02-03_at_4.05.21_PM.jpeg?v=1612351974"
+        data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-sizes="auto" data-image/>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% unless product.has_only_default_variant %}
+<div class="product-form__controls-group{% if bespoke %} bespoke_form{% endif %}" {% if bespokering %}data-tag="{{bespokering}}"{% endif %} >
+  {% for option in product.options_with_values %}
+  <div class="selector-wrapper js product-form__item {{ option.name | handalize }}_dropdown">
+    <label {% if option.name == 'default' %}class="label--hidden" {% endif %}for="SingleOptionSelector-{{ forloop.index0 }}">
+      {{ option.name }}
+    </label>
+    {% if option.name contains 'Size' and product.metafields.global.sizeChart %}
+    <div class="size-only">
+      {% endif %}
+      <select class="single-option-selector single-option-selector-{{ section.id }} product-form__input"
+      id="SingleOptionSelector-{{ forloop.index0 }}"
+      data-index="option{{ forloop.index }}"
+      >
+      {% for value in option.values %}
+      <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+        {{ value }}
+      </option>
+      {% endfor %}
+    </select>
+    <div class="custom-dropdown {% if option.name contains 'METAL COLOR' %}drop_color{% endif %}" >
+      <span class="custom-dropdown-selected">
+        {% if bespoke %}
+        {% for block in section.blocks %}
+        {% if block.type == 'gemstone-image' %}
+        {% assign gemstone_selected_name = block.settings.gemstone_name | handleize %}
+        {% assign gemstone_selected_option = option.selected_value | handleize %}
+        {% if gemstone_selected_name == gemstone_selected_option %}
+        {% if block.settings.gemstone_image != nil %}
+        <img src="{{ block.settings.gemstone_image | img_url: '30x' }}" />
+        {% endif %}
+        {% endif %}
+        {% comment %}
+        {% elsif block.type == 'metal-color' %}
+        {% assign metal_color_name = block.settings.color_name | handleize %}
+        {% assign matal_color_selected = option.selected_value | handleize %}
+        {% if metal_color_name == matal_color_selected %}
+        {% if block.settings.color_image != nil %}
+        <img src="{{ block.settings.color_image | img_url: '16x' }}" />
+        {% endif %}
+        {% endif %}
+        {% endcomment %}
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        {{ option.selected_value }}
+      </span>
+      <ul class="custom-select-options">
+        {% if option.name contains 'Gemstones' %}
+        {% for value in option.values %}
+        <li data-option-value="{{ value | escape }}" class="custom_li {% if option.selected_value == value %}selected{% endif %}">
+          {% if bespoke %}
+          {% for block in section.blocks %}
+          {% if block.type == 'gemstone-image' %}
+          {% assign gemstone_name = block.settings.gemstone_name | handleize %}
+          {% assign gemstone_value = value | handleize %}
+          {% if gemstone_name == gemstone_value %}
+          {% if block.settings.gemstone_image != nil %}
+          <img src="{{ block.settings.gemstone_image | img_url: '40x' }}" />
+          {% endif %}
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+          {{ value }}
+        </li> 
+        {% endfor %}
+        {% elsif option.name contains 'Metal Color' %}
+        {% for value in option.values %}
+        <li data-option-value="{{ value | escape }}" class="custom_li {% if option.selected_value == value %}selected{% endif %}">
+          {% comment %}
+          {% if bespoke %}
+          {% for block in section.blocks %}
+          {% if block.type == 'metal-color' %}
+          {% assign color_name = block.settings.color_name | handleize %}
+          {% assign color_value = value | handleize %}
+          {% if color_name == color_value %}
+          {% if block.settings.color_image != nil %}
+          <img src="{{ block.settings.color_image | img_url: '20x' }}" />
+          {% endif %}
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+          {% endcomment %}
+          {{ value }}
+        </li>
+        {% endfor %}
+        {% else %}
+        {% for value in option.values %}
+        <li data-option-value="{{ value | escape }}">
+          {{ value }}
+        </li>
+        {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+    
+    {% if option.name contains 'Size' and product.metafields.global.sizeChart %}
+    <button class="open_popup" type="button">Size Guide</button>
+    <div class="popup_main">
+      <div class="popup_body">
+        <div class="popup_back"></div>
+        <div class="popup_contain">
+          <div class="popup_close">{% include 'icon-close' %}</div>
+          <img src="{{ product.metafields.global.sizeChart }}" />
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+</div>
+{% endunless %}
+{% if bespoke and bespokering %}
+<div class="bespoke_ring">
+  <div class="font_btn">
+    <label for="ringsize">Size</label>
+    <select name="properties[Size]" id="ringsize">
+      <option value="5">5</option>
+      <option value="5.5">5.5</option>
+      <option value="6">6</option>
+      <option value="6.5">6.5</option>
+      <option value="7" selected="selected">7</option>
+      <option value="7.5">7.5</option>
+      <option value="8">8</option>
+      <option value="8.5">8.5</option>
+      <option value="9">9</option> 
+    </select>          
+  </div>
+</div>
+{% endif %}
+
+{% comment %}
+{% if custom_tag and NoEngraving %}
+{% elsif custom_tag %}
+<div class="name_engraving">
+  <p class="engraving_title">
+    Engraving
+  </p>
+  <div class="Img-txt">
+    <img class="lazyload" id="colr_img" alt="Metal img" src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/White_Gold.jpg?v=1612252253"
+    data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-sizes="auto" data-image>
+    <div id="toChange">Message</div>
+  </div>
+  <div class="line_btn">
+    <div class="txt_line">
+      {% if product.tags contains 'charlimit' %}
+      <label class="First_line">
+        Text<span>(Single Character Only)</span>
+      </label>
+      <input id="embros_txt" name="properties[Engraved Text]" type="text" placeholder="Enter text to embrose" value="" maxlength="1">
+      {% else %}
+      <label class="First_line">
+        Text <span>(Upto 10 Characters)</span>
+      </label>
+      <input id="embros_txt" name="properties[Engraved Text]" type="text" placeholder="Enter text to embrose" value="" maxlength="10">
+      {% endif %}
+    </div>
+    <div class="font-family-sec">
+      <h4>FONT</h4>
+      <div class="font-familt-grid">
+        <div class="font_btn">
+          <input type="radio" name="properties[Font]" id="dancing_font" value="Dancing font" class="font-family-btn" checked> 
+          <img class="lazyload"
+          alt="Gifting main banner"
+          data-src="https://cdn.shopify.com/s/files/1/0267/0523/1943/files/dancing.png?v=1611033077"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+          data-sizes="auto"
+          data-image>
+        </div>
+        
+        <div class="font_btn">
+          <input type="radio" name="properties[Font]" id="tinos_reg" value="Tinos regular font" class="font-family-btn">
+          <img class="lazyload"
+          alt="Gifting main banner"
+          data-src="https://cdn.shopify.com/s/files/1/0267/0523/1943/files/tinos.png?v=1611033066"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+          data-sizes="auto"
+          data-image>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  // PDP Text engraving css
+  
+  // Dancing Script Font
+  @font-face {
+    font-family: 'dancing_script_otregular';
+    src: url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/dancingscript-regular-webfont.eot?v=1611031958');
+    src: url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/dancingscript-regular-webfont.eot?v=1611031958#iefix') format('embedded-opentype'),
+    url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/dancingscript-regular-webfont.woff?v=1611032014') format('woff'),
+    url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/dancingscript-regular-webfont.ttf?v=1611032041') format('truetype'),
+    url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/dancingscript-regular-webfont.svg?v=1611032041#dancing_script_otregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  // Tinos Regular Font
+  @font-face {
+    font-family: 'tinosregular';
+    src: url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/tinos-regular-webfont.eot?v=1611032233');
+    src: url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/tinos-regular-webfont.eot?v=1611032233#iefix') format('embedded-opentype'),
+    url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/tinos-regular-webfont.woff?v=1611032233') format('woff'),
+    url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/tinos-regular-webfont.ttf?v=1611032233') format('truetype'),
+    url('https://cdn.shopify.com/s/files/1/0267/0523/1943/files/tinos-regular-webfont.svg?v=1611032233#tinosregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  .name_engraving {
+    width: 100%;
+  }
+  .engraving_title {
+    margin: 0;
+    font-size: 15px;
+    padding-top: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #305c8c;
+  }
+  .name_engraving .Img-txt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 390px;
+  }
+  .name_engraving .Img-txt #toChange {
+    font-family: 'dancing_script_otregular';
+    position: absolute;
+    font-size: 22px;
+  }
+  .name_engraving .line_btn {
+    display: flex;
+    justify-content: stretch;
+    margin-top: 6px;
+  }
+  .name_engraving .line_btn .First_line {
+    display: block;
+    font-size: 15px;
+    line-height: 24px;
+    text-transform: uppercase;
+    color: #305c8c;
+    margin: 0px;
+    font-weight: bold;
+  }
+  .name_engraving .line_btn .First_line span {
+    font-size: 11px;
+    margin-left: 6px;
+    vertical-align: bottom;
+  }
+  .name_engraving .line_btn #embros_txt {
+    border: 1px solid #305c8c;
+    border-radius: 4px;
+  }
+  .name_engraving .line_btn .font-family-sec {
+    margin-left: 20px;
+  }
+  .name_engraving .line_btn .font-family-sec h4 {
+    margin: 0px 0px 2px 0;
+    font-size: 15px;
+    text-transform: uppercase;
+    color: #305c8c;
+    font-weight: bold;
+  }
+  .name_engraving .line_btn .font-family-sec .font-familt-grid {
+    display: flex;
+    margin-bottom: 6px;
+  }
+  .name_engraving .line_btn .font-family-sec .font-familt-grid .font_btn {
+    position: relative;
+  }
+  .name_engraving .line_btn .font-family-sec .font-familt-grid .font_btn .font-family-btn {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+  }
+  .name_engraving .line_btn .font-family-sec .font-familt-grid .font_btn .font-family-btn:checked + img {
+    border: 2px solid #7d819a;
+  }
+  .name_engraving .line_btn .font-family-sec .font-familt-grid .font_btn .font-family-btn + img {
+    border-radius: 4px;
+    margin-left: 5px;
+    background: #fff;
+    border: 1.5px solid #d8e9fa;
+    width: 70px;
+    padding: 0px;
+    line-height: 0px;
+  }
+  @media only screen and (max-width: 375px) {
+    .name_engraving .line_btn {
+      flex-direction: column;
+    }
+    .font-family-sec {
+      margin-left: 0px;
+      margin-top: 10px;
+    }
+    .font-family-sec .font-family-btn {
+      width: 90px;
+    }
+  }
+  
+</style>
+{% endif %}
+{% endcomment %}
+
+{% if product.type == 'Ring' %}
+<div class="size-chart-popup">
+  <a href="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/ring_size_guide.pdf?v=1635247210" class="ring_size" target="_blank" aria-describedby="a11y-new-window-external-message" rel="noopener">
+    <svg class="ring_size_svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><style>.ring_size_svg .rs-a{fill:#292d36;stroke:#292d36;stroke-width:0.5px;}.ring_size_svg .rs-b{fill:none;}</style></defs><g transform="translate(-19 -252.447)"><path class="rs-a" d="M29.648,332.713a5.554,5.554,0,1,1,0-9.875.272.272,0,0,0,.25-.483h0a6.1,6.1,0,1,0,0,10.84.272.272,0,0,0-.25-.483Z" transform="translate(0 -61.759)"></path><path class="rs-a" d="M304.283,397.9a.272.272,0,0,0-.471.271,5.573,5.573,0,0,1,0,5.524.272.272,0,1,0,.471.271h0a6.116,6.116,0,0,0,0-6.066Z" transform="translate(-271.893 -134.917)"></path><path class="rs-a" d="M215.357,268.143a5.555,5.555,0,1,1-6.842-7.415l.818-.228.678.844a.272.272,0,0,0,.424,0l.678-.844.817.228a5.566,5.566,0,0,1,3.427,7.415Zm-6.619-9.25a.016.016,0,0,1,0-.01v-.007h0l.395-.877h0a.016.016,0,0,1,.015-.01H211.3a.016.016,0,0,1,.015.01h0l.395.877h0v.007a.016.016,0,0,1,0,.01h0l-.906,1.127,0,0-.577.718-.577-.717,0,0-.906-1.127Zm5.8,2.812a6.073,6.073,0,0,0-2.442-1.5l-.01,0-.6-.167.648-.806h0a.56.56,0,0,0,.074-.58h0l-.395-.876h0a.56.56,0,0,0-.51-.33h-2.155a.56.56,0,0,0-.51.33h0l-.395.876h0a.559.559,0,0,0,.074.58l.648.806-.6.167-.01,0a6.112,6.112,0,1,0,6.182,1.5Z" transform="translate(-176.077)"></path><path class="rs-a" d="M312.986,303.871h0Z" transform="translate(-280.748 -44.637)"></path></g><rect class="rs-b" width="24" height="24"></rect></svg>
+    Ring Size Chart
+  </a>
+</div>
+{% endif %}
+
+<select name="id" id="ProductSelect-{{ section.id }}" class="product-form__variants no-js">
+  {% for variant in product.variants %}
+  <option data-color=".{{ variant.title | handle | replace: "sterling-silver","14k-white-gold" | replace: "10k-white-gold","14k-white-gold" | replace: "10k-yellow-gold","14k-yellow-gold" | replace: "10k-rose-gold","14k-rose-gold" }}" value="{{ variant.id }}" {%- if variant == current_variant %} selected="selected" {%- endif -%}>
+    {{ variant.title }}  {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+  </option>
+  {% endfor %}
+</select>
+
+{% if section.settings.show_quantity_selector %}
+<div class="product-form__controls-group">
+  <div class="product-form__item">
+    <label for="Quantity-{{ section.id }}">{{ 'products.product.quantity' | t }}</label>
+    <div class="product-quantity-box">
+      <span class="icon-minus">{% include 'icon-minus' %}</span>
+      <input type="text" id="Quantity-{{ section.id }}"
+      name="quantity" value="1" min="1" pattern="[0-9]*"
+      class="product-form__input product-form__input--quantity" data-quantity-input
+      >
+      <span class="icon-plus">{% include 'icon-plus' %}</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="product-form__error-message-wrapper product-form__error-message-wrapper--hidden{% if section.settings.enable_payment_button %} product-form__error-message-wrapper--has-payment-button{% endif %}"
+data-error-message-wrapper
+role="alert"
+>
+<span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+{% include 'icon-error' %}
+<span class="product-form__error-message" data-error-message>{{ 'products.product.quantity_minimum_message' | t }}</span>
+</div>
+
+<div class="product-form__controls-group product-form__controls-group--submit">
+  {% if current_variant.available  %}
+  <div class="shopify-payment-button">
+    <button type="button" class="shopify-payment-button__button shopify-payment-button__button--unbranded" data-testid="Checkout-button">
+      <span class="checkout-text">Buy now
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><defs><style>.ar-a,.ar-b{fill:#fff;}.ar-a{opacity:0;}</style></defs><g transform="translate(-895 -493)"><rect class="ar-a" width="16" height="16" transform="translate(895 493)"/><path class="ar-b" d="M15.878-70.783a7.186,7.186,0,0,0,7.138-7.138,7.2,7.2,0,0,0-7.145-7.138A7.189,7.189,0,0,0,8.74-77.921,7.191,7.191,0,0,0,15.878-70.783Zm4.087-7.145a.653.653,0,0,1-.217.476l-2.68,2.673a.631.631,0,0,1-.42.168.577.577,0,0,1-.588-.581.6.6,0,0,1,.182-.427l.987-.966.952-.8-1.687.063h-4.1a.571.571,0,0,1-.595-.6.575.575,0,0,1,.595-.6h4.1l1.687.07-.952-.8-.987-.98a.614.614,0,0,1-.182-.42.577.577,0,0,1,.588-.581.593.593,0,0,1,.42.161l2.68,2.68A.621.621,0,0,1,19.965-77.928Z" transform="translate(887.344 579.059)"/></g></svg>
+      </span>      
+      <span class="hide" data-loader>
+        {% include 'icon-spinner' %}
+      </span>
+    </button>
+  </div>
+  {% endif %}
+  <div class="product-form__item--submit {%- if section.settings.enable_payment_button %} product-form__item--payment-button {%- endif -%}
+  {%- if product.has_only_default_variant %} product-form__item--no-variants {%- endif -%}">
+  <button type="submit" name="add" {% unless current_variant.available %} aria-disabled="true"{% endunless %}
+  aria-label="{% unless current_variant.available %}{{ 'products.product.sold_out' | t }}{% else %}{{ 'products.product.add_to_cart' | t }}{% endunless %}"
+  class="btn product-form__cart-submit{% if section.settings.enable_payment_button %} btn--secondary-accent{% endif %}" {% if settings.enable_ajax %}aria-haspopup="dialog"{% endif %} data-add-to-cart>
+  <span data-add-to-cart-text>
+    {% unless current_variant.available %}
+    {{ 'products.product.sold_out' | t }}
+    {% else %}
+    {{ 'products.product.add_to_cart' | t }}
+    {% endunless %}
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><defs><style>.ar-a,.ar-b{fill:#fff;}.ar-a{opacity:0;}</style></defs><g transform="translate(-895 -493)"><rect class="ar-a" width="16" height="16" transform="translate(895 493)"/><path class="ar-b" d="M15.878-70.783a7.186,7.186,0,0,0,7.138-7.138,7.2,7.2,0,0,0-7.145-7.138A7.189,7.189,0,0,0,8.74-77.921,7.191,7.191,0,0,0,15.878-70.783Zm4.087-7.145a.653.653,0,0,1-.217.476l-2.68,2.673a.631.631,0,0,1-.42.168.577.577,0,0,1-.588-.581.6.6,0,0,1,.182-.427l.987-.966.952-.8-1.687.063h-4.1a.571.571,0,0,1-.595-.6.575.575,0,0,1,.595-.6h4.1l1.687.07-.952-.8-.987-.98a.614.614,0,0,1-.182-.42.577.577,0,0,1,.588-.581.593.593,0,0,1,.42.161l2.68,2.68A.621.621,0,0,1,19.965-77.928Z" transform="translate(887.344 579.059)"/></g></svg>
+  </span>
+  <span class="hide" data-loader>
+    {% include 'icon-spinner' %}
+  </span>
+</button>
+{% if section.settings.enable_payment_button %}
+{{ form | payment_button }}
+{% endif %}
+
+
+</div>
+
+<div class="wishlist-wrapper hide">
+  <button class="wishlist__btn">
+    {% include 'icon-wishlist' %}
+    <span>ADD TO WISHLIST</span>
+  </button>
+</div>
+</div>
+
+<div class="shipping-text">
+  <ul>
+    {% if bespoke or bespokering %}
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <span>Estimated Delivery by {{ "now" | date: "%s" | plus: 1814400 | date: "%B %d, %Y" }}</span>
+    </li>
+    {% endif %}
+    
+    {% if product.tags contains 'custom' %}
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <span><b>Estimated Delivery Time:</b> 14 Days</span>
+    </li>
+    {% endif %}
+    
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <span>EXTRA 10% off on your first order | Use Code: <span class="code">NEW10</span></span>
+    </li>
+    
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <span>Free Shipping on All Orders | Free Returns</span>
+    </li>
+    
+    {% assign pre_black_friday = false %}
+    {% for collection in product.collections %}
+    {% if collection.handle == 'pre-black-friday-sale' %}
+    {% assign pre_black_friday = true %}
+    {% break %}
+    {% endif %}
+    {% endfor %}
+    {% comment %}
+    {% if pre_black_friday == false %}
+    <li class="black-friday-sale">
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <span>Pre-Black Friday Sale | Flat 30% Off on select styles. <a href="/collections/pre-black-friday-sale">Shop Now</a></span>
+    </li>
+    {% endif %}
+    {% endcomment %}
+      
+    <li class="voucher25">
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <p>Get <span>$25</span> off on your next purchase when you shop for $149 & more.</p>
+    </li>
+    
+    {% comment %}
+    <li class="free-product-text">
+      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11"><defs><style>.tick-a{fill:#fff;opacity:0;}.tick-b{fill:#3b444d;stroke:#3b444d;}</style></defs><g transform="translate(-730 -575)"><rect class="tick-a" width="11" height="11" transform="translate(730 575)"/><g transform="translate(731.291 576.871)"><path class="tick-b" d="M15.746-68.084a.681.681,0,0,0,.6-.315l4.562-7.1a.788.788,0,0,0,.146-.427.561.561,0,0,0-.592-.582.565.565,0,0,0-.529.315l-4.208,6.673L13.563-72.3a.59.59,0,0,0-.51-.267.575.575,0,0,0-.6.587.678.678,0,0,0,.18.446l2.514,3.135A.714.714,0,0,0,15.746-68.084Z" transform="translate(-12.451 76.514)"/></g></g></svg>
+      <span class="text">
+        Get a free <a href="/products/jewelili-sterling-silver-9x7mm-oval-shape-opal-with-round-blue-swiss-topaz-and-white-sapphire-pendant-necklace-18-box-chain">Opal Necklace</a> on orders above $199 <br><a href="/products/jewelili-sterling-silver-9x7mm-oval-shape-opal-with-round-blue-swiss-topaz-and-white-sapphire-pendant-necklace-18-box-chain"><img width="60" height="60" class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/31dgFqQggfL_800x_0c4b675e-1562-40f5-8f1a-b3db7c8d51c6.jpg?v=1632896842"></a>
+      </span>
+    </li>
+    {% endcomment %}
+  </ul>
+</div>
+
+<div class="product-tabs">
+  <ul class="tabs hide">
+    <li data-tab="tab-1" class ="active">Description</li>
+    <li data-tab="tab-2">Specifications</li>
+    <li data-tab="tab-3">Shipping</li>
+    <li data-tab="tab-4">About the Brand</li>
+  </ul>
+  
+  <div class="tab-details">
+    <div class="accordion_heading open">
+      <h2>Description</h2>
+      <svg class="tabdesc_svg" xmlns="http://www.w3.org/2000/svg" width="20" height="12" viewBox="0 0 20 12"><defs><style>.tabdesc_svg .a{fill:#fff;opacity:0;}.tabdesc_svg .b{fill:none;stroke:#2a2d35;stroke-linecap:round;stroke-width:2px;}</style></defs><g transform="translate(-1231 -889)"><rect class="a" width="20" height="12" transform="translate(1231 889)"/><g transform="translate(1234.5 891.613)"><line class="b" x2="6" y2="6"/><line class="b" x1="6" y2="6" transform="translate(6)"/></g></g></svg>
+    </div>
+    <div id="tab-1" class="tab_content">
+      {{ product.description }}
+      {% if product.vendor == 'Made For You' %}
+      <h4>BENEFITS OF LAB-GROWN DIAMONDS</h4>
+      <ul>
+        <li>Offer essentially the same physical, chemical and optical properties as mined diamonds.</li>
+        <li>Lab-grown diamonds are larger, and offer a higher quality than mined diamonds of the same price.</li>
+        <li>Each stone is conflict-free.</li>
+      </ul>
+      {% endif %}
+    </div>
+    <div class="accordion_heading">
+      <h2>Specifications</h2>
+      <svg class="spec_svg" xmlns="http://www.w3.org/2000/svg" width="20" height="12" viewBox="0 0 20 12"><defs><style>.spec_svg .a{fill:#fff;opacity:0;}.spec_svg .b{fill:none;stroke:#2a2d35;stroke-linecap:round;stroke-width:2px;}</style></defs><g transform="translate(-1231 -889)"><rect class="a" width="20" height="12" transform="translate(1231 889)"/><g transform="translate(1234.5 891.613)"><line class="b" x2="6" y2="6"/><line class="b" x1="6" y2="6" transform="translate(6)"/></g></g></svg>
+    </div>
+    <div id="tab-2" class="tab_content">
+      <!-- Added for SEO -->
+      <div itemscope itemtype="https://schema.org/Table" class="meta-field-des">
+        <h2 class="hide" itemprop="about">Specification</h2>
+        <!-- Added for SEO -->
+        <table>
+          <tr>
+            {% assign adjustable = product.metafields.Product['Type'] %}
+            {% if adjustable != 0 and adjustable != blank %}
+            <th>Type :</th><td>{{ adjustable }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign centrestonecttw = product.metafields.Product['Metal Type'] %}
+          {% if centrestonecttw != 0 and centrestonecttw != blank %}
+          <tr>
+            <th>Metal Type :</th><td>{{ centrestonecttw }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign centrestoneshape = product.metafields.Product['Metal Karat'] %}
+          {% if centrestoneshape != 0 and centrestoneshape != blank %}
+          <tr>
+            <th>Metal Karat :</th><td>{{ centrestoneshape }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stonects = product.metafields.Product['Metal Weight'] %}
+          {% if stonects != 0 and stonects != blank %}
+          <tr>
+            <th>Metal Weight :</th><td>{{ stonects }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stoneType = product.metafields.Product['Stone Type'] %}
+          {% if stoneType != 0 and stoneType != blank %}
+          <tr>
+            <th>Diamond Type :</th><td>{{ stoneType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign centrestonepcs = product.metafields.Product['Stone Shape'] %}
+          {% if centrestonepcs != "" and centrestonepcs != blank %}
+          <tr>
+            <th>Stone Shape  :</th><td>{{ centrestonepcs }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign centrestoneclarity = product.metafields.Product['Stone Weight 1'] %}
+          {% if centrestoneclarity != 0 and centrestoneclarity != blank %}
+          <tr>
+            <th>Stone Weight 1 :</th><td>{{ centrestoneclarity }}</td>
+          </tr>
+          {% endif %} 
+          
+          {% assign centrestone = product.metafields.Product['Diamond Clarity'] %}
+          {% if centrestone != 0 and centrestone != blank %}
+          <tr>
+            <th>Diamond Clarity :</th><td>{{ centrestone }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign totaldiamondweightcttw = product.metafields.Product['Diamond Color'] %}
+          {% if totaldiamondweightcttw != 0 and totaldiamondweightcttw != blank %}
+          <tr>
+            <th>Diamond Color :</th><td>{{ totaldiamondweightcttw }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stonetype = product.metafields.Product['Stone Treatment Method'] %}
+          {% if stonetype != 0 and stonetype != blank %}
+          <tr>
+            <th>Stone Treatment Method :</th><td>{{ stonetype }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign sizelength = product.metafields.Product['Stone Creation Method'] %}
+          {% if sizelength != 0 and sizelength != blank %}
+          <tr>
+            <th>Stone Creation Method :</th><td>{{ sizelength }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stonepcs = product.metafields.Product['Setting Type'] %}
+          {% if stonepcs != 0 and stonepcs != blank %}
+          <tr>
+            <th>Setting Type :</th><td>{{ stonepcs }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign gemstoneType = product.metafields.Product['Gemstone Type'] %}
+          {% if gemstoneType != 0 and gemstoneType != blank %}
+          <tr>
+            <th>Gemstone Type :</th><td>{{ gemstoneType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign gemstoneShape = product.metafields.Product['Gemstone Shape'] %}
+          {% if gemstoneShape != 0 and gemstoneShape != blank %}
+          <tr>
+            <th>Gemstone Shape :</th><td>{{ gemstoneShape }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign gemstoneWeight = product.metafields.Product['Gemstone Weight'] %}
+          {% if gemstoneWeight != 0 and gemstoneWeight != blank %}
+          <tr>
+            <th>Gemstone Weight :</th><td>{{ gemstoneWeight }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign chainType = product.metafields.Product['Chain Type'] %}
+          {% if chainType != 0 and chainType != blank %}
+          <tr>
+            <th>Chain Type :</th><td>{{ chainType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign color = product.metafields.Product['Clasp Type'] %}
+          {% if color != 0 and color != blank %}
+          <tr>
+            <th>Clasp Type :</th><td>{{ color }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign centrestonecolor = product.metafields.Product['Stone Weight 2'] %}
+          {% if centrestonecolor != 0 and centrestonecolor != blank %}
+          <tr>
+            <th>Stone Weight 2 :</th><td>{{ centrestonecolor }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign centrestonetype = product.metafields.Product['Stone Weight 3'] %}
+          {% if centrestonetype != 0 and centrestonetype != blank %}
+          <tr>
+            <th>Stone Weight 3 :</th><td>{{ centrestonetype }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign gemstonetype = product.metafields.Product['Resizable'] %}
+          {% if gemstonetype != 0 and gemstonetype != blank %}
+          <tr>
+            <th>Resizable :</th><td>{{ gemstonetype }}</td>
+          </tr>
+          {% endif %}  
+          
+          {% assign centerStoneWeight = product.metafields.Product['Centre Stone Weight 1'] %}
+          {% if centerStoneWeight != 0 and centerStoneWeight != blank %}
+          <tr>
+            <th>Centre Stone Weight :</th><td>{{ centerStoneWeight }}</td>
+          </tr>
+          {% endif %}
+          <!--           End           -->
+          
+          {% assign stonetwopcs = product.metafields.Product['Stone 2 Pcs'] %}
+          {% if stonetwopcs != 0 and stonetwopcs != blank %}
+          <tr>
+            <th>Stone 2 Pcs :</th><td>{{ stonetwopcs }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stonetwoshape = product.metafields.Product['Stone 2 Shape'] %}
+          {% if stonetwoshape != 0 and stonetwoshape != blank %}
+          <tr>
+            <th>Stone 2 Shape :</th><td>{{ stonetwoshape }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stonetwotype = product.metafields.Product['Stone 2 Type'] %}
+          {% if stonetwotype != 0 and stonetwotype != blank %}
+          <tr>
+            <th>Stone 2 Type :</th><td>{{ stonetwotype }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stonetwotype = product.metafields.Product['Origin'] %}
+          {% if stonetwotype != 0 and stonetwotype != blank %}
+          <tr>
+            <th>Origin :</th><td>{{ stonetwotype }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign stoneshape = product.metafields.Product['Diamond Type'] %}
+          {% if stoneshape != 0 and stoneshape != blank %}
+          <tr>
+            <th>Diamond Type :</th><td>{{ stoneshape }}</td>
+          </tr>
+          {% endif %}
+          
+          <!-- Dated: 17/06/2021 start -->
+          {% assign Dimension = product.metafields.Product['Dimension'] %}
+          {% if Dimension != 0 and Dimension != blank %}
+          <tr>
+            <th>Dimension :</th><td>{{ Dimension }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneWeight1 = product.metafields.Product['Gemstone Weight 1'] %}
+          {% if GemstoneWeight1 != 0 and GemstoneWeight1 != blank %}
+          <tr>
+            <th>Gemstone Weight 1 :</th><td>{{ GemstoneWeight1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneWeight2  = product.metafields.Product['Gemstone Weight 2'] %}
+          {% if GemstoneWeight2 != 0 and GemstoneWeight2 != blank %}
+          <tr>
+            <th>Gemstone Weight 2 :</th><td>{{ GemstoneWeight2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneSize1 = product.metafields.Product['Gemstone Size 1'] %}
+          {% if GemstoneSize1 != 0 and GemstoneSize1 != blank %}
+          <tr>
+            <th>Gemstone Size 1 :</th><td>{{ GemstoneSize1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneShape1 = product.metafields.Product['Gemstone Shape 1'] %}
+          {% if GemstoneShape1 != 0 and GemstoneShape1 != blank %}
+          <tr>
+            <th>Gemstone Shape 1 :</th><td>{{ GemstoneShape1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneShape2 = product.metafields.Product['Gemstone Shape 2'] %}
+          {% if GemstoneShape2 != 0 and GemstoneShape2 != blank %}
+          <tr>
+            <th>Gemstone Shape 2 :</th><td>{{ GemstoneShape2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Gemstone2 = product.metafields.Product['Gemstone 2'] %}
+          {% if Gemstone2 != 0 and Gemstone2 != blank %}
+          <tr>
+            <th>Gemstone 2 :</th><td>{{ Gemstone2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneSize2 = product.metafields.Product['Gemstone Size 2'] %}
+          {% if GemstoneSize2 != 0 and GemstoneSize2 != blank %}
+          <tr>
+            <th>Gemstone Size 2 :</th><td>{{ GemstoneSize2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign GemstoneSize = product.metafields.Product['Gemstone Size'] %}
+          {% if GemstoneSize != 0 and GemstoneSize != blank %}
+          <tr>
+            <th>Gemstone Size :</th><td>{{ GemstoneSize }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign short_desc = product.metafields.Product['short_desc'] %}
+          {% if short_desc != 0 and short_desc != blank %}
+          <tr>
+            <th>short_desc :</th><td>{{ short_desc }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign RhodiumPlating = product.metafields.Product['Rhodium Plating'] %}
+          {% if RhodiumPlating != 0 and RhodiumPlating != blank %}
+          <tr>
+            <th>Rhodium Plating :</th><td>{{ RhodiumPlating }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign StoneTypeShape1 = product.metafields.Product['Stone Type & Shape 1'] %}
+          {% if StoneTypeShape1 != 0 and StoneTypeShape1 != blank %}
+          <tr>
+            <th>Stone Type & Shape 1 :</th><td>{{ StoneTypeShape1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Color1 = product.metafields.Product['Color 1'] %}
+          {% if Color1 != 0 and Color1 != blank %}
+          <tr>
+            <th>Color 1 :</th><td>{{ Color1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Clarity1 = product.metafields.Product['Clarity 1'] %}
+          {% if Clarity1 != 0 and Clarity1 != blank %}
+          <tr>
+            <th>Clarity 1 :</th><td>{{ Clarity1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign TotalWeight1 = product.metafields.Product['Total Weight (CT.TW.) 1'] %}
+          {% if TotalWeight1 != 0 and TotalWeight1 != blank %}
+          <tr>
+            <th>Total Weight (CT.TW.) 1 :</th><td>{{ TotalWeight1 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign StoneTypeShape2 = product.metafields.Product['Stone Type & Shape 2'] %}
+          {% if StoneTypeShape2 != 0 and StoneTypeShape2 != blank %}
+          <tr>
+            <th>Stone Type & Shape 2 :</th><td>{{ StoneTypeShape2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Color2 = product.metafields.Product['Color 2'] %}
+          {% if Color2 != 0 and Color2 != blank %}
+          <tr>
+            <th>Color 2 :</th><td>{{ Color2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Clarity2 = product.metafields.Product['Clarity 2'] %}
+          {% if Clarity2 != 0 and Clarity2 != blank %}
+          <tr>
+            <th>Clarity 2 :</th><td>{{ Clarity2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign TotalWeight2 = product.metafields.Product['Total Weight (CT.TW.) 2'] %}
+          {% if TotalWeight2 != 0 and RhodiumPlating != blank %}
+          <tr>
+            <th>Total Weight (CT.TW.) 2 :</th><td>{{ TotalWeight2 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign StoneTypeShape3 = product.metafields.Product['Stone Type & Shape 3'] %}
+          {% if StoneTypeShape3 != 0 and StoneTypeShape3 != blank %}
+          <tr>
+            <th>Stone Type & Shape 3 :</th><td>{{ StoneTypeShape3 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Color3 = product.metafields.Product['Color 3'] %}
+          {% if Color3 != 0 and Color3 != blank %}
+          <tr>
+            <th>Color 3 :</th><td>{{ Color3 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Clarity3 = product.metafields.Product['Clarity 3'] %}
+          {% if Clarity3 != 0 and Clarity3 != blank %}
+          <tr>
+            <th>Clarity 3 :</th><td>{{ Clarity3 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign TotalWeight3 = product.metafields.Product['Total Weight (CT.TW.) 3'] %}
+          {% if TotalWeight3 != 0 and TotalWeight3 != blank %}
+          <tr>
+            <th>Total Weight (CT.TW.) 3 :</th><td>{{ TotalWeight3 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign StoneTypeShape4 = product.metafields.Product['Stone Type & Shape 4'] %}
+          {% if StoneTypeShape4 != 0 and StoneTypeShape4 != blank %}
+          <tr>
+            <th>Stone Type & Shape 4 :</th><td>{{ StoneTypeShape4 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Color4 = product.metafields.Product['Color 4'] %}
+          {% if Color4 != 0 and Color4 != blank %}
+          <tr>
+            <th>Color 4 :</th><td>{{ Color4 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign TotalWeight4 = product.metafields.Product['Total Weight (CT.TW.) 4'] %}
+          {% if TotalWeight4 != 0 and TotalWeight4 != blank %}
+          <tr>
+            <th>Total Weight (CT.TW.) 4 :</th><td>{{ TotalWeight4 }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign DesignStyle = product.metafields.Product['Design Style'] %}
+          {% if DesignStyle != 0 and DesignStyle != blank %}
+          <tr>
+            <th>Design Style :</th><td>{{ DesignStyle }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign PendantMeasurement = product.metafields.Product['Pendant Measurement'] %}
+          {% if PendantMeasurement != 0 and PendantMeasurement != blank %}
+          <tr>
+            <th>Pendant Measurement :</th><td>{{ PendantMeasurement }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign NecklaceChainLengthType = product.metafields.Product['Necklace Chain Length & Type'] %}
+          {% if NecklaceChainLengthType != 0 and NecklaceChainLengthType != blank %}
+          <tr>
+            <th>Necklace Chain Length & Type :</th><td>{{ NecklaceChainLengthType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign NecklaceClaspType = product.metafields.Product['Necklace Clasp Type'] %}
+          {% if NecklaceClaspType != 0 and NecklaceClaspType != blank %}
+          <tr>
+            <th>Necklace Clasp Type :</th><td>{{ NecklaceClaspType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign OverallMeasurement = product.metafields.Product['Overall Measurement'] %}
+          {% if OverallMeasurement != 0 and OverallMeasurement != blank %}
+          <tr>
+            <th>Overall Measurement :</th><td>{{ OverallMeasurement }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign BraceletClaspType = product.metafields.Product['Bracelet Clasp Type'] %}
+          {% if BraceletClaspType != 0 and BraceletClaspType != blank %}
+          <tr>
+            <th>Bracelet Clasp Type :</th><td>{{ BraceletClaspType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign BraceletChainType = product.metafields.Product['Bracelet Chain Type'] %}
+          {% if BraceletChainType != 0 and BraceletChainType != blank %}
+          <tr>
+            <th>Bracelet Chain Type :</th><td>{{ BraceletChainType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign TopdesignMeasurement = product.metafields.Product['Top design Measurement'] %}
+          {% if TopdesignMeasurement != 0 and TopdesignMeasurement != blank %}
+          <tr>
+            <th>Top design Measurement :</th><td>{{ TopdesignMeasurement }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign Bandthickness = product.metafields.Product['Band thickness'] %}
+          {% if Bandthickness != 0 and Bandthickness != blank %}
+          <tr>
+            <th>Band thickness :</th><td>{{ Bandthickness }}</td>
+          </tr>
+          {% endif %}
+          <!-- Dated: 17/06/2021 end -->
+          <!-- Dated: 10/08/2021 start -->
+          {% assign BackFinding = product.metafields.Product['Back Finding'] %}
+          {% if BackFinding != 0 and BackFinding != blank %}
+          <tr>
+            <th>Back Finding :</th><td>{{ BackFinding }}</td>
+          </tr>
+          {% endif %}
+          <!-- Dated: 10/08/2021 end -->
+          
+          <!-- Dated: 26/10/2021 start -->
+          {% assign TotalDiamondWeight = product.metafields.Product['Total Diamond Weight'] %}
+          {% if TotalDiamondWeight != 0 and TotalDiamondWeight != blank %}
+          <tr>
+            <th>Total Diamond Weight :</th><td>{{ TotalDiamondWeight }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign CenterStoneType = product.metafields.Product['Center Stone Type'] %}
+          {% if CenterStoneType != 0 and CenterStoneType != blank %}
+          <tr>
+            <th>Center Stone Type :</th><td>{{ CenterStoneType }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign CenterStoneShape = product.metafields.Product['Center Stone Shape'] %}
+          {% if CenterStoneShape != 0 and CenterStoneShape != blank %}
+          <tr>
+            <th>Center Stone Shape :</th><td>{{ CenterStoneShape }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign CenterStoneWeight = product.metafields.Product['Center Stone Weight'] %}
+          {% if CenterStoneWeight != 0 and CenterStoneWeight != blank %}
+          <tr>
+            <th>Center Stone Weight :</th><td>{{ CenterStoneWeight }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign DiamondWeight = product.metafields.Product['Diamond Weight'] %}
+          {% if DiamondWeight != 0 and DiamondWeight != blank %}
+          <tr>
+            <th>Diamond Weight :</th><td>{{ DiamondWeight }}</td>
+          </tr>
+          {% endif %}
+          
+          {% assign DiamondShape = product.metafields.Product['Diamond Shape'] %}
+          {% if DiamondShape != 0 and DiamondShape != blank %}
+          <tr>
+            <th>Diamond Shape :</th><td>{{ DiamondShape }}</td>
+          </tr>
+          {% endif %}
+          <!-- Dated: 26/10/2021 end -->
+          <!-- Dated: 27/10/2021 start -->
+          {% assign ProductDiamond = product.metafields.Product['Product.Dimension'] %}
+          {% if ProductDiamond != 0 and ProductDiamond != blank %}
+          <tr>
+            <th>Product Dimension :</th><td>{{ ProductDiamond }}</td>
+          </tr>
+          {% endif %}
+          <!-- Dated: 27/10/2021 end -->
+        </table>
+      </div> 
+    </div>
+    
+    <div class="accordion_heading">
+      <h2>Shipping</h2>
+      <svg class="ship_svg" xmlns="http://www.w3.org/2000/svg" width="20" height="12" viewBox="0 0 20 12"><defs><style>.ship_svg .a{fill:#fff;opacity:0;}.ship_svg .b{fill:none;stroke:#2a2d35;stroke-linecap:round;stroke-width:2px;}</style></defs><g transform="translate(-1231 -889)"><rect class="a" width="20" height="12" transform="translate(1231 889)"/><g transform="translate(1234.5 891.613)"><line class="b" x2="6" y2="6"/><line class="b" x1="6" y2="6" transform="translate(6)"/></g></g></svg>
+    </div>
+    <div id="tab-3" class="tab_content">
+      <p>Free Shipping on All Orders</p>
+      <p>We’re temporarily extending the return windows to make your holiday shopping easier and stress free! Items ordered through <a href="/">Jewelili</a> starting November 1, 2021 will have their return window extended to January 15th, 2022.</p>
+    </div>
+    <div class="accordion_heading">
+      <h2>About the Brand</h2>
+      <svg class="about_svg" xmlns="http://www.w3.org/2000/svg" width="20" height="12" viewBox="0 0 20 12"><defs><style>.about_svg .a{fill:#fff;opacity:0;} .about_svg .b{fill:none;stroke:#2a2d35;stroke-linecap:round;stroke-width:2px;}</style></defs><g transform="translate(-1231 -889)"><rect class="a" width="20" height="12" transform="translate(1231 889)"/><g transform="translate(1234.5 891.613)"><line class="b" x2="6" y2="6"/><line class="b" x1="6" y2="6" transform="translate(6)"/></g></g></svg>
+    </div>
+    <div id="tab-4" class="tab_content">
+      {% if product.vendor == 'Enchanted Disney Fine Jewelry' %}
+      <h4>Enchanted </h4>
+      <p>Enchanted Disney Fine Jewelry is a collection of diamond, gold and gemstone jewelry inspired by the romance of Disney fairy tales. The collection celebrates Happily Ever After with jewelry inspired by Disney Princesses and Villains, Frozen and Tinker Bell. It celebrates a woman’s beauty, elegance, independence, and style, and also, most importantly love. Whether someone is getting ready to propose to a soul mate, buying a gift for a daughter, or treating herself, Enchanted Disney Fine Jewelry celebrates every moment meaningfully. Enchanted Disney Fine Jewelry allows every woman to beautifully express her inner Princess.</p>
+      {% endif %}
+      
+      {% if product.vendor == 'Made For You' %}
+      <h4>MFY</h4>
+      <p>Made For You is committed to creating luxury products that provide an environmentally conscious alternative to our customers that deeply care for the planet. Adhering to no comprises on the quality, we bring to you the finest contemporary designs made with masterfully cut, high-quality Lab-grown diamonds. Better for you, better for the world!</p>
+      {% endif %}
+      
+      {% if product.vendor == 'Swarovski' %}
+      <h4>Swarovski</h4>
+      <p>With the same brilliance as natural diamonds, Swarovski’s Zirconia stands the test of time and style, proving to be every woman’s perfect match</p>
+      {% endif %}
+      
+      {% if product.vendor == 'Jewelili' or product.vendor == 'Jewelili Gemstones' or product.vendor == 'Jewelili Diamonds' %}
+      <h4> Jewelili</h4>
+      <p>Jewelili prides itself on offering high quality products at lower values than those available at other jewellers throughout the country.</p>
+      {% endif %}
+      
+      {% if product.vendor == 'Disney Mickey and Friends' %}
+      <h4>Mickey & Friends</h4>
+      <p>On November 18, 1928, Walt Disney unveiled what would become one of the most recognizable global icons and true originals of the century, Mickey Mouse. Since then, Mickey has positively touched the lives of fans of all ages, all around the world. Celebrate Mickey and his friends with this exquisite fine jewelry collection.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endform %}

@@ -1,0 +1,28 @@
+{% unless section.settings.hide_packaging_banner %}
+  {% if product.metafields.img.packaging_banner_desktop != blank and product.metafields.img.packaging_banner_mobile != blank  %}
+    <section data-section-id="{{ section.id }}" data-section-type="jewelili-packaging-banner">
+      <img class="lazyload small--hide" src="{{ product.metafields.img.packaging_banner_desktop }}" alt="" />
+      <img class="lazyload medium-up--hide" src="{{ product.metafields.img.packaging_banner_mobile }}" alt="" />
+    </section>
+  {% endif %}
+{% endunless %}
+
+{% schema %}
+  {
+    "name": "Packaging Banner",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "hide_packaging_banner",
+        "label": "Hide Packaging Banner Section",
+        "default": false
+      }
+	]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

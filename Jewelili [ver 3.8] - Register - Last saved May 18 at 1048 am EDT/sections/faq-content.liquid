@@ -1,0 +1,90 @@
+<div class="faq-page">
+  <div class="page-width static-page-wrapper">
+    <div class="grid">
+      <div class="grid__item">
+        {% unless section.settings.page_title == blank %}
+        <div class="section-header text-center">
+          <h1>
+            {{ section.settings.page_title }}
+            <span class="underline"></span>
+          </h1>
+        </div>
+        {% endunless %}
+
+        <div class="faq-content">
+          {% for block in section.blocks %}
+          	{% if block.type == 'faq-heading' %}
+              {% unless block.settings.heading == blank %}
+          		<h2>{{ block.settings.heading }}</h2>
+              {% endunless %}
+            {% endif %}
+            {% if block.type == 'faq-content' %}
+              <div class="faq-accordian">
+                <div class="faq-block{% if forloop.first %} active{% endif %}">
+                  {% unless block.settings.faq_question == blank %}
+                    <div class="faq-title">
+                      <h5>{{ block.settings.faq_question }}</h5>
+                    </div>
+                  {% endunless %}
+                  {% unless block.settings.faq_answer == blank %}
+                  <div class="faq-description"{% if forloop.first %} style="display:block;{% endif %}">
+                    <p>{{ block.settings.faq_answer }}</p>
+                  </div>
+                  {% endunless %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "FAQ",
+	"settings": [
+      {
+        "type": "text",
+        "id": "page_title",
+        "label": "Title",
+		"default": "Frequently Asked Questions"
+      }
+	],
+    "blocks": [
+      {
+        "type": "faq-heading",
+        "name": "FAQ Heading",
+        "settings": [
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading"
+          }
+        ]
+      },
+      {
+      "type": "faq-content",
+      "name": "FAQ Content",
+      "settings": [
+          {
+            "type": "textarea",
+            "id": "faq_question",
+            "label": "FAQ Question"
+          },
+          {
+            "type": "textarea",
+            "id": "faq_answer",
+            "label": "FAQ Answer"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

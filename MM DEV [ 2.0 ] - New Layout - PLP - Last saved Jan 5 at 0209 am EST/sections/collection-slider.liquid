@@ -1,0 +1,113 @@
+<div class="page-width">
+  {% if section.settings.title != blank or section.settings.subtitle != blank %}
+  <div class="section-header text-center header-title-wrapper">
+    {% if section.settings.title != blank %}
+    <h2 class="h3 header--sub-heading">{{ section.settings.title | escape }}</h2>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+    <h5 class="sub-title header--main-heading">{{ section.settings.subtitle | escape }}</h5>
+    {% endif %}
+  </div>
+  {% endif %}
+  
+  <div class="collection_slider">
+    {% for block in section.blocks %}
+    <div class="collection_grid">
+      {% assign collection = collections[block.settings.collection] %}
+      <a href="{{ collection.url }}">
+        <div class="hover_image">
+          <img class="lazyload image_scale"
+          src="{{ block.settings.collection_image | img_url: 'master' }}"
+          data-src="{{ block.settings.collection_image | img_url: 'master' }}"
+          data-sizes="auto"
+          alt="" />
+        </div>
+        <span class="btn_style1">
+          {% if block.settings.collection_title != blank %}
+          {{ block.settings.collection_title }}
+          {% else %}
+          {{ collection.title }}
+          {% endif %}
+        </span>
+      </a>
+      {% if block.settings.image_ontop != blank %}
+      <div class="image-on-top">
+        <img class="lazyload"
+        data-src="{{ block.settings.image_ontop | img_url: 'master' }}"
+        data-sizes="auto"
+        alt="" />
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection Slider",
+  "class": "index-section jewelili-collection-section",
+  "max_blocks": 12,
+  "settings": [
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Heading",
+    "default": "Slider title"
+  },
+  {
+    "type": "text",
+    "id": "subtitle",
+    "label": "Collection Sub Title",
+    "default": "Because celebrations don’t need a reason."
+  }
+  ],
+  "blocks": [
+  {
+    "type": "featured_collection",
+    "name": "Collection",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "collection_image",
+      "label": "Collection Image",
+      "info": "Recommended size 748x564"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_ontop",
+      "label": "Top Bottom Image",
+      "info": "Recommended size 190x212"
+    },
+    {
+      "type": "text",
+      "id": "collection_title",
+      "label": "Collection Title"
+    },
+    {
+      "label": "Collection",
+      "id": "collection",
+      "type": "collection"
+    }
+    ]
+  }
+  ],
+  "presets": [
+  {
+    "name": "Collection Slider",
+    "category": "Collection",
+    "blocks": [
+    {
+      "type": "featured_collection"
+    },
+    {
+      "type": "featured_collection"
+    },
+    {
+      "type": "featured_collection"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,591 @@
+{%- comment -%}
+This snippet structures the micro-data using JSON-LD specification. Please note that for Product especially,
+the schema often changes. We try to output as much info as possible, but Google may add new requirements over time,
+or change the format of some info
+{%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+{%- capture main_entity_microdata -%}
+"@type": "Product",
+"name": {{ product.title | json }},
+"image": {
+"@type": "ImageObject",
+"url": "https:{{ product.featured_media | img_url: '1024x' }}",
+"name": {{ product.featured_media.alt | json }},
+"width": "1024",
+"height": "1024"
+},
+"description": {{ product.description | strip_html | json }},
+"brand": "Jewelili",
+"sku": {{ product.selected_or_first_available_variant.sku | json }},
+"category": {{ product.type | json }},
+"url": "{{ shop.url }}{{ product.url }}",
+"offers": [
+{%- for variant in product.variants -%}
+{
+"@type": "AggregateOffer",
+"url": "{{ shop.url }}{{ product.url }}",
+"priceCurrency": {{ cart.currency.iso_code | json }},
+"lowprice": {{ variant.price | divided_by: 100.0 | json }},
+"highPrice": "{{ variant.compare_at_price | divided_by: 100.0 | json }}"
+}{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]
+{%- assign reviews_overview = null -%}
+{%- if product.metafields.reviewsimportify and product.metafields.reviewsimportify.reviews_overview -%}
+{%- assign reviews_overview = product.metafields.reviewsimportify.reviews_overview -%}
+{%- endif -%}
+
+{%- if shop.metafields.reviewsimportify and shop.metafields.reviewsimportify.store_settings -%}
+{%- assign ri_settings = shop.metafields.reviewsimportify.store_settings -%}
+{%- else -%}
+{%- assign ri_settings = null -%}
+{%- endif -%}
+{%- if ri_settings.product_reviews_status == "enabled" and ri_settings.app_status == "active" -%}
+{%- if ri_settings.aggregate_rating_status == "enabled" and reviews_overview.reviews_count > 0 -%}
+,"aggregateRating": {
+"@type": "AggregateRating",
+"ratingValue": "{{ reviews_overview.average_rating }}",
+"bestRating": "5",
+"worstRating": "1",
+"ratingCount": "{{ reviews_overview.average_rating }}",
+"reviewCount": "{{ reviews_overview.reviews_count }}"
+},
+"review": {
+"@type": "Review",
+"name": "{{reviews_overview.review_review_author}}",
+"reviewBody": "{{reviews_overview.review_review_title }}",
+"reviewRating": {
+"@type": "Rating",
+"ratingValue": "{{reviews_overview.review_review_rating}}",
+"bestRating": "5",
+"worstRating": "1"
+},
+"datePublished": "{{reviews_overview.review_review_date_time_str}}",
+"author": {"@type": "Person", "name": "{{reviews_overview.review_review_author}}"},
+"publisher": {"@type": "Organization", "name": "Jewelili"}  
+}
+{%- endif -%}
+{%- endif -%}
+{%- endcapture -%}
+{%- elsif request.page_type == 'collection' -%}
+{%- capture main_entity_microdata -%}
+"@type":"ItemList",
+"name":"{{collection.title}}",
+"url":"{{collection.url}}",
+"description":"{{collection.description }}",
+"image": {
+"@type": "ImageObject",
+"url": "https:{{ collection.image | img_url: '1024x' }}",
+"name": "{{ collection.image.alt }}",
+"width": "1024",
+"height": "1024"
+},
+"mainEntityOfPage":{
+"@type":"CollectionPage",
+"@id":"{{collection.id}}"
+},
+"itemListElement":[
+{%- for product in collection.products limit:20 -%}
+{
+"@type":"ListItem",
+"position":{{forloop.index}},
+"name":{{ product.title | json }},
+"url":"{{ shop.url }}{{product.url}}"
+}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
+{%- endcapture -%}
+{%- elsif request.page_type == 'article' -%}
+{%- capture main_entity_microdata -%}
+"@type": "BlogPosting",
+"mainEntityOfPage": "{{ article.url }}",
+"articleSection": {{ blog.title | json }},
+"keywords": "{{ article.tags | join: ', ' }}",
+"headline": {{ article.title | json }},
+"description": {{ article.excerpt_or_content | strip_html | truncatewords: 25 | json }},
+"dateCreated": "{{ article.created_at | date: '%Y-%m-%dT%T' }}",
+"datePublished": "{{ article.published_at | date: '%Y-%m-%dT%T' }}",
+"dateModified": "{{ article.published_at | date: '%Y-%m-%dT%T' }}",
+"image": {
+"@type": "ImageObject",
+"url": "https:{{ article.image | img_url: '1024x' }}",
+"image": "https:{{ article.image | img_url: '1024x' }}",
+"name": {{ article.image.alt | json }},
+"width": "1024",
+"height": "1024"
+},
+"author": {
+"@type": "Person",
+"name": "{{ article.user.first_name | escape }} {{ article.user.last_name | escape }}",
+"givenName": {{ article.user.first_name | json }},
+"familyName": {{ article.user.last_name | json }}
+},
+"publisher": {
+"@type": "Organization",
+"name": {{ shop.name | json }}
+},
+"commentCount": {{ article.comments_count }},
+"comment": [
+{%- for comment in article.comments limit: 5 -%}
+{
+"@type": "Comment",
+"author": {{ comment.author | json }},
+"datePublished": "{{ comment.created_at | date: '%Y-%m-%dT%T' }}",
+"text": {{ comment.content | json }}
+}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
+{%- endcapture -%}
+{%- elsif request.page_type == 'index' -%}
+{%- capture main_entity_microdata -%}
+"@type": "Organization",
+"name": "Jewelili",
+"url": "https://www.jewelili.com",
+"logo": "https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_logo_360x.png",
+"contactPoint": {
+"@type": "ContactPoint",
+"telephone": "5856325544",
+"contactType": "customer service",
+"areaServed": "US",
+"availableLanguage": "en"
+},
+"sameAs": [
+"https://www.facebook.com/jewelili",
+"https://www.instagram.com/jewelili"
+]
+{%- endcapture -%}
+{%- elsif request.page_type == 'search' -%}
+{%- capture main_entity_microdata -%}
+"@type" : "WebSite", 
+"name" : "Jewelili",
+"url" : "https://www.jewelili.com",
+"potentialAction" : {
+"@type" : "SearchAction",
+"target" : "https://www.jewelili.com?s={{ search.terms }}",
+"query-input" : "required name={{ search.terms }}"
+}
+{%- endcapture -%}
+{%- endif -%}
+
+<!-- Microdata -->
+{%- capture breadcrumb_entity_microdata -%}
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+"@type": "ListItem",
+"position": 1,
+"name": "Home",
+"item": "{{ shop.url }}"
+}
+{%- if request.page_type == 'product' -%}
+{%- for typelink in linklists['product-type'].links -%} 
+{%- assign linkHandle = typelink.title | handleize -%}
+{%- assign typeHandle = product.type | handleize -%}
+{%- capture type_links -%}
+{%- unless typeHandle == linkHandle -%}
+{{- typelink.url -}}
+{%- endunless -%}
+{%- endcapture -%}
+{%- endfor -%}
+{%- if type_links -%}
+,{
+"@type": "ListItem",
+"position": 2,
+"name": {{ product.type | json }},
+"item": "{{ shop.url }}{{- type_links -}}"
+},{
+"@type": "ListItem",
+"position": 3,
+"name": {{ product.title | json }},
+"item": "{{ shop.url }}{{- type_links -}}{{ product.url | within: collection }}"
+}
+{%- else -%}
+,{
+"@type": "ListItem",
+"position": 2,
+"name": {{ product.title | json }},
+"item": "{{ shop.url }}{{ product.url | within: collection }}"
+}
+{%- endif -%}
+
+{%- elsif request.page_type == 'collection' -%}
+{%- render 'breadcrumb_coll', id:"schema" -%}
+,{
+"@type": "ListItem",
+"position": 3,
+"name": {{ collection.title | json }},
+"item": "{{ shop.url }}{{ collection.url }}"
+}
+{%- elsif request.page_type == 'blog' -%}
+,{
+"@type": "ListItem",
+"position": 2,
+"name": {{ blog.title | json }},
+"item": "{{ shop.url }}{{ blog.url }}"
+}
+{%- elsif request.page_type == 'article' -%}
+,{
+"@type": "ListItem",
+"position": 2,
+"name": {{ blog.title | json }},
+"item": "{{ shop.url }}{{ blog.url }}"
+}, {
+"@type": "ListItem",
+"position": 3,
+"name": {{ blog.title | json }},
+"item": "{{ shop.url }}{{ article.url }}"
+}
+{%- elsif request.page_type == 'page' -%}
+,{
+"@type": "ListItem",
+"position": 2,
+"name": {{ page.title | json }},
+"item": "{{ shop.url }}{{ page.url }}"
+}
+{%- endif -%}
+]
+{%- endcapture -%}
+
+{% if main_entity_microdata != blank %}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    {{ main_entity_microdata }}
+  }
+</script>
+{% endif %}
+
+{% if breadcrumb_entity_microdata != blank %}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    {{ breadcrumb_entity_microdata }}
+  }
+</script>
+{% endif %}
+
+{% if request.page_type == 'index' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question",
+      "name": "Why to buy diamond Jewelry online at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We pride ourselves on offering high quality products at competitive prices. At the same time, we have jewelry for every occasion and unique preferences. Our aim is to give life to your desires by ensuring that your purchase is as exclusive as your choice."
+      }
+    }, {
+      "@type": "Question",
+      "name": "What are the benefits of buying diamond Jewelry online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Overall, we've found that buying diamonds online is far better. Specifically, buying a diamond online is cheaper than buying in a store. Because of the way that wholesalers distribute and sell diamonds, the process is less expensive for online retailers."
+      }
+    }, {
+      "@type": "Question",
+      "name": "How can I place an order on your website?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you are looking to purchase diamond jewelry online, then the following steps will help you place an order on our online diamond jewelry store. a. Choose product. b. Add to bag. c. Go to cart. d. Proceed to checkout. e. Fill-in delivery details and coupon code (if any). f. Make payment. g. Check confirmation on the website and over email"
+      }
+    }, {
+      "@type": "Question",
+      "name": "What would confirm the placing of diamond jewelry order?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Once an order is placed, you will receive an email confirming the order as well as see an order confirmation page. In case you have any questions, feel free to get in touch with us."
+      }
+    }]
+  }
+</script>
+{% endif %}
+{% if collection.handle == 'diamond-engagement-rings' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How can I check what engagement ring size will suit my fiancée?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can simply check the right size for your fiancée’s finger band by using a piece of thread or a flossing string. Wind the thread or floss around her ring finger and mark the place where the two ends meet. Now stretch out the thread/floss on a ruler that can help you check the length down to millimeters. You could also borrow her existing promise ring or any other ring that she wears to check the size."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "How much should you spend on an engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In case you don’t have a budget in mind, you can always decide on it once you shortlist a few favorites by going through our collection online. We cover a wide price range, starting as low as $39.99. So, whatever your budget, you will find just the one that perfectly reflects your commitment right here. Our diamond ring and bridal sets are made with certified stones, so you need never worry about the quality, regardless of the price."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "What type of ring is best suited for an engagement?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We love the traditional diamond ring. But, it all depends on what you and your special one prefer. If you want to stand out from the crowd, check out rings in other precious stones, such as sapphires and emeralds, placed exquisitely with finely cut diamonds."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "When should you give an engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Firstly, buy an engagement ring online only when you believe that both of you are ready to take your relationship to the next level. The next step is to decide when to give her the ring. You could consider a romantic dinner, during a moonlit stroll or maybe by recreating your first date. Remember, this is something that the two of you will cherish for a lifetime. So, make it special."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'diamond-rings' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How can I find my ring size? How do I choose a diamond ring online, which perfectly fits my finger?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "You can use a measuring tape if lying around at home or using any string or thread available. We recommend that you not use metallic materials since they are harder to bend. Cut the string once you have your finger's circumference covered and measure it on any wooden, metal, or plastic scale. You can measure it in the units provided on your scale and convert it into the required measuring system online."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Does the price vary with a difference in ring size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our rings’ prices differ on the precious metal used and the stones encrusted on the ring. The prices do not change with size. However, you will find a wide range of prices to choose from, including discount diamond rings. So, go ahead and check out our catalog."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Can I change the ring size if it does not fit me in a few years?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In case the ring becomes too tight or too loose after a few years, you can easily take it to any jeweler, who will be able to adjust the size according to your finger’s circumference."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Do you provide certification for diamond jewelry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All our gems are authentic and certified to ensure that our customers get exactly what is mentioned in the product specifications."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'diamond-earrings' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What do diamond earrings symbolize?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "As mentioned earlier, we believe they symbolize all things celestial and great in the universe, including you. We believe that every woman deserves to be celebrated with diamonds. After all, they are a girl’s best friend! Diamonds are so versatile that they fit in perfectly with any positive message you wish to convey. Most importantly, diamonds are symbols of light and life."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "What is the price of diamond earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When you buy diamond earrings online at Jewelili, you get to choose from a huge price range, starting at a mere $12.99 to up to $6,000 and beyond. We believe that everyone deserves to own or be gifted diamond earrings, which is why we ensure the most competitive pricing without compromising on quality."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "How to take care of diamond earrings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When you buy diamond earrings online from Jewelili, you get an attractive box and pouch perfect for storage and will take up very little space in your jewelry box. We recommend not storing them with other jewelry pieces since the sharp edges from other accessories may lead to scratches or abrasions on the metallic body or the stones themselves."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Do hoop earrings look good?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Of course. Hoops look great on almost every woman. We offer a range of sizes in hoops so that you find just the right one to suit the shape of your face and your preferences. The only thing you need to do is choose the right occasion to wear them."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'diamond-bracelets' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Does my loved one really need diamond jewelry?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "No, but your loved one and you truly deserve diamond jewelry. Plus, you can never go wrong in gifting someone else or yourself diamonds."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Where can I buy diamond bracelets for women?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Right here. Check out our carefully curated yet exhaustive collection of bracelets for women. They come in a wide range in styles, designs, metals, gemstones, and, most importantly, pricing."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Are there budget-friendly options in gifting diamond bracelets?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. Our diamond jewelry has been priced very competitively, so there is something for every budget and taste. All you have to do is add filters to your search through our catalog to find just what you are looking for."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "What association do tennis bracelets have with the sport?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A well-known tennis player had stopped a match in 1987, simply because the clasp of her bracelet had accidentally opened and she was unable to find her bracelet. This incident gave name to the specific style of bracelets. These bands come with a clasp for a sophisticated look."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'diamond-necklaces' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the simplest type of necklace?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "A single-string diamond necklace for women or one with a single gemstone on a metallic pendant is the simplest design that we have."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "What are the different types of necklaces available on Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our online necklace collection includes baguettes, hearts, dog paws, elephants, flowers, trees, angels, chain necklaces, necklaces with various gemstones, Disney necklaces, cross pendants, family tree diamond necklaces for women, "LOVE" engraved necklaces, and much more. Check out our extensive range to find something perfect for you or your loved one."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "How should I store my diamond necklace?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All our necklaces come in a sophisticated and convenient little box that is easy to store. We recommend that you avoid keeping it with other jewelry pieces since brushing against sharp edges or other metals might lead to scratches or ruin the product's shine. Make sure to wrap the necklace in a soft cloth before putting it with other jewelry pieces or store it in the box it came in."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "How much does a diamond necklace cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our range of diamond necklaces for women is very affordable, with the simplest gemstone necklaces starting at just $20. The branded jewelry is priced slightly higher, with prices going up to a few hundred dollars. But whatever your budget may be, we are confident you will find just the perfect necklace right here. We do not compromise on quality while ensuring the most competitive rates."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'diamond-cocktail-rings' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can you wear a cocktail ring every day?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "Cocktail rings are versatile pieces of jewelry so that you can pair them with various types of attire, including everyday office wear. Just make sure that the ring isn’t too large for a formal setup in the office. So, just like cocktail dresses, you take out the bigger ones with more bling for the night. On the other hand, if you have different rings on your fingers, it may be challenging to wear a cocktail ring daily."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can you use a cocktail ring as an engagement ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This is an important question a lot of men and women have asked us. A white gold diamond cocktail ring may perhaps be the solution to this odd confusion. As mentioned earlier, these rings are generally not worn on the ring finger and are too heavy for everyday wear. But if the design is slightly more subtle than the average cocktail ring, it could be easily used as an engagement ring."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I choose the perfect cocktail ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no single design or type of cocktail ring that suits everyone. So, first, consider your wardrobe and what you are likely to wear the ring with. You also have to consider the stone that you want in the center. Our cocktail rings for women are versatile and can be worn for almost any occasion - from a get-together brunch with the girls to accessorizing your evening outfit."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "How do I store my diamond ring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every diamond cocktail ring bought at Jewelili comes in an attractive box, which is perfect for storing your ring and helps protect the stones and metal from getting scratches from brushing against other pieces of jewelry. By storing the ring in this box, you can keep it looking as good as new for a long time to come."
+      }
+    }
+    ]
+  }
+</script>
+{% elsif collection.handle == 'diamond-fashion-rings' %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQ",
+    "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why are diamond fashion rings a great gifting idea?",
+      "acceptedAnswer": {	
+        "@type": "Answer",
+        "text": "Diamond fashion rings make for an excellent anniversary, birthday, or any event gift. It indicates you are attentive to the recipient’s tastes and dress sense and ready to find the perfect ring to complement their appearance. Also, since we offer these rings at a wide range of prices, you are sure to find something that suits your budget without compromising on quality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are fashion rings made of at Jewelili?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Besides the obvious diamonds, we also offer a wide selection of gemstones in our fashion rings, such as emeralds, sapphires, aquamarine, pearls, garnets, and much more. The focal stones or designs are embedded or cast on gold-plated, rose gold, white gold, rhodium, and sterling silver metal bodies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between fashion rings and normal rings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Fashion rings for women are a sub-style of statement rings, which complement the wearer’s overall look and add to their personal style statement. Standard rings are usually simpler in design and meant for everyday wear than as an accessory to attract attention."
+      }
+    }, 
+    {
+      "@type": "Question",
+      "name": "Which is the best place to buy fashion rings online?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Right here at Jewelili. You are already at the best place to buy diamond fashion rings for women online if you are reading this. Our range of designs, pricing, and precious stones is unmatched."
+      }
+    }
+    ]
+  }
+</script>
+{% endif %}

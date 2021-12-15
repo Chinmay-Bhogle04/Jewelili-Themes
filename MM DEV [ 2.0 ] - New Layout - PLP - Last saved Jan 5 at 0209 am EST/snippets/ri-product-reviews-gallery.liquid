@@ -1,0 +1,46 @@
+{% if ri_settings.app_status == "active" %}
+<div class="ri_review_images-row" ng-if="riStoreData.settings.reviews_overview_images_limit > 0">
+  <div class="ri_review_images" ng-if="imagesGallery && riStoreData.settings.reviews_overview_images_limit > 0">
+    <span class="ri_review_images_row" ng-repeat="rimage in imagesGallery">
+      <figure class="ri_reviews_images_figure" ng-repeat="image in rimage.images">
+        <a data-fancybox="rimages" href="(% image.original_url %)">
+          <img class="img-fluid ri_review_image-thumb" ng-src="(% image.thumbnail_url %)" />
+        </a>
+        <figcaption>
+          <h6 class="gallery_review_title">(% rimage.review.title %)</h6>
+          <span class="rating_star">
+            <span ng-class="{'fa fa-star ipreview-star-icon': rimage.review.rating > 0,'review-star-checked': rimage.review.rating >= 1}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rimage.review.rating > 0,'review-star-checked': rimage.review.rating >= 2}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rimage.review.rating > 0,'review-star-checked': rimage.review.rating >= 3}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rimage.review.rating > 0,'review-star-checked': rimage.review.rating >= 4}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rimage.review.rating > 0,'review-star-checked': rimage.review.rating >= 5}"></span>
+          </span>
+          <p class="gallery_review_description">(% rimage.review.description %)</p>
+        </figcaption>
+      </figure>
+    </span>
+  </div>
+</div>
+<div class="ri_review_videos-row" ng-if="riStoreData.settings.reviews_overview_videos_limit > 0">
+  <div class="ri_review_videos" ng-if="videosGallery && riStoreData.settings.reviews_overview_videos_limit > 0">
+    <span class="ri_review_videos_row" ng-repeat="rvideo in videosGallery">
+      <figure class="ri_reviews_videos_figure" ng-repeat="video in rvideo.videos">
+        <a class="ri_video_thumb" data-fancybox="rvideos" href="(% video.original_url %)">
+          <img class="img-fluid ri_review_image-thumb" ng-src="(% video.thumbnail_url %)" onError="this.src=riAppPublicUrl+'/images/video-play-icon.png'" alt="review_video_thumb">
+        </a>
+        <figcaption>
+          <h6 class="gallery_review_title">(% rvideo.review.title %)</h6>
+          <span class="rating_star">
+            <span ng-class="{'fa fa-star ipreview-star-icon': rvideo.review.rating > 0,'review-star-checked': rvideo.review.rating >= 1}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rvideo.review.rating > 0,'review-star-checked': rvideo.review.rating >= 2}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rvideo.review.rating > 0,'review-star-checked': rvideo.review.rating >= 3}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rvideo.review.rating > 0,'review-star-checked': rvideo.review.rating >= 4}"></span>
+            <span ng-class="{'fa fa-star ipreview-star-icon': rvideo.review.rating > 0,'review-star-checked': rvideo.review.rating >= 5}"></span>
+          </span>
+          <p class="gallery_review_description">(% rvideo.review.description %)</p>
+        </figcaption>
+      </figure>
+    </span>
+  </div>
+</div>
+{% endif %}

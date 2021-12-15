@@ -1,0 +1,68 @@
+<section data-section-id="{{ section.id }}" data-section-type="jewelili-instagram-section">
+  <div class="insta_logo">
+    <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"><defs><style>.insta_logo_a{fill:#fff;opacity:0;}.insta_logo_b{fill:#292d36;}</style></defs><g transform="translate(-612 -7501)"><rect class="insta_logo_a" width="56" height="56" transform="translate(612 7501)"/><g transform="translate(76.799 7504)"><path class="insta_logo_b" d="M25.222,4.546c6.739,0,7.53.03,10.193.15a13.765,13.765,0,0,1,4.686.871,7.828,7.828,0,0,1,2.9,1.882,7.706,7.706,0,0,1,1.882,2.9,14.023,14.023,0,0,1,.871,4.686c.12,2.663.15,3.454.15,10.193s-.03,7.53-.15,10.193a13.765,13.765,0,0,1-.871,4.686,7.828,7.828,0,0,1-1.882,2.9A7.706,7.706,0,0,1,40.1,44.9a14.023,14.023,0,0,1-4.686.871c-2.663.12-3.454.15-10.193.15s-7.53-.03-10.193-.15a13.765,13.765,0,0,1-4.686-.871,7.828,7.828,0,0,1-2.9-1.882,7.706,7.706,0,0,1-1.882-2.9,14.023,14.023,0,0,1-.871-4.686c-.12-2.663-.15-3.454-.15-10.193s.03-7.53.15-10.193a13.765,13.765,0,0,1,.871-4.686,7.828,7.828,0,0,1,1.882-2.9,7.706,7.706,0,0,1,2.9-1.882A14.023,14.023,0,0,1,15.029,4.7c2.663-.13,3.464-.15,10.193-.15m0-4.546c-6.849,0-7.71.03-10.4.15A18.488,18.488,0,0,0,8.7,1.322,12.294,12.294,0,0,0,4.235,4.235,12.511,12.511,0,0,0,1.322,8.7,18.5,18.5,0,0,0,.15,14.829C.03,17.512,0,18.373,0,25.222s.03,7.71.15,10.4a18.609,18.609,0,0,0,1.171,6.128,12.294,12.294,0,0,0,2.914,4.466A12.511,12.511,0,0,0,8.7,49.132,18.5,18.5,0,0,0,14.829,50.3c2.693.12,3.545.15,10.4.15s7.71-.03,10.4-.15a18.609,18.609,0,0,0,6.128-1.171,12.294,12.294,0,0,0,4.466-2.914,12.511,12.511,0,0,0,2.914-4.466,18.5,18.5,0,0,0,1.171-6.128c.12-2.693.15-3.544.15-10.4s-.03-7.71-.15-10.4a18.609,18.609,0,0,0-1.171-6.128,12.294,12.294,0,0,0-2.914-4.466,12.511,12.511,0,0,0-4.466-2.914A18.5,18.5,0,0,0,35.636.14C32.932.03,32.071,0,25.222,0Z" transform="translate(538.201 0)"/><path class="insta_logo_b" d="M135.457,122.6a12.956,12.956,0,1,0,12.957,12.956A12.959,12.959,0,0,0,135.457,122.6Zm0,21.357a8.411,8.411,0,1,1,8.411-8.411A8.41,8.41,0,0,1,135.457,143.957Z" transform="translate(427.967 -110.324)"/><ellipse class="insta_logo_b" cx="3.024" cy="3.024" rx="3.024" ry="3.024" transform="translate(573.867 8.731)"/></g></g></svg>
+  </div>
+  {% if section.settings.title != blank %}
+  <h2 class="header--main-heading">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  {% if section.settings.subtitle != blank %}
+  <h3 class="header--sub-heading">{{ section.settings.subtitle }}</h3>
+  {% endif %}
+
+  <div class="page-width">
+    <div id="insta-feed"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+"name": "Instagram Section",
+"class": "index-section jewelili-instagram-section",
+"settings": [
+{
+"type": "text",
+"id": "title",
+"label": "Title",
+"default": "Title"
+},
+{
+"type": "text",
+"id": "subtitle",
+"label": "Sub Title",
+"default": "#RedefiningJoy"
+}
+],
+"blocks": [
+{
+"type": "instagram-content",
+"name": "Instagram Content",
+"settings": [
+{
+"type": "image_picker",
+"id": "post_image",
+"label": "Post Image",
+"info": "Recommended size 264x264"
+},
+{
+"type": "url",
+"id": "instagram_url",
+"label": "Instagram URL"
+}
+]
+}
+],
+"presets": [
+{
+"name": "Instagram Section",
+"category": "Advanced layout"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

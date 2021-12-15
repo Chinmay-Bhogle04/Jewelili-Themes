@@ -1,0 +1,359 @@
+<style>
+  .page-ring-size-guide h1, 
+  .page-ring-size-guide h2, 
+  .page-ring-size-guide h3 {color: #AA2942;}
+  .page-ring-size-guide h2 {
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .page-ring-size-guide p {
+    color: #292D36;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .page-ring-size-guide .page-width {max-width: 1280px;}
+  .page-ring-size-guide {
+    background: rgb(251,231,232);
+    background-image: url(https://cdn.shopify.com/s/files/1/0252/9620/7926/files/ring-size-guide-bg.png?v=1638249430);
+    background: url(https://cdn.shopify.com/s/files/1/0252/9620/7926/files/ring-size-guide-bg.png?v=1638249430), 
+      -moz-linear-gradient(0deg, rgba(251,231,232,1) 0%, rgba(255,255,255,1) 100%);
+    background: url(https://cdn.shopify.com/s/files/1/0252/9620/7926/files/ring-size-guide-bg.png?v=1638249430), 
+      -webkit-linear-gradient(0deg, rgba(251,231,232,1) 0%, rgba(255,255,255,1) 100%);
+    background: url(https://cdn.shopify.com/s/files/1/0252/9620/7926/files/ring-size-guide-bg.png?v=1638249430), 
+      linear-gradient(0deg, rgba(251,231,232,1) 0%, rgba(255,255,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fbe7e8",endColorstr="#ffffff",GradientType=1);
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: auto 100%;
+    padding: 20px 0 0;
+  }
+  .page-ring-size-guide .section-spacing {padding-top: 80px;}
+  .page-ring-size-guide .section-header {margin-bottom: 70px;}
+  .page-ring-size-guide .section-header .sub-title {
+    font-family: "Playfair Display",serif;
+    color: rgba(165, 161, 162, 0.72);
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    letter-spacing: 2.1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .page-ring-size-guide .section-header h2 {
+    color: #000;
+    font-size: 18px;
+    line-height: 25px;
+    font-weight: 500;
+    letter-spacing: 2.7px;
+    text-transform: uppercase;
+    max-width: 450px;
+    margin: 0 auto 20px;
+  }
+  .page-ring-size-guide .section-header h2:after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: #21376F;
+    margin: 10px auto 0;
+  }
+  .page-ring-size-guide .section-header .text {
+    max-width: 786px;
+    margin: 0 auto;
+  }
+  .page-ring-size-guide .section-header .btn {
+    margin: 40px 0 0;
+    width: 485px;
+    max-width: 100%;
+    font-family: Lato,sans-serif;
+    color: #AA2942;
+    font-size: 19px;
+    line-height: 23px;
+    font-weight: 700;
+    letter-spacing: 1.9px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    width: auto;
+    padding: 0;
+  }
+  .page-ring-size-guide .section-header .btn svg {margin-left: 12px;}
+  @media (max-width: 749px) {
+    .page-ring-size-guide {
+      background: url('https://cdn.shopify.com/s/files/1/0252/9620/7926/files/ring-size-guide-bg-mob.png?v=1638336916') 
+        no-repeat top center;
+      background-size: 100% 100%;
+    }
+    .page-ring-size-guide p {
+      font-size: 16px;
+      line-height: 22px;
+    }
+    .page-ring-size-guide .section-spacing {padding-top: 50px;}
+    .page-ring-size-guide .section-header h2 {
+      font-size: 16px;
+      line-height: 22px;
+      letter-spacing: 1.6px;
+      margin-bottom: 15px;
+    }
+    .page-ring-size-guide .section-header h2:after {height: 3px;}
+    .page-ring-size-guide .page-width {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    .page-ring-size-guide .section-header .text {max-width: 344px;}
+  }
+  
+  /***** rsg-header *****/
+  .rsg-header {margin-top: 11px;}
+  .rsg-header h1 {
+    font-size: 30px;
+    line-height: 40px;
+    font-weight: 700;
+    text-transform: capitalize;
+    margin-bottom: 10px;
+  }
+  .rsg-header .text {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  @media (max-width: 749px) {
+    .rsg-header h1 {
+      font-size: 22px;
+      line-height: 30px;
+      letter-spacing: 2.2px;
+    }
+  }
+  
+  /***** rsg-option *****/
+  .rsg-option .steps-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    counter-reset: section;
+  }
+  .rsg-option .steps-wrapper .step {
+    display: flex;
+    justify-content: center;
+  }
+  .rsg-option .steps-wrapper .step:not(:last-child) {margin-bottom: 50px;}
+  
+  .rsg-option .steps-wrapper .step-svg svg {
+    display: block;
+    max-width: 100%;
+  }
+  .rsg-option .steps-wrapper .step-info h3 {
+    color: #AA2942;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    position: relative;
+    padding-left: 45px;
+  }
+  .rsg-option .steps-wrapper .step-info h3:after {
+    counter-increment: section;
+    content: " " counter(section) "";
+    margin-left: 2px;
+  }
+  .rsg-option .steps-wrapper .step-info h3 svg {
+    width: 28px;
+    margin-right: 20px;
+    position: absolute;
+    left: 0;
+    top: 4px;
+  }
+  .rsg-option .steps-wrapper .step-info p {
+    font-size: 20px;
+    line-height: 23px;
+    padding-left: 45px;
+  }
+  @media (min-width: 750px) {
+    .rsg-option .steps-wrapper .step:nth-child(2n) .step-info {
+      order: 2;
+      padding-left: 50px;
+      padding-right: 0;
+    }
+    .rsg-option .steps-wrapper .step:not(:nth-child(2n)) {padding-left: 20px;}
+    .rsg-option .steps-wrapper .step:nth-child(2n) {padding-right: 20px;}
+    .rsg-option .steps-wrapper .step-1 .step-info p {max-width: 273px;}
+    .rsg-option .steps-wrapper .step-2 .step-info p {max-width: 450px;}
+    .rsg-option .steps-wrapper .step:not(:first-child) .step-svg {margin-top: -160px;}
+    .rsg-option .steps-wrapper .step-info {
+      max-width: 42%;
+      padding-right: 70px;
+    }
+    .rsg-option .steps-wrapper .step-svg {max-width: 58%;}
+  }
+  @media (max-width: 749px) {
+    .rsg-option .steps-wrapper {padding: 0 15px;}
+    .rsg-option .steps-wrapper .step {flex-wrap: wrap;}
+    .rsg-option .steps-wrapper .step-info {margin-bottom: 30px;}
+    .rsg-option .steps-wrapper .step-info h3 {
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 2.1px;
+      font-weight: 500;
+    }
+    .rsg-option .steps-wrapper .step-info p {
+      font-size: 18px;
+      line-height: 22px;
+      padding-right: 45px;
+    }
+    .rsg-option .steps-wrapper .step:not(:last-child) {margin-bottom: 30px;}
+    .rsg-option .steps-wrapper .step-svg {
+      max-width: 295px;
+      margin: 0 auto;
+    }
+    .rsg-option .steps-wrapper .step-svg svg {height: auto;}
+  }
+  
+  /***** rsg-size-chart *****/
+  .rsg-size-chart h2 {
+    color: #AA2942;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 500;
+    letter-spacing: 2.7px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .rsg-size-chart p {
+    font-size: 16px;
+    line-height: 21px;
+  }
+  .rsg-size-chart .grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .rsg-size-chart .chart {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+  }
+  .rsg-size-chart .chart span {
+    font-family: "Playfair Display",serif;
+    color: #AA2942;
+    font-size: 16px;
+    line-height: 21px;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+  }
+  .rsg-size-chart .chart h4 {
+    font-family: "Source Sans Pro",sans-serif;
+    color: #292D36;
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 700;
+    margin-bottom: 23px;
+  }
+  .rsg-size-chart .chart .table-wrapper {
+    background: #FBE7E8;
+    width: 100%;
+    height: 100%;
+    padding: 25px 25px 36px;
+  }
+  .rsg-size-chart .chart .chart-header {width: 100%;}
+  .rsg-size-chart .chart table {
+    background: transparent;
+    margin-bottom: 0;
+  }
+  .rsg-size-chart .chart table td, 
+  .rsg-size-chart .chart table th {
+    width: 20%;
+    color: #242424;
+    border: none;
+    border-bottom: 1px solid rgba(155, 53, 68, 0.15);
+    text-align: center;
+  }
+  .rsg-size-chart .chart table td:not(:last-child), 
+  .rsg-size-chart .chart table th:not(:last-child) {
+    border-right: 2px solid transparent;
+  }
+  .rsg-size-chart .chart table th {
+    font-family: "Playfair Display",serif;
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 700;
+  }
+  .rsg-size-chart .chart table th:last-child {
+    font-size: 11px;
+    letter-spacing: 0.11px;
+    font-weight: 500;
+  }
+  .rsg-size-chart .chart table th:last-child small {font-size: 6px;}
+  .rsg-size-chart .chart table td {
+    font-family: "Source Sans Pro",sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 4px 5px;
+  }
+  .rsg-size-chart .image-wrapper {margin-top: 150px;}
+  .rsg-size-chart .image-wrapper img {
+    display: block;
+    margin: 0 auto;
+  }
+  @media (max-width: 749px) {
+    .rsg-size-chart .text {
+      max-width: 330px;
+      margin: 0 auto;
+    }
+    .rsg-size-chart .chart {margin-top: 40px;}
+    .rsg-size-chart .chart span {
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: 1.8px;
+    }
+    .rsg-size-chart .chart h4 {
+      font-size: 18px;
+      line-height: 22px;
+      margin-bottom: 10px;
+    }
+    .rsg-size-chart .chart .table-wrapper {padding: 16px 18px 20px;}
+    .rsg-size-chart .chart table td {padding: 3px 5px;}
+    .rsg-size-chart .image-wrapper {margin: 50px 0 20px;}
+    .rsg-size-chart .image-wrapper img {max-width: 195px;}
+    .page-ring-size-guide .section-header .btn {
+      margin-top: 30px;
+      font-size: 13px;
+      line-height: 16px;
+      letter-spacing: 1.3px;
+    }
+    .page-ring-size-guide .section-header .btn svg {
+      margin-left: 7px;
+      width: 17px;
+      height: auto;
+    }
+    .rsg-size-chart .chart table td, 
+    .rsg-size-chart .chart table th {
+      padding: 6px 5px;
+    }
+    .rsg-size-chart .chart table th {
+      font-size: 12px;
+      line-height: 12px;
+    }
+    .rsg-size-chart .chart table td {
+      font-size: 10px;
+      line-height: 16px;
+    }
+  }
+  
+  /***** Option-2 *****/
+  .rsg-option.option-2 .section-header .sub-title {
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 2.7px;
+  }
+  .rsg-option.option-2 .section-header h2 {
+    color: #AA2942;
+    text-transform: capitalize;
+    letter-spacing: 1.8px;
+  }
+  @media (min-width: 750px) {
+    .rsg-option.option-2 .section-header .text {max-width: 585px;}
+  }
+</style>

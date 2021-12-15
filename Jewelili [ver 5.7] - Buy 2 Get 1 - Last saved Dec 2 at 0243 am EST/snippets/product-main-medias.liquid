@@ -1,0 +1,76 @@
+<div class="main-image-wrapper"  data-tag="{% if bespoke %}{{bespoke}}{% endif %}{% if hasVariantImage and bespoke == blank %}variant_thumbnails{% endif %}">
+  <div class="percentage-off">
+    {% if custom_tag %}
+    <p class="customized">Personalized</p>
+    {% elsif bespoke %}
+    <p class="customized">Customize</p>
+    {% elsif product.compare_at_price > product.price %}
+    {% capture percentageOff %}{{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | money_without_currency | times: 100 | remove: '.0'}}{% endcapture %}
+    {% assign number = percentageOff | plus:0 %}
+    {% include 'svg-icons', svgId: number %}
+    {% endif %}
+  </div>
+  <div class="mm__product-gallery">
+    {% if product.media == blank %}
+    <div class="slide {{ allColorName }}">
+      <div id="{{ media_wrapper_id }}" class="product-single__media-wrapper  js" data-product-single-media-wrapper
+      data-media-id="{{ section.id }}-{{ media.id }}" tabindex="-1">
+      <div class="product-single__media--has-thumbnails">
+        <a href="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_Box.jpg?v=1627959899" data-options="zoomPosition: inner" class="MagicZoom">
+          <img id="{{ media_id }}" class="feature-row__image lazyload"
+          data-src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_Box.jpg?v=1627959899"
+          data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-aspectratio="{{ media_img.aspect_ratio }}"
+          data-sizes="auto" alt="Product Box">
+        </a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  {%- for media in product.media -%}
+  {% assign active_media = false %}
+  {% if featured_media == media %}
+  {% assign active_media = true %}
+  {% endif %}
+  {% assign mediaId = media.id %}
+  {% if mediaList contains mediaId -%}
+  {% assign colorName1 = mediaList | split: mediaId | last %}
+  {% endif %}
+  
+  
+  {% include 'media', media: media, colorName1:colorName1, featured_media: featured_media, height: height, enable_image_zoom: enable_image_zoom, image_zoom_size: product_image_zoom_size, image_scale: product_image_scale %}
+  
+  {% assign newColor = colorName1 | split:"`~`" | first | handle | replace: "sterling-silver","14k-white-gold" | replace: "10k-white-gold","14k-white-gold" | replace: "10k-yellow-gold","14k-yellow-gold" | replace: "10k-rose-gold","14k-rose-gold" %}
+  {% if allColorName contains newColor %}
+  
+  {% else %}
+  {% assign allColorName = allColorName | append: newColor | append:" "  %}
+  {% endif %}
+  
+  {% if product.vendor contains 'Jewelili Diamonds' or product.vendor contains 'Jewelili Gemstones' or product.vendor contains 'Swarovski' %}
+  {% if forloop.last == true %}
+  <div class="slide {{ allColorName }}">
+    <div id="{{ media_wrapper_id }}" class="product-single__media-wrapper  js" data-product-single-media-wrapper data-media-id="{{ section.id }}-{{ media.id }}" tabindex="-1">
+      <div class="product-single__media--has-thumbnails"
+      {% if enable_image_zoom %} data-image-zoom-wrapper data-zoom="{{ media | img_url: image_zoom_size, scale: image_scale }}"{% endif %}>
+      <a href="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_Box.jpg?v=1627959899" data-options="zoomPosition: inner" class="MagicZoom">
+        <img id="{{ media_id }}" class="feature-row__image lazyload {% unless featured_media == media %} lazypreload{% endunless %}"
+        src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Jewelili_Box.jpg?v=1627959899">
+      </a>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endif %}
+{%- endfor -%}
+{% endif %}
+</div>
+{% comment %}
+{% if product.vendor contains 'Jewelili' %}
+<!-- Buy 2 Get 1 Free start -->
+<div class="BTGO_badge_top"><img class="lazyload" data-src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/BUY_ANY_2_GET_1_Free__H_unit_NA__BLACK.png?v=1637754418" data-sizes="auto"></div>
+<!-- Buy 2 Get 1 Free end -->
+{% else %}
+{% endif %}
+{% endcomment %}
+{% include 'product-share' %}
+</div>

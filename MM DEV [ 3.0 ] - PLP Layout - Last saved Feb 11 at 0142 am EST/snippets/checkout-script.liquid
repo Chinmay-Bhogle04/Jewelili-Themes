@@ -1,0 +1,53 @@
+<script type="text/javascript">
+  window.$ = Checkout.$;
+  $(document).on('page:load page:change', function(){
+    var discountHtml = $("#discount-wrapper").html();
+    $('.order-summary__section--discount').append(discountHtml);
+    $('.order-summary__section--discount').append("<b>Fast and Free Shipping In Mainland USA</b><ul class='new_promotext'><li>- Easy Return Policy</li><li>- Excellent Customer Service Support</li><li>- Casagear Brand You can Trust</li></ul>");
+    $('.total-line.total-line--shipping').after("<tr class='new_shiptext'><td colspan='2'>Standard Shipping - Free Shipping In Mainland USA</td></tr>");
+    $(document).on("click","#apply-discount",function(){
+      var discountCode = $(this).data('discount-code');
+      $('[name="checkout[reduction_code]"]').val(discountCode);
+      $('[name="checkout[reduction_code]"]').closest('form').submit();
+    });
+    $(document).on("click",".code-button a",function(){
+      $(this).fadeOut();
+      $(this).closest('.section__discount').find('.section__discount-description').stop().slideDown();
+    });
+    
+    function checkDiscountApplied(){
+      $('.tags-list .tag').each(function(){
+        var discountCode = $(this).find(".reduction-code__text").text();
+        $('.'+discountCode).addClass('applied-discount');
+      });
+      $('.discount-button-wrapper .section__discount').each(function(){
+        var isDiscountApplied = $(this).find(".apply-button").hasClass('applied-discount');
+        if(!isDiscountApplied){
+          $(this).addClass('disabled-discount');
+        }
+      });
+    }
+    
+    var appliedDiscount = $(".tags-list .tag").length;
+    if(appliedDiscount){
+      checkDiscountApplied();
+    }
+    
+    $(document).on('click','.tags-list .tag__wrapper .tag__button',function(e){
+      //       alert();
+      e.preventDefault();    
+      $('form [data-trekkie-id="apply_discount_button"]').addClass("btn--loading");
+      var formTag = $(this).closest('form');
+      var tagUrl = $(formTag).attr("action");
+      $.ajax({
+        url: tagUrl,
+        type: 'post',
+        data: formTag.serialize(),
+        success: function(response) {
+          location.reload();
+        }
+      })
+    });
+    
+  });
+</script>

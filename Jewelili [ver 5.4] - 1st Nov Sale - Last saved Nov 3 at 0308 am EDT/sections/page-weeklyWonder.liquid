@@ -1,0 +1,361 @@
+<style>
+  .weekly-wonder .overlay-content .title , .weekly-wonder .overlay-content .subtext{
+    color: {{ section.settings.text_color}};
+  }
+</style>
+{% if section.settings.banner_image %}
+<div class="banner-section weekly-wonder">
+  <div class="overlay">
+    <div class="image_wrapper mobilehide">
+      <img src="{{section.settings.banner_image | img_url:'master'}}" alt="" />
+    </div>
+    {% if section.settings.banner_image-mobile  %}
+    <div class="image_wrapper desktophide">
+      <img src="{{section.settings.banner_image-mobile | img_url:'master'}}" alt="" />
+    </div>
+    {% endif %}
+    <div class="overlay-content">
+      <h1 class="title">{{section.settings.overlay_heading}}</h1>
+      <p class="subtext">{{section.settings.overlay_subtext}}</p>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="page-width weekly-wonder">
+  {% assign productlist = "" %}
+  {% for product in collections[section.settings.bestdeal_collection].products %}
+  {% assign productlist =  productlist | append: product.handle | append: ',' %} 
+  {% endfor %}
+  {% assign handle = productlist | split: ',' %}
+  {% assign first_deal = handle | first %}
+  {% assign last_deal = handle | last %}
+  <div class="grid grid--uniform best__deal-top">
+    {% if section.settings.bestdeal_collection %}
+    <div class="grid__item small--one medium-up--one-third  text-center">
+      <h4 class="desktophide vertical_title">{{section.settings.vertical_title}}</h4>
+      {% assign bestDeals = all_products[first_deal] %}
+      {% include 'product-card-grid-alt', product: bestDeals, max_height: 200 %}
+    </div>
+    <div class="grid__item small--one medium-up--two-thirds">
+      {% assign bestDeals = all_products[first_deal] %}
+      <h4 class="title--description">Description</h4>
+      {% if bestDeals.metafields.desc.main-text %}
+      <div class="description__wrapper">
+        <p class="main-text">{{bestDeals.metafields.desc.main-text}}</p>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-1}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-1}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-2}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-2}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-3}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-3}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-4}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-4}}</p>            
+        </div>
+      </div>
+      {% else %}
+      <p class="main-text">{{ bestDeals.description }}</p>
+      {% endif %}
+    </div>
+    {% else %}
+    {% for block in section.blocks %}
+    {% if forloop.first %}
+    <div class="grid__item small--one medium-up--one-third  text-center">
+      <h4 class="desktophide vertical_title">{{section.settings.vertical_title}}</h4>
+      {% assign bestDeals = all_products[block.settings.best_deal_product] %}
+      {% include 'product-card-grid-alt', product: bestDeals, max_height: 200 %}
+    </div>
+    <div class="grid__item small--one medium-up--two-thirds">
+      {% assign bestDeals = all_products[block.settings.best_deal_product] %}
+      <h4 class="title--description">Description</h4>
+      {% if bestDeals.metafields.desc.main-text %}
+      <div class="description__wrapper">
+        <p class="main-text">{{bestDeals.metafields.desc.main-text}}</p>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-1}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-1}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-2}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-2}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-3}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-3}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-4}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-4}}</p>            
+        </div>
+      </div>
+      {% else %}
+      <p class="main-text">No description available for this product</p>
+      {% endif %}
+    </div>
+    {%endif%}
+    {% endfor %}
+    {% endif%}
+
+  </div>
+  <div class="grid grid--uniform best__deal-mid">
+    {% if section.settings.bestdeal_collection %}
+    <div class="grid__item" style="padding-left: 0 !important;">
+      {% for product in collections[section.settings.bestdeal_collection].products %}
+      {% unless product.handle == first_deal or product.handle == last_deal  %}
+      <div class="grid__item small--one-half medium-up--one-third  text-center">
+        {% include 'product-card-grid-alt', product: product, max_height: 200 %}
+      </div>
+      {% endunless %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="grid__item" style="padding-left: 0 !important;">
+      {% for block in section.blocks %}
+      {% assign bestDeals = all_products[block.settings.best_deal_product] %}
+      {% if forloop.index > 1 %}
+      {% unless forloop.last %}
+      <div class="grid__item small--one-half medium-up--one-third  text-center">
+        {% include 'product-card-grid-alt', product: bestDeals, max_height: 200 %}
+      </div>
+      {% endunless %}
+      {% endif%}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="grid grid--uniform best__deal-bottom">
+    {% if section.settings.bestdeal_collection %}
+    <div class="grid__item small--one medium-up--two-thirds">
+      {% assign bestDeals = all_products[last_deal] %}
+      <h4 class="title--description">Description</h4>
+      {% if bestDeals.metafields.desc.main-text %}
+      <div class="description__wrapper">
+        <p class="main-text">{{bestDeals.metafields.desc.main-text}}</p>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-1}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-1}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-2}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-2}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-3}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-3}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-4}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-4}}</p>            
+        </div>
+      </div>
+      {% else %}
+      <p class="main-text">{{ bestDeals.description }}</p>
+      {% endif %}
+    </div>
+    <div class="grid__item small--one medium-up--one-third text-center medium--one-third text-center">
+      <h4 class="desktophide vertical_title">{{section.settings.vertical_title}}</h4>
+      {% assign bestDeals = all_products[last_deal] %}
+      {% include 'product-card-grid-alt', product: bestDeals, max_height: 200 %}
+    </div>
+    {% else %}
+    {% for block in section.blocks %}
+    {% if forloop.last %}
+    <div class="grid__item small--one medium-up--two-thirds">
+      {% assign bestDeals = all_products[block.settings.best_deal_product] %}
+      <h4 class="title--description">Description</h4>
+      {% if bestDeals.metafields.desc.main-text %}
+      <div class="description__wrapper">
+        <p class="main-text">{{bestDeals.metafields.desc.main-text}}</p>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-1}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-1}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-2}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-2}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-3}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-3}}</p>            
+        </div>
+        <div style="display:flex;margin-bottom:8px;">
+          <div class="image"><img src="{{bestDeals.metafields.desc.img-4}}"/></div>
+          <p>{{bestDeals.metafields.desc.text-4}}</p>            
+        </div>
+      </div>
+      {% else %}
+      <p class="main-text">No description available for this product</p>
+      {% endif %}
+    </div>
+    <div class="grid__item small--one medium-up--one-third text-center medium--one-third text-center">
+      <h4 class="desktophide vertical_title">{{section.settings.vertical_title}}</h4>
+      {% assign bestDeals = all_products[block.settings.best_deal_product] %}
+      {% include 'product-card-grid-alt', product: bestDeals, max_height: 200 %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+
+<!-- NEWSLETTER -->
+<div class="page__newsletter">
+  <div class="newsletter__flex">
+    <div class="flex__item item__image">
+      <div class="flex__image">
+        {%- unless section.settings.newsletter_image == nil -%}
+        <img src="{{ section.settings.newsletter_image | img_url: 'master' }}" 
+             alt="{{ section.settings.newsletter_image.alt | default: 'Image' }}" />
+        {%- endunless -%}
+      </div>
+    </div>
+    <div class="flex__item item__text">
+      <div class="flex__form">
+        {%- unless section.settings.newsletter_title == blank -%}
+        <h2 class="text--heading">{{ section.settings.newsletter_title }}</h2>
+        {%- endunless -%}
+        {%- unless section.settings.newsletter_subtitle == blank -%}
+        <p class="text--subheading">{{ section.settings.newsletter_subtitle }}</p>
+        {%- endunless -%}
+
+        {%- assign formId = 'Contact_' | append: section.id -%}
+        {% form 'customer', id: formId, novalidate: 'novalidate', class: 'contact-form form-single-field' %}
+        {%- if form.posted_successfully? -%}
+        <p class="form-message form-message--success" tabindex="-1" data-form-status>
+          {{ 'general.newsletter_form.confirmation' | t }}
+        </p>
+        {%- endif -%}
+
+        <input type="hidden" name="contact[tags]" value="newsletter">
+
+        <div class="input-group {% if form.errors %} input-group--error{% endif %}">
+          <input type="email"
+                 name="contact[email]"
+                 id="{{ formId }}-email"
+                 class="input-group__field{% if form.errors %} input--error{% endif %}"
+                 value="{{ form.email }}"
+                 placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                 aria-label="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                 aria-required="true"
+                 autocorrect="off"
+                 autocapitalize="off"
+                 {% if form.errors %}
+                 aria-invalid="true"
+                 aria-describedby="{{ formId }}-email-error"
+                 data-form-status
+                 {% endif %}
+                 >
+          <span class="input-group__btn">
+            <button type="submit" class="btn" name="commit">
+              <span>{{ 'general.newsletter_form.submit' | t }}</span>
+            </button>
+          </span>
+        </div>
+
+        {%- if form.errors contains 'email' -%}
+        <span id="{{ formId }}-email-error" class="input-error-message">
+          <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+          {% include 'icon-error' %}
+          <span>{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}.</span>
+        </span>
+        {%- endif -%}
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<style>
+  {% unless section.settings.vertical_title == blank %}
+  .jewelili-best-deals .best__deal-top .grid__item:first-of-type .product-card:after,
+  .jewelili-best-deals .best__deal-bottom .product-card:after {
+    content: "{{ section.settings.vertical_title }}";
+  }
+  {% endunless %}
+</style>
+
+{% schema %}
+  {
+    "name": "Best Deal Section",
+	"class": "index-section jewelili-best-deals",
+    "settings": [
+      {
+        "type" :"header",
+        "content" : "Banner section"
+      },
+      {
+        "type" : "image_picker",
+        "id" : "banner_image",
+        "label" :"Select Banner Image",
+        "info" : "1200 x 400px recommends"
+      },
+      {
+        "type" : "image_picker",
+        "id" : "banner_image-mobile",
+        "label" :"Select Mobile Banner Image",
+        "info" : "386 x 527px  recommends"
+      },
+      {
+        "type" :"text",
+        "id" : "overlay_heading",
+        "label" :"Enter Overlay Title",
+        "default" :"About Us"
+      },
+      {
+        "type" :"text",
+        "id" : "overlay_subtext",
+        "label" :"Enter Overlay Text",
+        "default" :"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"
+      },
+      {
+        "type" :"color",
+        "id" : "text_color",
+        "label" :"Select Text color",
+        "default" :"#ffffff"
+      },
+      {
+        "type": "text",
+        "id": "vertical_title",
+        "label": "Enter Vertical Title",
+        "default": "Best Deal"
+      },
+      {
+        "type": "collection",
+        "id": "bestdeal_collection",
+        "label": "Select Collection",
+        "info": "Choose a collection to show its top 8 products automatically!"
+      },
+      {
+        "type" :"header",
+        "content" : "Newsletter section"
+      },
+      {
+        "type" : "image_picker",
+        "id" : "newsletter_image",
+        "label" :"Image"
+      },
+	  {
+        "type": "text",
+        "id": "newsletter_title",
+        "label": "Title",
+        "default": "New Styles Added Weekly"
+      },
+	  {
+        "type": "text",
+        "id": "newsletter_subtitle",
+        "label": "Subtitle",
+        "default": "Subscribe today to get weekly updates!"
+      }
+	]
+  }
+{% endschema %}

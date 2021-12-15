@@ -1,0 +1,484 @@
+{% include 'search-drawer' %}
+
+<div data-section-id="{{ section.id }}" data-section-type="header-section" data-header-section>  
+  <header class="site-header{% if section.settings.align_logo == 'left' %} border-bottom logo--left{% else %} logo--center{% endif %}" role="banner">
+    <div class="grid grid--no-gutters grid--table">
+      {% unless linklists[section.settings.main_linklist] == blank %}
+      <div class="grid__item small--one-quarter medium-up--hide site-header__mobilemenu">
+        <button type="button" class="btn--link site-header__icon site-header__menu js-mobile-nav-toggle mobile-nav--open" aria-controls="MobileNav"  aria-expanded="false" aria-label="{{ 'layout.navigation.menu' | t }}">
+          {% include 'icon-hamburger' %}
+        </button>
+      </div>
+      {% endunless %}
+      
+      {% if section.settings.align_logo == 'center' %}
+      {%- assign logo_classes = 'small--one-half medium-up--two-eighths medium-up--push-one-third logo-align--center' -%}
+      {% else %}
+      {%- assign logo_classes = 'small--one-half medium-up--two-twelfths logo-align--left' -%}
+      {% endif %}
+      
+      <div class="grid__item {% if section.settings.align_logo == 'left' %}small--one-quarter one-twelfth{% else %}medium-up--two-eighths medium-up--push-one-third{% endif %} text-left site-header__icons{% if shop.customer_accounts_enabled %} site-header__icons--plus{% endif %} small--hide">
+        <div class="site-header__icons-wrapper left-side">
+          <div class="free-shipping-text">
+            <div class="box-img">
+              {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" viewBox="0 0 47 47"><defs><style>.d{fill:#fff;}.b{fill:none;stroke:#292d36;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><g transform="translate(-54 -55)"><rect class="d" width="47" height="47" transform="translate(54 55)"/><g transform="translate(3.939 -4.346)"><path class="b" d="M71.714,328.505,53.061,319.9v-20.09" transform="translate(2 -226.852)"/><path class="b" d="M53.061,299.807l18.654,8.61v20.089" transform="translate(2 -226.852)"/><path class="b" d="M85.714,299.807l-18.654,8.61v20.089" transform="translate(6.654 -226.852)"/><path class="b" d="M67.061,328.505,85.714,319.9v-20.09" transform="translate(6.654 -226.852)"/><line class="b" x1="18.654" y2="8.609" transform="translate(55.061 64.346)"/><line class="b" x2="18.654" y2="8.609" transform="translate(73.714 64.346)"/><path class="b" d="M79.055,314.34l-7.994,4v-7.994l7.994-4Z" transform="translate(7.983 -224.679)"/><line class="b" y1="7.994" x2="17.321" transform="translate(64.387 68.343)"/><line class="b" y2="5.33" transform="translate(64.387 76.338)"/></g></g></svg> {% endcomment %}
+              <svg id="Capa_1" enable-background="new 0 0 512 512" width="35" height="35" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><g><path d="m256 241c24.813 0 45-20.187 45-45s-20.187-45-45-45-45 20.187-45 45 20.187 45 45 45zm0-60c8.271 0 15 6.729 15 15s-6.729 15-15 15-15-6.729-15-15 6.729-15 15-15z"/><path d="m331 316c0 24.813 20.187 45 45 45s45-20.187 45-45-20.187-45-45-45-45 20.187-45 45zm60 0c0 8.271-6.729 15-15 15s-15-6.729-15-15 6.729-15 15-15 15 6.729 15 15z"/><path d="m216.147 241h199.705v30h-199.705z" transform="matrix(.707 -.707 .707 .707 -88.465 298.427)"/><path d="m497 241h15v-150c-18.982 0-495.353 0-512 0v150h15c8.271 0 15 6.729 15 15s-6.729 15-15 15h-15v150h512v-150h-15c-8.271 0-15-6.729-15-15s6.729-15 15-15zm-15-27.43c-17.461 6.191-30 22.873-30 42.43s12.539 36.239 30 42.43v92.57h-331v-30h-30v30h-91v-92.57c17.461-6.191 30-22.873 30-42.43s-12.539-36.239-30-42.43v-92.57h91v30h30v-30h331z"/><path d="m121 271h30v60h-30z"/><path d="m121 181h30v60h-30z"/></g></svg>
+            </div>
+            <div class="box-text">
+              {% comment %}<p>EXTRA 10% off on your first order<br>Use Code: FIRST10</p>{% endcomment %}
+              {% comment %}<p>TAKE AN EXTRA 20% OFF ON <a href="/collections/diamond-jewelry-deep-discount">CLEARANCE STYLES</a><br>DISCOUNT APPLIED ON CHECKOUT</p>{% endcomment %}
+              <p>FLAT 30% OFF ON SELECT STYLES | <a href="/collections/pre-black-friday-sale" style="color:#1990c6;">PRE-BLACK FRIDAY SALE</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% if section.settings.align_logo == 'left' %}
+      <nav class="grid__item medium-up--four-twelfths left-menu small--hide" id="AccessibleNav" role="navigation">
+        {% include 'desktop-nav' , menu: linklists[section.settings.main_linklist_1] %}
+      </nav>
+      {% endif %}
+      
+      <div class="grid__item {{ logo_classes }}">
+        {% comment %}
+        Use the uploaded logo from theme settings if enabled.
+        Site name gets precedence with H1 tag on homepage, div on other pages.
+        {% endcomment %}
+        
+        <div class="h2 site-header__logo">
+          {% if section.settings.logo %}
+          {%- assign img_url = section.settings.logo | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          <a href="{{ routes.root_url }}" class="site-header__logo-image{% if section.settings.align_logo == 'center' %} site-header__logo-image--centered{% endif %}">
+            {% comment %}
+            <svg width="180px" id="Group_87190" data-name="Group 87190" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 785.874 150.343">
+              <path id="Path_191682" data-name="Path 191682" d="M251.552,389.644c0,26.817,16.292,34.026,26.7,34.026,14.992,0,21.749-7.209,21.749-33.181V277.1h25.131V380.563c0,29.353-15.417,46.877-41.6,46.877-19.849,0-36.109-9.5-36.109-37.8Z" transform="translate(-247.424 -277.097)"/>
+              <path id="Path_191683" data-name="Path 191683" d="M370.7,277.1v4.237H315.589v63.76h47.722v4.215H315.589v71.383H370.7v4.215H290.464V277.1Z" transform="translate(-178.577 -277.097)"/>
+              <path id="Path_191684" data-name="Path 191684" d="M478.241,277.1v4.237h-55.11v63.76h47.721v4.215H423.131v71.383h55.11v4.215H398V277.1Z" transform="translate(0.211 -277.097)"/>
+              <path id="Path_191685" data-name="Path 191685" d="M498.249,277.1,460.875,424.908H447.149l-34-118.67h-.421l-29.984,118.67H368.6L325.946,277.1h27.872l31.464,122.47H384.9L415.73,277.1H431.1l32.729,122.47h-.941L494.234,277.1Z" transform="translate(-117.75 -277.097)"/>
+              <path id="Path_191686" data-name="Path 191686" d="M518.065,424.908h-81.5V277.1h25.127v143.6h56.378Z" transform="translate(63.635 -277.097)"/>
+              <path id="Path_191687" data-name="Path 191687" d="M579.94,424.908h-81.5V277.1h25.127v143.6H579.94Z" transform="translate(166.089 -277.097)"/>
+              <path id="Path_191688" data-name="Path 191688" d="M473.575,424.908V277.1H498.7V424.908Z" transform="translate(123.744 -277.097)"/>
+              <path id="Path_191689" data-name="Path 191689" d="M535.45,424.908V277.1h25.128V424.908Z" transform="translate(225.296 -277.097)"/>
+            </svg>
+            {% endcomment %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="182" height="54" viewBox="0 0 182 54">
+              <g id="Group_93358" data-name="Group 93358" transform="translate(-6118 -9594.571)">
+                <g id="Group_93351" data-name="Group 93351" transform="translate(6118 9594.571)">
+                  <g id="Component_3_8" data-name="Component 3 – 8" transform="translate(0 0)">
+                    <path id="Path_191682" data-name="Path 191682" d="M248.369,304.682c0,6.573,3.732,8.34,6.116,8.34,3.434,0,4.981-1.767,4.981-8.133V277.1h5.756v25.359c0,7.194-3.531,11.489-9.528,11.489-4.546,0-8.27-2.329-8.27-9.264Z" transform="translate(-247.424 -277.097)" fill="#292d36"/>
+                    <path id="Path_191683" data-name="Path 191683" d="M308.842,277.1v1.039H296.219v15.627h10.931V294.8H296.219v17.5h12.623v1.033H290.464V277.1Z" transform="translate(-264.837 -277.097)" fill="#292d36"/>
+                    <path id="Path_191684" data-name="Path 191684" d="M416.381,277.1v1.039H403.759v15.627h10.93V294.8h-10.93v17.5h12.623v1.033H398V277.1Z" transform="translate(-306.794 -277.097)" fill="#292d36"/>
+                    <path id="Path_191685" data-name="Path 191685" d="M365.411,277.1l-8.56,36.228h-3.144l-7.787-29.086h-.1l-6.868,29.086h-3.24l-9.77-36.228h6.384l7.207,30.017h-.087L346.51,277.1h3.521l7.5,30.017h-.215l7.179-30.017Z" transform="translate(-278.26 -277.097)" fill="#292d36"/>
+                    <path id="Path_191686" data-name="Path 191686" d="M455.228,313.325H436.56V277.1h5.755v35.195h12.913Z" transform="translate(-321.993 -277.097)" fill="#292d36"/>
+                    <path id="Path_191687" data-name="Path 191687" d="M517.1,313.325H498.436V277.1h5.755v35.195H517.1Z" transform="translate(-346.23 -277.097)" fill="#292d36"/>
+                    <path id="Path_191688" data-name="Path 191688" d="M473.575,313.325V277.1h5.754v36.228Z" transform="translate(-336.762 -277.097)" fill="#292d36"/>
+                    <path id="Path_191689" data-name="Path 191689" d="M535.45,313.325V277.1h5.755v36.228Z" transform="translate(-361.205 -277.097)" fill="#292d36"/>
+                  </g>
+                </g>
+                <text id="Shine_Bright._Spend_Small." data-name="Shine Bright. Spend Small." transform="translate(6129 9646.571)" fill="#292d36" font-size="9.5" font-family="Lato-Regular, Lato" letter-spacing="0.15em"><tspan x="0" y="0">SHINE BRIGHT. SPEND SMALL.</tspan></text>
+              </g>
+            </svg>
+          </a>
+          {% else %}
+          <a class="site-header__logo-link" href="{{ routes.root_url }}">{{ shop.name }}</a>
+          {% endif %}
+        </div>
+      </div>
+      
+      {% if section.settings.align_logo == 'left' %}
+      <nav class="grid__item medium-up--four-twelfths right-menu small--hide" id="AccessibleNav" role="navigation">
+        {% include 'desktop-nav' , menu: linklists[section.settings.main_linklist_2] %}
+      </nav>
+      {% endif %}
+      
+      <div class="grid__item {% if section.settings.align_logo == 'left' %}small--one-quarter medium-up--one-twelfth{% else %}small--one-quarter medium-up--one-eighth medium-up--push-one-third right-header{% endif %} text-right site-header__icons{% if shop.customer_accounts_enabled %} site-header__icons--plus{% endif %}">
+        <div class="site-header__icons-wrapper">
+          <button type="button" class="btn--link site-header__icon site-header__search-toggle js-drawer-open-top">
+            {% render 'icon-search' %}
+            <span class="icon__fallback-text">Search</span>
+          </button>
+          
+          {%comment%}
+          <a href="/pages/wishlist" class="site-header__icon site-header__wishlist small--hide">
+            {% include 'icon-wishlist' %}
+          </a>
+          {%endcomment%}
+          
+          <!--included iwish_v2 with link my added--------->
+          {% include 'iwish_v2' with 'iwishlink' %}
+          
+          {% if shop.customer_accounts_enabled %}
+          {% if customer %}
+          <a href="{{ routes.account_url }}" class="site-header__icon site-header__account small--hide">
+            {% include 'icon-login' %}
+            <span class="icon__fallback-text">{{ 'layout.customer.account' | t }}</span>
+          </a>
+          {% else %}
+          <a href="{{ routes.account_login_url }}" class="site-header__icon site-header__account small--hide">
+            {% include 'icon-login' %}
+            <span class="icon__fallback-text">{{ 'layout.customer.log_in' | t }}</span>
+          </a>
+          {% endif %}
+          {% endif %}
+          
+          <a href="{{ routes.cart_url }}" class="site-header__icon site-header__cart">
+            {% include 'icon-cart' %}
+            <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
+            <div id="CartCount" class="site-header__cart-count{% if cart.item_count == 0 %} hide{% endif %}" data-cart-count-bubble>
+              <span data-cart-count>{{ cart.item_count }}</span>
+              <span class="icon__fallback-text medium-up--hide">{{ 'layout.cart.items_count' | t: count: cart.item_count }}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <nav class="mobile-nav-wrapper medium-up--hide" role="navigation">
+      <div class="mobile-nav-head">
+        {% unless linklists[section.settings.main_linklist] == blank %}
+        <button type="button" class="btn--link site-header__icon site-header__menu js-mobile-nav-toggle mobile-nav--open" aria-controls="MobileNav"  aria-expanded="false" aria-label="{{ 'layout.navigation.menu' | t }}">
+          {% include 'icon-close' %}
+        </button>
+        {% endunless %}
+        {%comment%}
+        <a href="#" class="site-header__icon site-header__wishlist">
+          {% include 'icon-wishlist' %}
+        </a>
+        {%endcomment%}
+        
+        <!--included iwish_v2 with link my added--------->
+        {% include 'iwish_v2' with 'iwishMoblink' %}
+        
+        {% if shop.customer_accounts_enabled %}
+        {% if customer %}
+        <a href="{{ routes.account_url }}" class="site-header__icon site-header__account">
+          {% include 'icon-login' %}
+          <span class="icon__fallback-text">{{ 'layout.customer.account' | t }}</span>
+        </a>
+        {% else %}
+        <a href="{{ routes.account_login_url }}" class="site-header__icon site-header__account">
+          {% include 'icon-login' %}
+          <span class="icon__fallback-text">{{ 'layout.customer.log_in' | t }}</span>
+        </a>
+        {% endif %}
+        {% endif %}
+      </div>
+      
+      <ul class="mobile-nav-body">
+        {% for link in linklists[section.settings.main_linklist_1].links %}
+        {%- assign outerLoopIndex = forloop.index -%}
+        <li>
+          {% if link.links != blank %}
+          {% capture child_list_handle %}{{ link.handle }}-{{ outerLoopIndex }}{% endcapture %}
+          <button class="menu__level--one menu-button" type="button">
+            <span class="title">
+              {{ link.title | escape }}
+              {% assign link_titl = link.title | handleize %}
+              {% if link_titl == 'jewelili-deals' %}
+              <label class="icon_sale">Holiday Sale</label>
+              {% endif %}
+            </span>
+            <span class="toggle__icon">
+              {% include 'icon-menu-open' %}
+              {% include 'icon-menu-close' %}
+            </span>
+          </button>
+          <ul data-parent="{{ child_list_handle }}" data-level="2">
+            {% for childlink in link.links %}
+            <li class="menu__level--two {% if childlink.links != blank %}has__level--three{% endif %}">
+              {% if childlink.links != blank %}
+              {% capture grandchild_list_handle %}{{ childlink.handle }}-{{ outerLoopIndex }}-{{ forloop.index }}{% endcapture %}
+              <button class="menu__level--two menu-button" type="button">
+                <span class="title">{{ childlink.title | escape }}</span>
+                <span class="toggle__icon">
+                  {% include 'icon-menu-open' %}
+                  {% include 'icon-menu-close' %}
+                </span>
+              </button>
+              <ul data-parent="{{ grandchild_list_handle }}" data-level="3">
+                {% for grandchildlink in childlink.links %}
+                {% assign url_array = grandchildlink.url | split: "/" | last %}
+                <li class="menu__level--three">
+                  <a href="{{ grandchildlink.url }}"{% if grandchildlink.current %} aria-current="page"{% endif %}>
+                    <span>{{ grandchildlink.title | escape }}</span>
+                    {% if collections[url_array].metafields.global.collectionNew %}
+                    <span class="new-collection">{{ collections[url_array].metafields.global.collectionNew }}</span>
+                    {% endif %}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <a href="{{ childlink.url }}"{% if childlink.current %} aria-current="page"{% endif %}>
+                <span>{{ childlink.title | escape }}</span>
+              </a>
+              {% endif %}
+            </li>
+            {% endfor %}
+            {% if link.url != blank and link.url != '#' %}
+            <a class="main-link medium-up--hide" href="{{ link.url }}">Shop All</a>
+            {% endif %}
+          </ul>
+          {% else %}
+          <a class="menu__level--one" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>
+            <span>{{ link.title | escape }}</span>
+          </a>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </header>
+  
+  {% if section.settings.align_logo == 'center' %}
+  <nav class="small--hide border-bottom" id="AccessibleNav" role="navigation">
+    {% include 'site-nav', linklist: section.settings.main_linklist, wrapper_class: 'site-nav--centered' %}
+  </nav>
+  {% endif %}
+</div>
+
+{% comment %}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if section.settings.logo %}
+    {% assign image_size = section.settings.logo.width | append:'x' %}
+    "logo": {{ section.settings.logo | img_url: image_size | prepend: "https:" | json }},
+    {% endif %}
+    "sameAs": [
+    {{ settings.social_twitter_link | json }},
+    {{ settings.social_facebook_link | json }},
+    {{ settings.social_pinterest_link | json }},
+    {{ settings.social_instagram_link | json }},
+    {{ settings.social_tumblr_link | json }},
+    {{ settings.social_snapchat_link | json }},
+    {{ settings.social_youtube_link | json }},
+    {{ settings.social_vimeo_link | json }}
+    ],
+    "url": {{ shop.url | append: page.url | json }}
+  }
+</script>
+
+{% if request.page_type == 'index' %}
+{% assign potential_action_target = shop.url | append: routes.search_url | append: "?q={search_term_string}" %}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": {{ shop.name | json }},
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {{ potential_action_target | json }},
+      "query-input": "required name=search_term_string"
+    },
+    "url": {{ shop.url | append: page.url | json }}
+  }
+</script>
+{% endif %}
+{% endcomment %}
+
+{% if section.settings.message %}
+<style>
+  {% if section.settings.logo != blank %}
+  .site-header__logo-image {
+    max-width: {{ section.settings.logo_max_width | escape }}px;
+  }
+  {% endif %}
+  
+  {% if section.settings.align_logo == 'left' %}
+  .site-header__logo-image {
+    margin: 0;
+  }
+  {% endif %}
+</style>
+{% endif %}
+
+{% schema %}
+{
+  "name": {
+    "da": "Overskrift",
+    "de": "Titel",
+    "en": "Header",
+    "es": "Encabezado",
+    "fi": "Ylätunniste",
+    "fr": "En-tête",
+    "hi": "हैडर",
+    "it": "Header",
+    "ja": "ヘッダー",
+    "ko": "헤더",
+    "nb": "Header",
+    "nl": "Koptekst",
+    "pt-BR": "Cabeçalho",
+    "pt-PT": "Cabeçalho",
+    "sv": "Rubrik",
+    "th": "ส่วนหัว",
+    "zh-CN": "标头",
+    "zh-TW": "標頭"
+  },
+  "settings": [
+  {
+    "type": "radio",
+    "id": "align_logo",
+    "label": {
+      "da": "Logojustering",
+      "de": "Logo-Ausrichtung",
+      "en": "Logo alignment",
+      "es": "Alineación de logo",
+      "fi": "Logon tasaus",
+      "fr": "Alignement du logo",
+      "hi": "लोगो संरेखण",
+      "it": "Allineamento logo",
+      "ja": "ロゴアラインメント",
+      "ko": "로고 정렬",
+      "nb": "Logojustering",
+      "nl": "Logo-uitlijning",
+      "pt-BR": "Alinhamento do logotipo",
+      "pt-PT": "Alinhamento do logótipo",
+      "sv": "Logojustering",
+      "th": "การจัดวางโลโก้",
+      "zh-CN": "logo 对齐方式",
+      "zh-TW": "商標對齊"
+    },
+    "default": "left",
+    "options": [
+    {
+      "value": "left",
+      "label": {
+        "da": "Venstre",
+        "de": "Links",
+        "en": "Left",
+        "es": "Izquierda",
+        "fi": "Vasen",
+        "fr": "Gauche",
+        "hi": "बाएँ",
+        "it": "Sinistra",
+        "ja": "左",
+        "ko": "왼쪽",
+        "nb": "Venstre",
+        "nl": "Links",
+        "pt-BR": "Esquerda",
+        "pt-PT": "Esquerda",
+        "sv": "Vänster",
+        "th": "ด้านซ้าย",
+        "zh-CN": "左侧",
+        "zh-TW": "左方"
+      }
+    },
+    {
+      "value": "center",
+      "label": {
+        "da": "Centreret",
+        "de": "Mittig",
+        "en": "Centered",
+        "es": "Centrada",
+        "fi": "Keskitetty",
+        "fr": "Centré",
+        "hi": "केंद्र",
+        "it": "Centrato",
+        "ja": "中央揃え",
+        "ko": "센터 맞추기",
+        "nb": "Sentrert",
+        "nl": "Gecentreerd",
+        "pt-BR": "Centralizado",
+        "pt-PT": "Centrado",
+        "sv": "Centrera",
+        "th": "ตรงกลาง",
+        "zh-CN": "居中",
+        "zh-TW": "置中"
+      }
+    }
+    ]
+  },
+  {
+    "type": "image_picker",
+    "id": "logo",
+    "label": {
+      "da": "Logobillede",
+      "de": "Logo-Foto",
+      "en": "Logo image",
+      "es": "Logo",
+      "fi": "Logokuva",
+      "fr": "Image du logo",
+      "hi": "लोगो इमेज",
+      "it": "Immagine del logo",
+      "ja": "ロゴ画像",
+      "ko": "로고 이미지",
+      "nb": "Logobilde",
+      "nl": "Afbeelding van logo",
+      "pt-BR": "Imagem do logotipo",
+      "pt-PT": "Imagem do logótipo",
+      "sv": "Logobild",
+      "th": "รูปภาพโลโก้",
+      "zh-CN": "logo 图片",
+      "zh-TW": "標誌圖片"
+    }
+  },
+  {
+    "type": "range",
+    "id": "logo_max_width",
+    "label": {
+      "da": "Tilpasset logobredde",
+      "de": "Logobreite",
+      "en": "Custom logo width",
+      "es": "Ancho del logo personalizado",
+      "fi": "Mukautetun logon leveys",
+      "fr": "Largeur personnalisée du logo",
+      "hi": "कस्टम लोगो की चौड़ाई",
+      "it": "Larghezza logo personalizzato",
+      "ja": "ロゴの幅をカスタマイズする",
+      "ko": "사용자 지정 로고 폭",
+      "nb": "Tilpasset logobredde",
+      "nl": "Aangepaste logo-breedte",
+      "pt-BR": "Largura do logotipo personalizado",
+      "pt-PT": "Largura de logótipo personalizada",
+      "sv": "Anpassad logotypsbredd",
+      "th": "ความกว้างของโลโก้แบบกำหนดเอง",
+      "zh-CN": "自定义 logo 宽度",
+      "zh-TW": "自訂商標寬度"
+    },
+    "min": 50,
+    "max": 250,
+    "step": 5,
+    "unit": "px",
+    "default": 100
+  },
+  {
+    "type": "link_list",
+    "id": "main_linklist",
+    "label": {
+      "da": "Menu",
+      "de": "Menü",
+      "en": "Menu",
+      "es": "Menú",
+      "fi": "Valikko",
+      "fr": "Menu",
+      "hi": "मेनू",
+      "it": "Menu",
+      "ja": "メニュー",
+      "ko": "메뉴",
+      "nb": "Meny",
+      "nl": "Menu",
+      "pt-BR": "Menu",
+      "pt-PT": "Menu",
+      "sv": "Meny",
+      "th": "เมนู",
+      "zh-CN": "菜单",
+      "zh-TW": "選單"
+    },
+    "default": "main-menu"
+  },
+  {
+    "type": "link_list",
+    "id": "main_linklist_1",
+    "label": "Desktop Menu 1"
+  },
+  {
+    "type": "link_list",
+    "id": "main_linklist_2",
+    "label": "Desktop Menu 2"
+  }
+  ]
+}
+{% endschema %}

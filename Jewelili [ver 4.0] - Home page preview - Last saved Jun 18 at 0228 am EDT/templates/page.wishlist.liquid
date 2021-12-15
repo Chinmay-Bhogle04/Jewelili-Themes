@@ -1,0 +1,52 @@
+<div id="wishlist-page">
+  <div class="header">
+    {% render 'breadcrumbs' %}
+    <div class="banner">
+      <img class=" lazyload" data-src="https://cdn.shopify.com/s/files/1/0252/9620/7926/files/Banner_1_2x_378868aa-2e76-4243-8f5f-4cb22df2cfb8.png?v=1609316179" data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+      data-sizes="auto" alt="">
+    </div>
+    <div class="section-header text-center">
+      <h1 class="header">{{ page.title }} </h1>
+      <p class="subheading">Make your wishes come true! Order today & grab your favourites before they’re gone.</p>
+    </div>
+  </div>
+  <div class="page-width">
+    <div class="grid">
+      {% for product in collections['Earrings'].products limit: 2 %}
+      <div class="grid__item">
+        <div class="grid-view-item{% unless product.available %} grid-view-item--sold-out{% endunless %} product-card">
+          <a class="grid-view-item__link grid-view-item__image-container full-width-link" href="{{ product.url }}">
+            <span class="visually-hidden">{{ product.title }}</span>
+          </a>
+          
+          {% capture img_id %}ProductCardImage-{{ product.id }}{% endcapture %}
+          {% capture wrapper_id %}ProductCardImageWrapper-{{ product.id }}{% endcapture %}
+          {%- assign preview_image = product.featured_media.preview_image -%}
+          {%- assign img_url = preview_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          
+          
+          <div class="product-card__image-with-placeholder-wrapper" data-image-with-placeholder-wrapper>
+            
+            <div id="{{ wrapper_id }}" class="grid-view-item__image-wrapper product-card__image-wrapper js">
+              <div style="padding-top: 100%;">
+                <img id="{{ img_id }}" class="grid-view-item__image lazyload" alt="{{ product.title }}" data-src="{{ img_url }}"
+                data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]" data-aspectratio="{{ preview_image.aspect_ratio }}" data-sizes="auto" data-image>
+              </div>
+            </div>
+            <div class="placeholder-background placeholder-background--animation" data-image-placeholder></div>
+          </div>
+          <div class="product_detail">
+            <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title | truncate: '65' }}</div>
+            {% include 'product-price-listing', product: product %}
+            <form method="post" action="/cart/add" class="add_to_cart_form">
+              <input type="hidden" name="id" value="'+ product_id +'" />
+              <input type="hidden" name="quantity" value="1"/>
+              <button type="submit" class="btn">{{ 'products.product.add_to_cart' | t }}{% include 'icon-add-to-cart-1' %}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

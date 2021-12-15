@@ -1,0 +1,15 @@
+{% comment %}
+The contents of the collection.liquid template can be found in /sections/collection-template.liquid
+{% endcomment %}
+
+
+{% if collection.handle == 'flash-sale' %}
+{% section 'mm-flash-sale-template' %}
+<div class="flash-sales-logo-section">
+  {% section 'logo-bar' %}
+</div>
+{% elsif collection.handle == 'jewelili-bespoke-customize-jewelry' %}
+{% section 'mm-customize-collection-template' %}
+{% else %}
+{% section 'mm-collection-template' %}
+{% endif %}

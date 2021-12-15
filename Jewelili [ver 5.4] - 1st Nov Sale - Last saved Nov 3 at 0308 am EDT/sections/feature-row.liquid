@@ -1,0 +1,123 @@
+<div class="page-width  image-text-blogger">
+  {% for block in section.blocks %}
+  <div class="testimonial-slider-wrapper">
+    <div class="feature-row">
+      {% if block.settings.layout == 'left' %}
+      {% if block.settings.image != blank %}
+      <div class="feature-row__item">        
+        {% capture img_id %}FeatureRowImage-{{ section.id }}{% endcapture %}
+        {% capture wrapper_id %}FeatureRowImageWrapper-{{ section.id }}{% endcapture %}
+        {%- assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+        <div class="feature-row__image-wrapper js hover_image">
+          <div style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100}}%;">
+            <img id="{{ img_id }}" class="feature-row__image lazyload image_scale" data-src="{{ img_url }}"
+            data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+            data-aspectratio="{{ block.settings.image.aspect_ratio }}"
+            data-sizes="auto"
+            alt="{{ block.settings.image.alt | escape }}">
+          </div>
+        </div>
+        <noscript>
+          {{ block.settings.image | img_url: '600x600', scale: 2 | img_tag: section.settings.image.alt, 'feature-row__image' }}
+        </noscript>
+      </div>
+      {% endif %}
+      {% endif %}
+      <div class="{% if block.settings.image != blank %}feature-row__item{% endif %} feature-row__text" data-slick="{{section.blocks.size}}" {% if section.blocks.size > 1 %} data-init-testimonial{% endif %}>
+        <div class="text_block grid__item--{{ block.id }}">
+          {% if block.settings.title != blank or block.settings.subtitle != blank %}
+          <div class="section-header text-center header-title-wrapper">
+            {% if block.settings.title != blank %}
+            <h2 class="title header--sub-heading">{{ block.settings.subtitle | escape }}</h2>
+            {% endif %}
+            {% if block.settings.subtitle != blank %}
+            <h5 class="sub-title header--main-heading">{{ block.settings.title | escape }}</h5>
+            {% endif %}
+          </div>
+          {% endif %}
+          {% if block.settings.text != blank %}
+          <div class="rte rte-setting featured-row__subtext">{{ block.settings.text }}</div>
+          {% endif %}
+          <div class="customer-name">
+            <span class="divider"></span>
+            <p class="name">{{ block.settings.name }}</p>
+            <p class="profession">{{ block.settings.profession }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Image with text",
+  "class": "index-section",
+  "settings": [
+  
+  ],
+  "blocks": [
+  {
+    "type": "text_block",
+    "name": "Text Block",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Image alignment",
+      "default": "left",
+      "options": [
+      {
+        "value": "left",
+        "label": "Left"
+      },
+      {
+        "value": "right",
+        "label": "Right"
+      }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Name"
+    },
+    {
+      "type": "text",
+      "id": "profession",
+      "label": "Profession"
+    }
+    ]
+  }
+  ],
+  "presets": [
+  {
+    "name": "Image with text",
+    "category": "Image"
+  }
+  ]
+}
+{% endschema %}
